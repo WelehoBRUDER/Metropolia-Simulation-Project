@@ -1,4 +1,4 @@
-package simu.framework;
+package sim.framework;
 
 public class Event implements Comparable<Event> {
 

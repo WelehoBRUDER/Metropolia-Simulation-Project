@@ -1,10 +1,10 @@
-package simu.model;
+package sim.model;
 
-import simu.framework.*;
+import sim.framework.*;
 import eduni.distributions.Negexp;
 import eduni.distributions.Normal;
 
-public class OwnEngine extends simu.framework.Engine {
+public class OwnEngine extends sim.framework.Engine {
 
     private ArrivalProcess arrivalProcess;
 

@@ -1,6 +1,6 @@
-package simu.model;
+package sim.model;
 
-import simu.framework.IEventType;
+import sim.framework.IEventType;
 
 // TODO:
 // Tapahtumien tyypit määritellään simulointimallin vaatimusten perusteella

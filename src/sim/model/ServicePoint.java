@@ -1,6 +1,6 @@
-package simu.model;
+package sim.model;
 
-import simu.framework.*;
+import sim.framework.*;
 import java.util.LinkedList;
 import eduni.distributions.ContinuousGenerator;
 

@@ -1,9 +1,9 @@
-package testi;
+package test;
 
-import simu.framework.Engine;
-import simu.framework.Trace;
-import simu.framework.Trace.Level;
-import simu.model.OwnEngine;
+import sim.framework.Engine;
+import sim.framework.Trace;
+import sim.framework.Trace.Level;
+import sim.model.OwnEngine;
 
 public class Simulator { //Tekstipohjainen
 

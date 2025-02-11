@@ -1,6 +1,6 @@
-package simu.model;
+package sim.model;
 
-import simu.framework.*;
+import sim.framework.*;
 
 // TODO:
 // Asiakas koodataan simulointimallin edellyttämällä tavalla (data!)
