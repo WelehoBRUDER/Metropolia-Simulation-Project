@@ -80,21 +80,15 @@ public class OwnEngine extends sim.framework.Engine {
                 c = (Customer) servicePoints[3].fetchFromQueue();
                 if (!c.isWristband()){c.removeTicket();}
                 servicePoints[4].addToQueue(c);
-                System.out.println("Customer " + c.getId() + " goes to restaurant queue that has " + servicePoints[4].getQueueSize() + " customers");
                 break;
 
             case RESTAURANT:
-                System.out.println("Restaurant queue: " +servicePoints[4].getQueueSize());
-                if (!servicePoints[4].isInQueue()) {
-                    System.out.println("Attempted to fetch from empty queue");
-                    break;
+                c = (Customer) servicePoints[4].fetchFromRestaurantQueue(); //Palauttaa siis null jos ravintola täynnä
+                if (c != null) {
+                    servicePoints[4].customerLeftRestaurant();
+                    c.setDepartTime(Clock.getInstance().getTime());
+                    c.report();
                 }
-                c = (Customer) servicePoints[4].fetchFromQueue();
-                servicePoints[4].customerLeftRestaurant();
-                System.out.println("Customers at restaurant: " + servicePoints[4].getRestaurantCustomerCounter());//Nämä printit vaan tsekkinä
-                System.out.println("Customer " + c.getId() + " left restaurant");
-                c.setDepartTime(Clock.getInstance().getTime());
-                c.report();
         }
     }
 

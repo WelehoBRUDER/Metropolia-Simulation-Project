@@ -40,15 +40,23 @@ public class ServicePoint {
 		return queue.poll();
 	}
 
+	public Customer fetchFromRestaurantQueue() {
+		if (hasRoomInRestaurant()) {
+			Customer customer = queue.poll();
+			if (customer != null) {
+				return customer; //Asiakas ravintolaan
+			}
+		} return null; //Ravintola täynnä
+	}
 
 	public void beginService(){  //Aloitetaan uusi palvelu, asiakas on jonossa palvelun aikana
 		
 		Trace.out(Trace.Level.INFO, "Starting new service for customer  " + queue.peek().getId());
 
 		if (isRestaurant()){
+			restaurantCustomerCounter++;
 			System.out.println("Customers in restaurant: " + restaurantCustomerCounter); //Tämä tässä vaan jotta voi seurata kapasiteetin ylitystä
-			if(restaurantCustomerCounter < restaurantCapacity){ //Varattu vasta kun ravintola täynnä
-				restaurantCustomerCounter++;
+			if (restaurantCustomerCounter < restaurantCapacity){ //Varattu vasta kun ravintola täynnä
 				reserved = false;
 			} else {
 				reserved = true;

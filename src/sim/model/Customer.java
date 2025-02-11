@@ -20,7 +20,6 @@ public class Customer {
 	    } else {
 	        wristband = false;
 	    }
-	    
 		arrivalTime = Clock.getInstance().getTime();
 		Trace.out(Trace.Level.INFO, "New customer number " + id + " arrived at  "+arrivalTime);
 		if (wristband) {
