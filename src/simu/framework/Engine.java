@@ -25,26 +25,26 @@ public abstract class Engine {
 	
 	
 	public void drive(){
-		alustukset(); // luodaan mm. ensimmäinen tapahtuma
-		while (simuloidaan()){
+		init(); // luodaan mm. ensimmäinen tapahtuma
+		while (simulating()){
 			
-			Trace.out(Trace.Level.INFO, "\nA-vaihe: clock on " + nykytime());
-			clock.setAika(nykytime());
+			Trace.out(Trace.Level.INFO, "\nA-phase: time is " + currentTime());
+			clock.setTime(currentTime());
 			
-			Trace.out(Trace.Level.INFO, "\nB-vaihe:" );
-			suoritaBTapahtumat();
+			Trace.out(Trace.Level.INFO, "\nB-phase:" );
+			runBEvents();
 			
-			Trace.out(Trace.Level.INFO, "\nC-vaihe:" );
-			yritaCTapahtumat();
+			Trace.out(Trace.Level.INFO, "\nC-phase:" );
+			attemptCEvents();
 
 		}
-		tulokset();
+		results();
 		
 	}
 	
-	private void suoritaBTapahtumat(){
+	private void runBEvents(){
 		while (eventList.getNextTime() == clock.getTime()){
-			processEvent(eventList.poista());
+			processEvent(eventList.delete());
 		}
 	}
 
@@ -53,11 +53,11 @@ public abstract class Engine {
 	}
 	
 	private boolean simulating(){
-		return clock.getAika() < simulationTime;
+		return clock.getTime() < simulationTime;
 	}
 
-	protected abstract void runEvents(Event t);  // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
-	protected abstract void attemptEvents();	// Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	protected abstract void processEvent(Event t);  // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	protected abstract void attemptCEvents();	// Määritellään simu.model-pakkauksessa Moottorin aliluokassa
 
 	protected abstract void init(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
 

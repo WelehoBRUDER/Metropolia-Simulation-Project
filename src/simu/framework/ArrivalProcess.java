@@ -13,7 +13,7 @@ public class ArrivalProcess {
 		this.type = type;
 	}
 
-	public void generoiSeuraava(){
+	public void generateNext(){
 		Event t = new Event(type, Clock.getInstance().getTime()+generator.sample());
 		eventList.add(t);
 	}

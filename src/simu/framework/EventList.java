@@ -15,7 +15,7 @@ public class EventList {
 	}
 	
 	public void add(Event t){
-		Trace.out(Trace.Level.INFO,"Tapahtumalistaan lisätään uusi " + t.getType() + " " + t.getTime());
+		Trace.out(Trace.Level.INFO,"Adding this to event list " + t.getType() + " " + t.getTime());
 		list.add(t);
 	}
 	
