@@ -12,13 +12,21 @@ public class OwnEngine extends sim.framework.Engine {
 
     public OwnEngine() {
 
-        servicePoints = new ServicePoint[3];
+        servicePoints = new ServicePoint[5];
 
-        servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.DEP1);
-        servicePoints[1] = new ServicePoint(new Normal(10, 10), eventList, EventType.DEP2);
-        servicePoints[2] = new ServicePoint(new Normal(5, 3), eventList, EventType.DEP3);
+        servicePoints[0] = new ServicePoint(new Normal(7, 4), eventList, EventType.TICKET);
 
-        arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
+        //Laitteilla vähän eri ajoajat, mutta hajonta kaikissa pientä
+        servicePoints[1] = new ServicePoint(new Normal(3, 1), eventList, EventType.RIDE1);
+        servicePoints[2] = new ServicePoint(new Normal(5, 2), eventList, EventType.RIDE2);
+        servicePoints[3] = new ServicePoint(new Normal(2, 1), eventList, EventType.RIDE3);
+
+        servicePoints[4] = new ServicePoint(new Normal(45, 15), eventList, EventType.RESTAURANT);
+        servicePoints[4].setRestaurant(true);
+        servicePoints[4].setRestaurantCapacity(50);
+
+
+        arrivalProcess = new ArrivalProcess(new Negexp(5, 5), eventList, EventType.ENTRENCE);
 
     }
 
@@ -28,28 +36,65 @@ public class OwnEngine extends sim.framework.Engine {
         arrivalProcess.generateNext(); // Ensimmäinen saapuminen järjestelmään
     }
 
+    public void addToOtherQueue(Customer c, ServicePoint rideQueue, ServicePoint ticketQueue){   //
+        if (c.isWristband() || c.isTicket()) {
+            rideQueue.addToQueue(c);
+        } else {
+            ticketQueue.addToQueue(c);
+            System.out.println("Customer " + c.getId() + " goes to ticket queue"); //Tämä vaan tsekkinä, että toimiiko
+        }
+    }
+
     @Override
     protected void processEvent(Event t) {  // B-vaiheen tapahtumat
 
-        Customer a;
+        Customer c;
         switch ((EventType) t.getType()) {
 
-            case ARR1:
-                servicePoints[0].addToQueue(new Customer());
+            case ENTRENCE:
+                Customer customer = new Customer();
+                if (customer.isWristband()){
+                    servicePoints[1].addToQueue(customer);
+                } else {
+                    servicePoints[0].addToQueue(customer);
+                    System.out.println("Customer " + customer.getId() + " goes to ticket queue");
+                }
                 arrivalProcess.generateNext();
                 break;
-            case DEP1:
-                a = (Customer) servicePoints[0].fetchFromQueue();
-                servicePoints[1].addToQueue(a);
+            case TICKET:
+                c = (Customer) servicePoints[0].fetchFromQueue();
+                c.addTicket();
+                servicePoints[1].addToQueue(c);
                 break;
-            case DEP2:
-                a = (Customer) servicePoints[1].fetchFromQueue();
-                servicePoints[2].addToQueue(a);
+            case RIDE1:
+                c = (Customer) servicePoints[1].fetchFromQueue();
+                if (!c.isWristband()){c.removeTicket();}
+                addToOtherQueue(c, servicePoints[2], servicePoints[0]);
                 break;
-            case DEP3:
-                a = (Customer) servicePoints[2].fetchFromQueue();
-                a.setDepartTime(Clock.getInstance().getTime());
-                a.report();
+            case RIDE2:
+                c = (Customer) servicePoints[2].fetchFromQueue();
+                if (!c.isWristband()){c.removeTicket();}
+                addToOtherQueue(c, servicePoints[3], servicePoints[0]);
+                break;
+            case RIDE3:
+                c = (Customer) servicePoints[3].fetchFromQueue();
+                if (!c.isWristband()){c.removeTicket();}
+                servicePoints[4].addToQueue(c);
+                System.out.println("Customer " + c.getId() + " goes to restaurant queue that has " + servicePoints[4].getQueueSize() + " customers");
+                break;
+
+            case RESTAURANT:
+                System.out.println("Restaurant queue: " +servicePoints[4].getQueueSize());
+                if (!servicePoints[4].isInQueue()) {
+                    System.out.println("Attempted to fetch from empty queue");
+                    break;
+                }
+                c = (Customer) servicePoints[4].fetchFromQueue();
+                servicePoints[4].customerLeftRestaurant();
+                System.out.println("Customers at restaurant: " + servicePoints[4].getRestaurantCustomerCounter());//Nämä printit vaan tsekkinä
+                System.out.println("Customer " + c.getId() + " left restaurant");
+                c.setDepartTime(Clock.getInstance().getTime());
+                c.report();
         }
     }
 
@@ -57,7 +102,9 @@ public class OwnEngine extends sim.framework.Engine {
     protected void attemptCEvents() {
         for (ServicePoint p : servicePoints) {
             if (!p.isReserved() && p.isInQueue()) {
-                p.beginService();
+                if (!p.isRestaurant()|| (p.isRestaurant() && p.hasRoomInRestaurant())) {
+                    p.beginService();
+                }
             }
         }
     }
@@ -65,7 +112,9 @@ public class OwnEngine extends sim.framework.Engine {
     @Override
     protected void results() {
         System.out.println("Simulation ended at " + Clock.getInstance().getTime());
-        System.out.println("Results ... are not yet here");
+        System.out.println("Results so far...");
+        System.out.println("Total amound of customers: " + Customer.getI());
+        System.out.println("Average time in system: " + Customer.getAverage());
     }
 
 
