@@ -6,7 +6,7 @@ import eduni.distributions.Normal;
 
 public class OmaEngine extends Engine {
 	
-	private Saapumisprosessi saapumisprosessi;
+	private ArrivalProcess saapumisprosessi;
 
 	private Palvelupiste[] palvelupisteet;
 
@@ -18,7 +18,7 @@ public class OmaEngine extends Engine {
 		palvelupisteet[1]=new Palvelupiste(new Normal(10,10), tapahtumalista, TapahtumanTyyppi.DEP2);
 		palvelupisteet[2]=new Palvelupiste(new Normal(5,3), tapahtumalista, TapahtumanTyyppi.DEP3);
 
-		saapumisprosessi = new Saapumisprosessi(new Negexp(15,5), tapahtumalista, TapahtumanTyyppi.ARR1);
+		saapumisprosessi = new ArrivalProcess(new Negexp(15,5), tapahtumalista, TapahtumanTyyppi.ARR1);
 
 	}
 
@@ -29,7 +29,7 @@ public class OmaEngine extends Engine {
 	}
 
 	@Override
-	protected void suoritaTapahtuma(Tapahtuma t){  // B-vaiheen tapahtumat
+	protected void suoritaTapahtuma(Event t){  // B-vaiheen tapahtumat
 
 		Asiakas a;
 		switch ((TapahtumanTyyppi)t.getTyyppi()){

@@ -43,24 +43,24 @@ public abstract class Engine {
 	}
 	
 	private void suoritaBTapahtumat(){
-		while (eventList.getSeuraavanAika() == clock.getAika()){
-			suoritaTapahtuma(eventList.poista());
+		while (eventList.getNextTime() == clock.getTime()){
+			processEvent(eventList.poista());
 		}
 	}
 
-	private double nykytime(){
-		return eventList.getSeuraavanAika();
+	private double currentTime(){
+		return eventList.getNextTime();
 	}
 	
-	private boolean simuloidaan(){
+	private boolean simulating(){
 		return clock.getAika() < simulationTime;
 	}
 
-	protected abstract void suoritaTapahtuma(Tapahtuma t);  // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
-	protected abstract void yritaCTapahtumat();	// Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	protected abstract void runEvents(Event t);  // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	protected abstract void attemptEvents();	// Määritellään simu.model-pakkauksessa Moottorin aliluokassa
 
-	protected abstract void alustukset(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	protected abstract void init(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
 
-	protected abstract void tulokset(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
+	protected abstract void results(); // Määritellään simu.model-pakkauksessa Moottorin aliluokassa
 	
 }
