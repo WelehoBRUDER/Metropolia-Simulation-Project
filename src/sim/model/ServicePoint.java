@@ -25,7 +25,7 @@ public class ServicePoint {
 		this.eventList = eventList;
 		this.generator = generator;
 		this.scheduledEventType = type;
-				
+
 	}
 
 
@@ -41,17 +41,12 @@ public class ServicePoint {
 	}
 
 	public Customer fetchFromRestaurantQueue() {
-		if (hasRoomInRestaurant()) {
-			Customer customer = queue.poll();
-			if (customer != null) {
-				return customer; //Asiakas ravintolaan
-			}
-		} return null; //Ravintola täynnä
+			return queue.poll();
 	}
 
 	public void beginService(){  //Aloitetaan uusi palvelu, asiakas on jonossa palvelun aikana
 		
-		Trace.out(Trace.Level.INFO, "Starting new service for customer  " + queue.peek().getId());
+		Trace.out(Trace.Level.INFO, "Starting new service for customer " + queue.peek().getId());
 
 		if (isRestaurant()){
 			restaurantCustomerCounter++;
@@ -116,6 +111,10 @@ public class ServicePoint {
 			return false;
 		}
 		return true;
+	}
+
+	public EventType getScheduledEventType() {
+		return scheduledEventType;
 	}
 
 }

@@ -21,7 +21,7 @@ public class OwnEngine extends sim.framework.Engine {
         servicePoints[2] = new ServicePoint(new Normal(5, 2), eventList, EventType.RIDE2);
         servicePoints[3] = new ServicePoint(new Normal(2, 1), eventList, EventType.RIDE3);
 
-        servicePoints[4] = new ServicePoint(new Normal(45, 15), eventList, EventType.RESTAURANT);
+        servicePoints[4] = new ServicePoint(new Normal(10, 5), eventList, EventType.RESTAURANT);
         servicePoints[4].setRestaurant(true);
         servicePoints[4].setRestaurantCapacity(50);
 
@@ -30,64 +30,106 @@ public class OwnEngine extends sim.framework.Engine {
 
     }
 
-
     @Override
     protected void init() {
         arrivalProcess.generateNext(); // Ensimmäinen saapuminen järjestelmään
     }
 
-    public void addToOtherQueue(Customer c, ServicePoint rideQueue, ServicePoint ticketQueue){   //
-        if (c.isWristband() || c.isTicket()) {
-            rideQueue.addToQueue(c);
-        } else {
-            ticketQueue.addToQueue(c);
-            System.out.println("Customer " + c.getId() + " goes to ticket queue"); //Tämä vaan tsekkinä, että toimiiko
+    private ServicePoint selectNextQueue(Customer c) {
+        for (ServicePoint p : servicePoints) {
+            if (c.getEventListSize() > 0 && p.getScheduledEventType() == c.peekNextRide()) {
+                return p;
+            }
         }
+        return servicePoints[4];
+    }
+
+    private boolean addToOtherQueue(Customer c, ServicePoint rideQueue, ServicePoint ticketQueue){   //
+        if ((c.isWristband() || c.isTicket()) && c.ridesLeft()) {
+            rideQueue.addToQueue(c);
+            c.removeNextRide();
+            if (!c.isWristband()) {
+                c.removeTicket();
+                return true;
+            }
+        } else if (c.ridesLeft()) {
+            ticketQueue.addToQueue(c);
+            Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ticket queue");//Tämä vaan tsekkinä, että toimiiko
+        } else {
+            servicePoints[4].addToQueue(c);
+            c.removeNextRide();
+        }
+        return false;
     }
 
     @Override
     protected void processEvent(Event t) {  // B-vaiheen tapahtumat
 
         Customer c;
+        ServicePoint nextService;
         switch ((EventType) t.getType()) {
 
             case ENTRENCE:
                 Customer customer = new Customer();
                 if (customer.isWristband()){
-                    servicePoints[1].addToQueue(customer);
+                    nextService = selectNextQueue(customer);
+                    nextService.addToQueue(customer);
+                    customer.removeNextRide();
+                    Trace.out(Trace.Level.INFO, "Customer " + customer.getId() + " goes to " + nextService.getScheduledEventType() + " queue");
                 } else {
                     servicePoints[0].addToQueue(customer);
-                    System.out.println("Customer " + customer.getId() + " goes to ticket queue");
+                    Trace.out(Trace.Level.INFO, "Customer " + customer.getId() + " goes to ticket queue");
                 }
                 arrivalProcess.generateNext();
                 break;
             case TICKET:
                 c = (Customer) servicePoints[0].fetchFromQueue();
                 c.addTicket();
-                servicePoints[1].addToQueue(c);
+                nextService = selectNextQueue(c);
+                nextService.addToQueue(c);
+                c.removeNextRide();
+                c.removeTicket();
+                Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to " + nextService.getScheduledEventType() + " queue");
                 break;
             case RIDE1:
                 c = (Customer) servicePoints[1].fetchFromQueue();
-                if (!c.isWristband()){c.removeTicket();}
-                addToOtherQueue(c, servicePoints[2], servicePoints[0]);
+                nextService = selectNextQueue(c);
+                if (addToOtherQueue(c, nextService, servicePoints[0])) {
+                    Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to " + nextService.getScheduledEventType() + " queue");
+                    //c.removeNextRide();
+                }
                 break;
             case RIDE2:
                 c = (Customer) servicePoints[2].fetchFromQueue();
-                if (!c.isWristband()){c.removeTicket();}
-                addToOtherQueue(c, servicePoints[3], servicePoints[0]);
+                nextService = selectNextQueue(c);
+                if (addToOtherQueue(c, nextService, servicePoints[0])) {
+                    Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to " + nextService.getScheduledEventType() + " queue");
+                    //c.removeNextRide();
+                }
                 break;
             case RIDE3:
                 c = (Customer) servicePoints[3].fetchFromQueue();
-                if (!c.isWristband()){c.removeTicket();}
-                servicePoints[4].addToQueue(c);
+                if (c == null) {
+                    System.out.println("quf");
+                }
+                nextService = selectNextQueue(c);
+                if (addToOtherQueue(c, nextService, servicePoints[0])) {
+                    Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to " + nextService.getScheduledEventType() + " queue");
+                    //c.removeNextRide();
+                }
                 break;
 
             case RESTAURANT:
-                c = (Customer) servicePoints[4].fetchFromRestaurantQueue(); //Palauttaa siis null jos ravintola täynnä
-                if (c != null) {
-                    servicePoints[4].customerLeftRestaurant();
-                    c.setDepartTime(Clock.getInstance().getTime());
-                    c.report();
+                if (servicePoints[4].hasRoomInRestaurant()) {
+                    c = (Customer) servicePoints[4].fetchFromRestaurantQueue();
+                    if (c == null) {
+                        System.out.println("fuq");
+                    }
+                    if (c != null) {
+                        servicePoints[4].customerLeftRestaurant();
+                        c.setDepartTime(Clock.getInstance().getTime());
+                        c.report();
+                    }
                 }
         }
     }

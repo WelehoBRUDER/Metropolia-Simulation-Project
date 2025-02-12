@@ -2,6 +2,8 @@ package sim.model;
 
 import sim.framework.*;
 
+import java.util.ArrayList;
+
 // TODO:
 // Asiakas koodataan simulointimallin edellyttämällä tavalla (data!)
 public class Customer {
@@ -12,6 +14,7 @@ public class Customer {
 	private static long sum = 0;
 	private boolean wristband;
 	private boolean ticket;
+	private ArrayList<EventType> eventList = new ArrayList<>();
 	
 	public Customer(){
 	    id = i++;
@@ -20,6 +23,25 @@ public class Customer {
 	    } else {
 	        wristband = false;
 	    }
+
+		for (int i = 0; i <= (int) (Math.random() * 3 + 1) ; i++) {
+			EventType newEvent = EventType.values()[(int) (Math.random() * 3 + 2)];
+			while (!eventList.contains(newEvent)) {
+				eventList.add(newEvent);
+			}
+		}
+
+		String eventString = "";
+		for (EventType eventType: eventList) {
+			if (eventType == eventList.get(eventList.size() - 1)) {
+				eventString += eventType;
+			} else {
+				eventString += eventType + ", ";
+			}
+		}
+
+		Trace.out(Trace.Level.INFO, "Customer " + id + " wants to go to rides: " + eventString);
+
 		arrivalTime = Clock.getInstance().getTime();
 		Trace.out(Trace.Level.INFO, "New customer number " + id + " arrived at  "+arrivalTime);
 		if (wristband) {
@@ -63,6 +85,28 @@ public class Customer {
 
 	public boolean isTicket() {
 		return ticket;
+	}
+
+
+	public boolean ridesLeft() {
+		return !eventList.isEmpty();
+	}
+
+	public EventType getNextRide() {
+		return eventList.remove(0);
+	}
+
+	public EventType peekNextRide() {
+		return eventList.get(0);
+	}
+
+	public void removeNextRide() {
+		if (!eventList.isEmpty())
+			eventList.remove(0);
+	}
+
+	public int getEventListSize() {
+		return eventList.size();
 	}
 
 	public static double getAverage() {
