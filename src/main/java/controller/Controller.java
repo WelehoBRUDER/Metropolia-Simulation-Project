@@ -20,7 +20,7 @@ public class Controller implements IControllerForM, IControllerForV {   // UUSI
 		
 	@Override
 	public void startSimulation() {
-		engine = new OwnEngine(this); // luodaan uusi moottorisäie jokaista simulointia varten
+		engine = new OwnEngine(this, ui.getRideCount()); // luodaan uusi moottorisäie jokaista simulointia varten
 		engine.setSimulationTime(ui.getTime());
 		engine.setDelay(ui.getDelay());
 		ui.getVisualization().clearScreen();
@@ -38,8 +38,6 @@ public class Controller implements IControllerForM, IControllerForV {   // UUSI
 		engine.setDelay((long)(engine.getDelay()*0.9));
 	}
 	
-	
-	
 	// Simulointitulosten välittämistä käyttöliittymään.
 	// Koska FX-ui:n päivitykset tulevat moottorisäikeestä, ne pitää ohjata JavaFX-säikeeseen:
 		
@@ -50,14 +48,32 @@ public class Controller implements IControllerForM, IControllerForV {   // UUSI
 
 	
 	@Override
-	public void visualizeCustomer() {
+	public void visualizeCustomer(int id, int rideid, boolean wristband) {
 		Platform.runLater(new Runnable(){
 			public void run(){
-				ui.getVisualization().newCustomer();
+				ui.getVisualization().newCustomer(id, rideid, wristband);
 			}
 		});
 	}
 
+	public void visualizeResults(){
+		Platform.runLater(new Runnable(){
+			public void run(){
+				ui.getVisualization().showResults();
+			}
+		});
+	}
 
+	public void setWristbandChance(double amount) {
+		((OwnEngine)engine).setWristbandChance(amount);
+	}
+
+	public double getWristbandChance() {
+		return ((OwnEngine)engine).getWristbandChance();
+	}
+
+	public int getRideCount() {
+		return ui.getRideCount();
+	}
 
 }

@@ -31,14 +31,20 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
     // Käyttöliittymäkomponentit:
     private TextField time;
     private TextField delay;
+    private TextField rideCount;
     private Label result;
     private Label timeLabel;
+    private Label rideCountLabel;
     private Label delayLabel;
     private Label resultLabel;
+    private Label wristbandLabel;
+    private Label wristbandChanceLabel;
 
     private Button startButton;
     private Button slowDownButton;
     private Button SpeedUpButton;
+    private Button lessWristbandsButton;
+    private Button moreWristbandsButton;
 
     private IVisualization screen;
 
@@ -65,14 +71,17 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
             });
 
 
-            primaryStage.setTitle("Simulaattori");
+            primaryStage.setTitle("Huvipuistosimulaattori");
 
             startButton = new Button();
             startButton.setText("Käynnistä simulointi");
             startButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
+                    int rideCount = controller.getRideCount();
                     controller.startSimulation();
+                    screen.rides(rideCount);
+                    updateWristbandLabel();
                     startButton.setDisable(true);
                 }
             });
@@ -85,11 +94,31 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
             SpeedUpButton.setText("Nopeuta");
             SpeedUpButton.setOnAction(e -> controller.speedUp());
 
+            lessWristbandsButton = new Button();
+            lessWristbandsButton.setText("Vähemmän rannekkeita");
+            lessWristbandsButton.setOnAction(e -> {
+                controller.setWristbandChance(-0.1);
+                updateWristbandLabel();
+            });
+
+            moreWristbandsButton = new Button();
+            moreWristbandsButton.setText("Enemmän rannekkeita");
+            moreWristbandsButton.setOnAction(e -> {
+                controller.setWristbandChance(0.1);
+                updateWristbandLabel();
+            });
+
             timeLabel = new Label("Simulointiaika:");
             timeLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
             time = new TextField("Syötä aika");
             time.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
             time.setPrefWidth(150);
+
+            rideCountLabel = new Label("Laitemäärä:");
+            rideCountLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+            rideCount = new TextField("Syötä laitemäärä");
+            rideCount.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+            rideCount.setPrefWidth(200);
 
             delayLabel = new Label("Viive:");
             delayLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
@@ -103,6 +132,12 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
             result.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
             result.setPrefWidth(150);
 
+            wristbandLabel = new Label("Rannekkeiden todennäk.: ");
+            wristbandLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 10));
+            wristbandChanceLabel = new Label();
+            wristbandChanceLabel.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
+            wristbandLabel.setPrefWidth(200);
+
             HBox hBox = new HBox();
             hBox.setPadding(new Insets(15, 12, 15, 12)); // marginaalit ylÃ¤, oikea, ala, vasen
             hBox.setSpacing(10);   // noodien välimatka 10 pikseliä
@@ -114,15 +149,24 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
 
             grid.add(timeLabel, 0, 0);   // sarake, rivi
             grid.add(time, 1, 0);          // sarake, rivi
-            grid.add(delayLabel, 0, 1);      // sarake, rivi
-            grid.add(delay, 1, 1);           // sarake, rivi
-            grid.add(resultLabel, 0, 2);      // sarake, rivi
-            grid.add(result, 1, 2);           // sarake, rivi
-            grid.add(startButton, 0, 3);  // sarake, rivi
-            grid.add(SpeedUpButton, 0, 4);   // sarake, rivi
-            grid.add(slowDownButton, 1, 4);   // sarake, rivi
+            grid.add(rideCountLabel, 0, 1);      // sarake, rivi
+            grid.add(rideCount, 1, 1);      // sarake, rivi
 
-            screen = new Visualization(400, 200);
+            grid.add(delayLabel, 0, 2);      // sarake, rivi
+            grid.add(delay, 1, 2);      // sarake, rivi
+
+            grid.add(resultLabel, 0, 3);      // sarake, rivi
+            grid.add(result, 1, 3);           // sarake, rivi
+            grid.add(startButton, 0, 4);  // sarake, rivi
+            grid.add(SpeedUpButton, 0, 5);   // sarake, rivi
+            grid.add(slowDownButton, 1, 5);   // sarake, rivi
+            grid.add(moreWristbandsButton, 0, 6);   // sarake, rivi
+            grid.add(lessWristbandsButton, 1, 6);// sarake, rivi
+
+            grid.add(wristbandLabel, 0, 7); // sarake, rivi
+            grid.add(wristbandChanceLabel, 1, 7); // sarake, rivi
+
+            screen = new VisualizationNL(800, 400);
 
             // TÃ¤ytetÃ¤Ã¤n boxi:
             hBox.getChildren().addAll(grid, (Canvas) screen);
@@ -136,7 +180,6 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
             e.printStackTrace();
         }
     }
-
 
     //Käyttöliittymän rajapintametodit (kutsutaan kontrollerista)
 
@@ -156,10 +199,18 @@ public class SimulatorGUI extends Application implements ISimulatorUI {
         this.result.setText(formatter.format(time));
     }
 
-
     @Override
     public IVisualization getVisualization() {
         return screen;
+    }
+
+    public int getRideCount() {
+        return Integer.parseInt(rideCount.getText());
+    }
+
+    public void updateWristbandLabel() {
+        double wristbandChance = controller.getWristbandChance();
+        wristbandChanceLabel.setText(String.format("%.2f", wristbandChance));
     }
 }
 
