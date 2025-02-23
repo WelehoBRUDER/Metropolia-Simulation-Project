@@ -62,7 +62,7 @@ public class VisualizationNL extends Canvas implements IVisualization {
         } else {
             lastRide = rideMap.get(id);
             if (!rideQueues.get(lastRide).isEmpty()) {
-                // Remove the **last** customer (not necessarily the current one) from their previous ride
+                // Tämä poistaa nyt vaan edellisen laitteen vikan palluran, oli sitten sininen tai punanen
                 double lastRideX = rideQueues.get(lastRide).removeLast();
                 int lastRideBaseY = spacing + rectHeight * lastRide;
                 int lastRideCustomerCount = rideQueues.get(lastRide).size();
