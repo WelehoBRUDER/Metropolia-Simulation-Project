@@ -37,7 +37,8 @@ public class OwnEngine extends Engine {
 
 		servicePoints[rideCount+1]=new RestaurantServicePoint(new Normal(80,3), eventList, EventType.DEP_RESTAURANT, 5); //Ravintola
 
-		arrivalProgress = new ArrivalProgress(new Negexp(15,5), eventList, EventType.ARRIVAL); //Saapuminen
+		//arrivalProgress = new ArrivalProgress(new Negexp(15, 5), eventList, EventType.ARRIVAL); //Saapuminen, Tällä asiakkaat saapuvat n. 15 aikayksikön välein eli aika harvoin
+		arrivalProgress = new ArrivalProgress(new Negexp(5, 5), eventList, EventType.ARRIVAL); //Saapuminen
 
 	}
 
@@ -166,9 +167,10 @@ public class OwnEngine extends Engine {
 		System.out.println("Simulointi päättyi kello " + Clock.getInstance().getTime());
 		System.out.println("Valmiita asiakkaita: " + averages.size());
 		System.out.printf("Asiakkaiden keskimääräinen viipymäaika: %.2f\n", getWholeAverage());
-		System.out.println("Asiakkaita vielä huvipuistossa: " + (Customer.getI()- averages.size()));
+		System.out.println("Asiakkaita vielä huvipuistossa: " + (Customer.getI() - averages.size()));
 		System.out.println("Asiakkaiden keskimääräinen palveluaika ravintolassa: " + servicePoints[rideCount + 1].getAverageServiceTime());
 		System.out.println("Asiakkaiden keskimääräinen aika laitteissa: " + getAverageRideTime());
+		queueLengths();
 		// UUTTA graafista
 		controller.visualizeResults();
 		controller.showEndTime(Clock.getInstance().getTime());
@@ -187,5 +189,21 @@ public class OwnEngine extends Engine {
 		for (int i = 1; i < servicePoints.length-1; i++) {
 			sum += servicePoints[i].getAverageServiceTime();
 		} return sum / (servicePoints.length-2);
+	}
+
+	protected void queueLengths() {
+		for (ServicePoint point : servicePoints) {
+			double averageQueueTime = point.getAverageQueueTime(point.getRideID());
+			if (!(point instanceof RestaurantServicePoint)) {
+				if (point.getRideID() == 0) {
+					System.out.println("Keskimääräinen jonotusaika lippupisteessä: " + averageQueueTime);
+				} else {
+					System.out.println("Keskimääräinen jonotusaika laitteessa " + point.getRideID() + " on " + averageQueueTime);
+				}
+			}
+			else {
+				System.out.println("Keskimääräinen jonotusaika ravintolassa: " + averageQueueTime);
+			}
+		}
 	}
 }

@@ -17,6 +17,8 @@ public class Customer {
 	private boolean wristband;
 	private ArrayList<Integer> rideList = new ArrayList<>();
 	private boolean inRestaurant = false;
+	private double queueArrivalTime;
+	private double queueDepartureTime;
 	
 	public Customer(int rideCount, double wristbandChance) {
 	    id = i++;
@@ -97,6 +99,22 @@ public class Customer {
 
 	public static int getI() {
 		return i;
+	}
+
+	public void setQueueArrivalTime(double queueArrivalTime) {
+		this.queueArrivalTime = queueArrivalTime;
+	}
+
+	public double getQueueArrivalTime() {
+		return queueArrivalTime;
+	}
+
+	public void setQueueDepartureTime(double queueDepartureTime) {
+		this.queueDepartureTime = queueDepartureTime;
+	}
+
+	public double getQueueDepartureTime() {
+		return queueDepartureTime;
 	}
 	
 	public double report(){

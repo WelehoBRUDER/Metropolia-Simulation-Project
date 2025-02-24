@@ -13,6 +13,8 @@ public class RestaurantServicePoint extends ServicePoint{
     private int capacity;
     private ArrayList<Customer> CustomerList = new ArrayList<>();
     private ArrayList<Double> serviceTimes = new ArrayList<>();
+    private double restaurantQueueTimes = 0;
+    private int i = 0;
 
     public RestaurantServicePoint(ContinuousGenerator generator, EventList eventList, EventType type, int capacity) {
         super(generator, eventList, type);
@@ -41,6 +43,8 @@ public class RestaurantServicePoint extends ServicePoint{
         if (!c.InRestaurant()) {
             c.setInRestaurant(true);
             CustomerList.add(queue.remove());
+            c.setQueueDepartureTime(Clock.getInstance().getTime());
+            addRestaurantQueueTime(c);
 
             double serviceTime = generator.sample();
             serviceTimes.add(serviceTime);
@@ -58,4 +62,16 @@ public class RestaurantServicePoint extends ServicePoint{
         }
         return sum / serviceTimes.size();
     }
+
+    public void addRestaurantQueueTime(Customer c) {
+        double queueTime = c.getQueueDepartureTime()-c.getArrivalTime();
+        i++;
+        restaurantQueueTimes += queueTime;
+    }
+
+    @Override
+    public double getAverageQueueTime(int servicePointID) {
+        return restaurantQueueTimes / i;
+    }
+
 }
