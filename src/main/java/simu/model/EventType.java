@@ -7,7 +7,4 @@ public enum EventType {
 	DEP_TICKET_BOOTH,
 	DEP_RIDE,
 	DEP_RESTAURANT,
-	DEP4,
-	DEP5
-
 }
