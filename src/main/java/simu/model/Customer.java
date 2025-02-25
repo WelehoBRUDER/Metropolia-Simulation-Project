@@ -17,23 +17,24 @@ public class Customer {
 	private boolean wristband;
 	private ArrayList<Integer> rideList = new ArrayList<>();
 	private boolean inRestaurant = false;
-	private final int RIDE_COUNT;
+	private double queueArrivalTime;
+	private double queueDepartureTime;
 	
-	public Customer(int RIDE_COUNT, double WRISTBAND_CHANCE) {
+	public Customer(int rideCount, double wristbandChance) {
 	    id = i++;
-		this.RIDE_COUNT = RIDE_COUNT;
 
-		if (Math.random() < WRISTBAND_CHANCE) {
+		if (wristbandChance == 1) {
 			wristband = true;
 		} else {
 			wristband = false;
 		}
 
-		for (int i = 0; i < (int) (Math.random() * RIDE_COUNT + 1) ; i++) {
+
+		for (int i = 0; i < (int) (Math.random() * rideCount + 1) ; i++) {
 			int tempInt;
 
 			do {
-				tempInt = (int) (Math.random() * RIDE_COUNT + 1);
+				tempInt = (int) (Math.random() * rideCount + 1);
 			} while (rideList.contains(tempInt));
 
 			rideList.add(tempInt);
@@ -95,14 +96,35 @@ public class Customer {
 		}
 		return rides;
 	}
+
+	public static int getI() {
+		return i;
+	}
+
+	public void setQueueArrivalTime(double queueArrivalTime) {
+		this.queueArrivalTime = queueArrivalTime;
+	}
+
+	public double getQueueArrivalTime() {
+		return queueArrivalTime;
+	}
+
+	public void setQueueDepartureTime(double queueDepartureTime) {
+		this.queueDepartureTime = queueDepartureTime;
+	}
+
+	public double getQueueDepartureTime() {
+		return queueDepartureTime;
+	}
 	
-	public void report(){
+	public double report(){
 		Trace.out(Trace.Level.INFO, "Asiakas "+id+ " saapui:" +arrivalTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " poistui:" +departureTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " viipyi:" +(departureTime-arrivalTime));
 		sum += (departureTime-arrivalTime);
 		double average = sum/id;
 		System.out.println("Asiakkaiden läpimenoaikojen keskiarvo "+ average);
+		return average;
 	}
 
 }

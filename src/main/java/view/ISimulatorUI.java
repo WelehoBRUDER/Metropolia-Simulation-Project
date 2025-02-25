@@ -12,4 +12,6 @@ public interface ISimulatorUI {
 	// Kontrolleri tarvitsee  
 	public IVisualization getVisualization();
 
+	public int getRideCount();
+
 }
