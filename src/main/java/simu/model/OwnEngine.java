@@ -8,6 +8,7 @@ import simu.framework.*;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class OwnEngine extends Engine {
 	
@@ -22,6 +23,7 @@ public class OwnEngine extends Engine {
 	private int rideCount;
 	private ArrayList<Double> wristbandAverages = new ArrayList<>();
 	private ArrayList<Double> ticketAverages = new ArrayList<>();
+	HashMap<String, Double> results = new HashMap<>();
 
 
 	public OwnEngine(IControllerForM controller, int rideCount){
@@ -171,40 +173,61 @@ public class OwnEngine extends Engine {
 
 	@Override
 	protected void results() {
-		System.out.println("Simulointi päättyi kello " + Clock.getInstance().getTime());
-		int readyCustomers = wristbandAverages.size() + ticketAverages.size();
+		double endTime = Clock.getInstance().getTime();
+		System.out.println("Simulointi päättyi kello " + endTime);
+		results.put("End time", endTime);
 
+		//Asiakkaat:
+		int readyCustomers = wristbandAverages.size() + ticketAverages.size();
 		System.out.println("Valmiita asiakkaita: " + readyCustomers);
 		System.out.println("Kesken jääneiden asiakkaiden määrä: " + (Customer.getI() - readyCustomers));
+		results.put("Ready customers", (double) readyCustomers);
+		results.put("Unready customers", (double) (Customer.getI() - readyCustomers));
 
+		//Viipymät:
 		System.out.printf("Rannekkeellisten keskimääräinen viipymäaika: %.2f\n", getAverageWristbandTime());
 		System.out.printf("Lippujen ostajien keskimääräinen viipymäaika: %.2f\n", getAverageTicketTime());
 		System.out.printf("Asiakkaiden keskimääräinen viipymäaika: %.2f\n", getWholeAverage());
 		System.out.printf("Lippuja ostaneiden viipymä suhteessa rannekkeellisten viipymään: %.2f\n", getWristbandTicketAverageRatio());
+		results.put("Wristband average time", getAverageWristbandTime());
+		results.put("Ticket average time", getAverageTicketTime());
+		results.put("Whole average time", getWholeAverage());
+		results.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
 
+		//Palvelupisteiden tulokset:
 		for (ServicePoint point: servicePoints) {
+			int customerCount = point.getCustomerCounter();
+			double averageServiceTime = point.getAverageServiceTime();
+			double averageQueueTime = point.getAverageQueueTime();
+
 			if (!(point instanceof RestaurantServicePoint)) {
 				if (point.getRideID() == 0) {
-					System.out.println("Lippupisteessä käytiin " + point.getCustomerCounter() + " kertaa.");
-					System.out.println("Lippupisteessä keskimääräinen palveluaika: " + point.getAverageServiceTime());
-					System.out.println("Lippupisteessä keskimääräinen jonotusaika: " + point.getAverageQueueTime());
+					System.out.println("Lippupisteessä käytiin " + customerCount + " kertaa.");
+					System.out.println("Lippupisteessä keskimääräinen palveluaika: " + averageServiceTime);
+					System.out.println("Lippupisteessä keskimääräinen jonotusaika: " + averageQueueTime);
+					results.put("Ticket booth count", (double) customerCount);
+					results.put("Ticket booth average service time", averageServiceTime);
+					results.put("Ticket booth average queue time", averageQueueTime);
 				} else {
-					System.out.println("Laitteessa " + point.getRideID() + " palveltiin " + point.getCustomerCounter() + " asiakasta.");
-					System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen palveluaika: " + point.getAverageServiceTime());
-					System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen jonotusaika: " + point.getAverageQueueTime());
+					System.out.println("Laitteessa " + point.getRideID() + " palveltiin " + customerCount + " asiakasta.");
+					System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen palveluaika: " + averageServiceTime);
+					System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen jonotusaika: " + averageQueueTime);
+					results.put("Ride " + point.getRideID() + " count", (double) customerCount);
+					results.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
+					results.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
 				}
 			} else {
-				System.out.println("Ravintolassa palveltiin " + point.getCustomerCounter() + " asiakasta.");
-				System.out.println("Ravintolassa keskimääräinen palveluaika: " + point.getAverageServiceTime());
-				System.out.println("Ravintolassa keskimääräinen jonotusaika: " + point.getAverageQueueTime());
+				System.out.println("Ravintolassa palveltiin " + customerCount + " asiakasta.");
+				System.out.println("Ravintolassa keskimääräinen palveluaika: " + averageServiceTime);
+				System.out.println("Ravintolassa keskimääräinen jonotusaika: " + averageQueueTime);
+				results.put("Restaurant count", (double) customerCount);
+				results.put("Restaurant average service time", averageServiceTime);
+				results.put("Restaurant average queue time", averageQueueTime);
 			}
 		}
 
-		// Nämä vielä tässä jos metodeille tarvetta
-//		serviceTimes(); //For loop, joka käy läpi kaikki palvelupisteet ja tulostaa niiden palveluajan (point.getAverageServiceTime())
-//		queueLengths(); //For loop, joka käy läpi kaikki palvelupisteet ja tulostaa niiden jonon pituuden (point.getAverageQueueTime())
-//		customerCounts(); //For loop, joka käy läpi kaikki palvelupisteet ja tulostaa niiden asiakasmäärän (point.getCustomerCounter())
-//
+		//Tulokset hashmap: getResults()
+
 		// UUTTA graafista
 		controller.visualizeResults();
 		controller.showEndTime(Clock.getInstance().getTime());
@@ -230,52 +253,11 @@ public class OwnEngine extends Engine {
 		return sum / ticketAverages.size();
 	}
 
-//	protected void queueLengths() {
-//
-//		for (ServicePoint point : servicePoints) {
-//			double averageQueueTime = point.getAverageQueueTime();
-//			if (!(point instanceof RestaurantServicePoint)) {
-//				if (point.getRideID() == 0) {
-//					System.out.println("Keskimääräinen jonotusaika lippupisteessä: " + averageQueueTime);
-//				} else {
-//					System.out.println("Keskimääräinen jonotusaika laitteessa " + point.getRideID() + " on " + averageQueueTime);
-//				}
-//			}
-//			else {
-//				System.out.println("Keskimääräinen jonotusaika ravintolassa: " + averageQueueTime);
-//			}
-//		}
-//	}
-//
-//	public void serviceTimes() {
-//		for (ServicePoint point: servicePoints) {
-//			if (!(point instanceof RestaurantServicePoint)) {
-//				if (point.getRideID() == 0) {
-//					System.out.println("Lippupisteen keskimääräinen palveluaika: " + point.getAverageServiceTime());
-//				} else {
-//					System.out.println("Laitteen " + point.getRideID() + " keskimääräinen palveluaika: " + point.getAverageServiceTime());
-//				}
-//			} else {
-//				System.out.println("Ravintolan keskimääräinen palveluaika: " + point.getAverageServiceTime());
-//			}
-//		}
-//	}
-//
-//	public void customerCounts(){
-//		for (ServicePoint point: servicePoints) {
-//			if (!(point instanceof RestaurantServicePoint)) {
-//				if (point.getRideID() == 0) {
-//					System.out.println("Lippupisteessä käytiin " + point.getCustomerCounter() + " kertaa.");
-//				} else {
-//					System.out.println("Laitteessa " + point.getRideID() + " palveltiin " + point.getCustomerCounter() + " asiakasta.");
-//				}
-//			} else {
-//				System.out.println("Ravintolassa palveltiin " + point.getCustomerCounter() + " asiakasta.");
-//			}
-//		}
-//	}
-
 	public double getWristbandTicketAverageRatio(){
 		return getAverageTicketTime() / getAverageWristbandTime();
+	}
+
+	public HashMap<String, Double> getResults() {
+		return results;
 	}
 }
