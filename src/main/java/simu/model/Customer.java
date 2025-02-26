@@ -13,7 +13,10 @@ public class Customer {
 	private double departureTime;
 	private int id;
 	private static int i = 1;
-	private static long sum = 0;
+	private static long wristbandSum = 0;
+	private static int wristbandCount = 0;
+	private static long ticketSum = 0;
+	private static int ticketCount = 0;
 	private boolean wristband;
 	private ArrayList<Integer> rideList = new ArrayList<>();
 	private boolean inRestaurant = false;
@@ -25,8 +28,10 @@ public class Customer {
 
 		if (wristbandChance == 1) {
 			wristband = true;
+			wristbandCount++;
 		} else {
 			wristband = false;
+			ticketCount++;
 		}
 
 
@@ -116,14 +121,24 @@ public class Customer {
 	public double getQueueDepartureTime() {
 		return queueDepartureTime;
 	}
+
 	
 	public double report(){
 		Trace.out(Trace.Level.INFO, "Asiakas "+id+ " saapui:" +arrivalTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " poistui:" +departureTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " viipyi:" +(departureTime-arrivalTime));
-		sum += (departureTime-arrivalTime);
-		double average = sum/id;
-		System.out.println("Asiakkaiden läpimenoaikojen keskiarvo "+ average);
+		double average;
+		if (wristband) {
+			wristbandSum += (departureTime - arrivalTime);
+			average = wristbandSum / wristbandCount;
+			System.out.println("Rannekkeellisten asiakkaiden läpimenoaikojen keskiarvo "+ average);
+
+		} else {
+			ticketSum += (departureTime - arrivalTime);
+			average = ticketSum / ticketCount;
+			System.out.println("Lippu-asiakkaiden läpimenoaikojen keskiarvo "+ average);
+		}
+
 		return average;
 	}
 
