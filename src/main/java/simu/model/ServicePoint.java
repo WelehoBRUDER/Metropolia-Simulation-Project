@@ -18,24 +18,26 @@ public class ServicePoint {
 	protected final EventType scheduledEventType;
 	protected int rideID = 0;
 	protected static int i = 0;
-	private ArrayList<Double> serviceTimes = new ArrayList<>();
+	private HashMap<Integer, List<Double>> serviceTimes = new HashMap<>();
 	private HashMap<Integer, List<Double>> queueTimes = new HashMap<>();
+	private int customerCounter = 0;
 	
 	//JonoStartegia strategia; //optio: asiakkaiden järjestys
 
 	protected boolean reserved = false;
 
 
-	public ServicePoint(ContinuousGenerator generator, EventList eventList, EventType type){
+	public ServicePoint(ContinuousGenerator generator, EventList eventList, EventType type, int rideCount){
 		this.eventList = eventList;
 		this.generator = generator;
 		this.scheduledEventType = type;
-		if (this.scheduledEventType == EventType.DEP_RIDE) {
-			i++;
-			rideID = i;
-		}
 		if (this.scheduledEventType == EventType.DEP_TICKET_BOOTH) {
 			rideID = 0;
+		} else if (this.scheduledEventType == EventType.DEP_RESTAURANT) {
+			rideID = rideCount + 2;
+		}else {
+			i++;
+			rideID = i;
 		}
 	}
 
@@ -64,8 +66,8 @@ public class ServicePoint {
 		queue.peek().setQueueDepartureTime(Clock.getInstance().getTime());
 		addQueueTime(queue.peek());
 		double serviceTime = generator.sample();
+		addServiceTime(rideID, serviceTime);
 		Trace.out(Trace.Level.INFO, "Aloitetaan uusi palvelu asiakkaalle " + queue.peek().getId() + " pisteessä: " + scheduledEventType + " " + rideID + " valmis: " + (Clock.getInstance().getTime()+serviceTime));
-		serviceTimes.add(serviceTime);
 		reserved = true;
 		eventList.add(new Event(scheduledEventType, Clock.getInstance().getTime()+serviceTime));
 	}
@@ -87,23 +89,27 @@ public class ServicePoint {
 	}
 
 	public double getAverageServiceTime() {
-		double sum = 0;
-		for (double time : serviceTimes) {
-			sum += time;
-		}
-		return sum / serviceTimes.size();
+		return (serviceTimes.get(rideID).get(0) / serviceTimes.get(rideID).get(1));
 	}
 
-	public double getAverageQueueTime(int servicePointID) {
-		if (queueTimes.containsKey(servicePointID)) {
-			return queueTimes.get(servicePointID).get(0) / queueTimes.get(servicePointID).get(1);
+	public void addServiceTime(int servicePointID, double serviceTime){
+			if (!serviceTimes.containsKey(servicePointID)) {
+				serviceTimes.put(servicePointID, new ArrayList<>(Arrays.asList(serviceTime, 1.0)));
+			} else {
+				serviceTimes.get(rideID).set(0, serviceTimes.get(rideID).get(0) + serviceTime);
+				serviceTimes.get(rideID).set(1, serviceTimes.get(rideID).get(1) + 1);
+			}
+		}
+
+	public double getAverageQueueTime() {
+		if (queueTimes.containsKey(rideID)) {
+			return queueTimes.get(rideID).get(0) / queueTimes.get(rideID).get(1);
 		} else {
 			return 0;
 		}
 	}
 
 	public void addQueueTime(Customer customer){
-		//Lasketaan jonotusaika ja lisätään laitteen jonotusaikasummaan
 		double queueTime = customer.getQueueDepartureTime() - customer.getQueueArrivalTime();
 		if (!queueTimes.containsKey(rideID)) {
 			queueTimes.put(rideID, new ArrayList<>(Arrays.asList(queueTime, 1.0)));
@@ -111,5 +117,14 @@ public class ServicePoint {
 			queueTimes.get(rideID).set(0, queueTimes.get(rideID).get(0) + queueTime);
 			queueTimes.get(rideID).set(1, queueTimes.get(rideID).get(1) + 1);
 		}
+	}
+
+	public void incrementCustomerCounter() {
+		System.out.println("Laite id " + rideID + " asiakasmäärä: " + customerCounter);
+		customerCounter++;
+	}
+
+	public int getCustomerCounter() {
+		return customerCounter;
 	}
 }
