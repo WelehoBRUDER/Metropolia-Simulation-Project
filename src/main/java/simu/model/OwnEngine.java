@@ -13,17 +13,17 @@ import java.util.HashMap;
 public class OwnEngine extends Engine {
 	
 	private ArrivalProgress arrivalProgress;
-
 	private ServicePoint[] servicePoints;
-
 	private ArrayList<Integer> rideOrder = new ArrayList<>();
 
 	private double wristbandChance = 0.5;
 	private Bernoulli bernoulli = new Bernoulli(wristbandChance);
 	private int rideCount;
+
 	private ArrayList<Double> wristbandAverages = new ArrayList<>();
 	private ArrayList<Double> ticketAverages = new ArrayList<>();
-	HashMap<String, Double> results = new HashMap<>();
+	private HashMap<String, Double> results = new HashMap<>();
+	private int readyCustomers = 0;
 
 
 	public OwnEngine(IControllerForM controller, int rideCount){
@@ -93,6 +93,7 @@ public class OwnEngine extends Engine {
 			case DEP_TICKET_BOOTH:
 				c = servicePoints[0].fetchFromQueue();
 				servicePoints[0].incrementCustomerCounter();
+				c.incrementTicketboothCounter();
 
 				p = findRideByID(c.getNextRideID());
 				controller.visualizeCustomer(c.getId(), p.getRideID(), c.hasWristband());
@@ -137,7 +138,14 @@ public class OwnEngine extends Engine {
 				servicePoints[rideCount + 1].incrementCustomerCounter();
 				controller.visualizeCustomer(c.getId(), rideCount + 2, c.hasWristband());
 				c.setDepartureTime(Clock.getInstance().getTime());
+				readyCustomers++;
 				double average = c.report();
+				double ticketWristRatio = getWristbandTicketAverageRatio();
+				if (!Double.isNaN(ticketWristRatio)) {
+					System.out.printf("Lippuja ostaneiden viipymä suhteessa rannekkeellisten viipymään: %.2f\n", ticketWristRatio);
+				} else {
+					System.out.println("Lippu-asiakkaiden ja rannekkeellisten viipymäaikojen suhde ei voida vielä laskea.");
+				}
 				if (c.hasWristband()) {
 					wristbandAverages.add(average);
 				} else {
@@ -178,11 +186,14 @@ public class OwnEngine extends Engine {
 		results.put("End time", endTime);
 
 		//Asiakkaat:
-		int readyCustomers = wristbandAverages.size() + ticketAverages.size();
+		int unreadyCustomers = Customer.getI()-readyCustomers;
 		System.out.println("Valmiita asiakkaita: " + readyCustomers);
-		System.out.println("Kesken jääneiden asiakkaiden määrä: " + (Customer.getI() - readyCustomers));
+		System.out.println("Kesken jääneiden asiakkaiden määrä: " + unreadyCustomers);
 		results.put("Ready customers", (double) readyCustomers);
-		results.put("Unready customers", (double) (Customer.getI() - readyCustomers));
+		results.put("Unready customers", (double) unreadyCustomers);
+
+		//Lippuluukku (ticketboothCounterSumiin lisätään vasta kun asiakas valmis, joten lasketaan valmiilla asiakkailla:
+		System.out.printf("Lippuasiakas kävi keskimäärin %.2f kertaa lippuluukulla.\n", Customer.getTicketboothCounterAverage());
 
 		//Viipymät:
 		System.out.printf("Rannekkeellisten keskimääräinen viipymäaika: %.2f\n", getAverageWristbandTime());
@@ -226,7 +237,8 @@ public class OwnEngine extends Engine {
 			}
 		}
 
-		//Tulokset hashmap: getResults()
+		//Tulokset hashmapissa:
+		System.out.println("Results hashmap: " + getResults());
 
 		// UUTTA graafista
 		controller.visualizeResults();

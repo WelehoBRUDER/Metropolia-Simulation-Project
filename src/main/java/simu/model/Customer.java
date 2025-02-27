@@ -13,25 +13,26 @@ public class Customer {
 	private double departureTime;
 	private int id;
 	private static int i = 1;
-	private static long wristbandSum = 0;
+	private static double wristbandSum = 0;
 	private static int wristbandCount = 0;
-	private static long ticketSum = 0;
+	private static double ticketSum = 0;
 	private static int ticketCount = 0;
 	private boolean wristband;
 	private ArrayList<Integer> rideList = new ArrayList<>();
 	private boolean inRestaurant = false;
 	private double queueArrivalTime;
 	private double queueDepartureTime;
+	private int ticketboothCounter = 0;
+	private static int ticketboothCounterSum = 0;
 	
 	public Customer(int rideCount, double wristbandChance) {
 	    id = i++;
 
 		if (wristbandChance == 1) {
 			wristband = true;
-			wristbandCount++;
 		} else {
 			wristband = false;
-			ticketCount++;
+
 		}
 
 
@@ -122,23 +123,37 @@ public class Customer {
 		return queueDepartureTime;
 	}
 
-	
+	public void incrementTicketboothCounter() {
+		ticketboothCounter++;
+	}
+
+	public void addTicketboothCounterSum() {
+		ticketboothCounterSum += ticketboothCounter;
+	}
+
+	public static double getTicketboothCounterAverage() {
+		return (double) ticketboothCounterSum /ticketCount;
+	}
+
 	public double report(){
 		Trace.out(Trace.Level.INFO, "Asiakas "+id+ " saapui:" +arrivalTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " poistui:" +departureTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " viipyi:" +(departureTime-arrivalTime));
 		double average;
 		if (wristband) {
+			wristbandCount++;
 			wristbandSum += (departureTime - arrivalTime);
 			average = wristbandSum / wristbandCount;
 			System.out.println("Rannekkeellisten asiakkaiden läpimenoaikojen keskiarvo "+ average);
 
 		} else {
+			ticketCount++;
+			System.out.println("Asiakas kävi " + ticketboothCounter + " kertaa lipunmyyntipisteessä");
+			addTicketboothCounterSum();
 			ticketSum += (departureTime - arrivalTime);
 			average = ticketSum / ticketCount;
 			System.out.println("Lippu-asiakkaiden läpimenoaikojen keskiarvo "+ average);
 		}
-
 		return average;
 	}
 

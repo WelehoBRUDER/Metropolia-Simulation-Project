@@ -31,15 +31,13 @@ public class ServicePoint {
 		this.eventList = eventList;
 		this.generator = generator;
 		this.scheduledEventType = type;
-		if (this.scheduledEventType == EventType.DEP_RIDE) {
-			i++;
-			rideID = i;
-		}
 		if (this.scheduledEventType == EventType.DEP_TICKET_BOOTH) {
 			rideID = 0;
-		}
-		if (this.scheduledEventType == EventType.DEP_RESTAURANT) {
+		} else if (this.scheduledEventType == EventType.DEP_RESTAURANT) {
 			rideID = rideCount + 2;
+		}else {
+			i++;
+			rideID = i;
 		}
 	}
 
@@ -112,7 +110,6 @@ public class ServicePoint {
 	}
 
 	public void addQueueTime(Customer customer){
-		//Lasketaan jonotusaika ja lisätään laitteen jonotusaikasummaan
 		double queueTime = customer.getQueueDepartureTime() - customer.getQueueArrivalTime();
 		if (!queueTimes.containsKey(rideID)) {
 			queueTimes.put(rideID, new ArrayList<>(Arrays.asList(queueTime, 1.0)));

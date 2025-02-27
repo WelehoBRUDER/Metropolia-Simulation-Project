@@ -13,8 +13,6 @@ public class RestaurantServicePoint extends ServicePoint{
     private int capacity;
     private ArrayList<Customer> CustomerList = new ArrayList<>();
     private ArrayList<Double> serviceTimes = new ArrayList<>();
-    private double restaurantQueueTimes = 0;
-    private int i = 0;
 
     public RestaurantServicePoint(ContinuousGenerator generator, EventList eventList, EventType type, int rideCount, int capacity) {
         super(generator, eventList, type, rideCount);
