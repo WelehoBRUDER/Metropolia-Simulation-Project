@@ -5,6 +5,8 @@ import simu.framework.IEngine;
 import simu.model.OwnEngine;
 import view.ISimulatorUI;
 
+import java.util.HashMap;
+
 public class Controller implements IControllerForM, IControllerForV {   // UUSI
 	
 	private IEngine engine;
@@ -74,6 +76,10 @@ public class Controller implements IControllerForM, IControllerForV {   // UUSI
 
 	public int getRideCount() {
 		return ui.getRideCount();
+	}
+
+	public HashMap<String, Double> getResults() {
+		return ((OwnEngine)engine).getResults();
 	}
 
 }
