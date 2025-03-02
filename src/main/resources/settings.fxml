@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="873.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
+            <Label text="Simulation time">
+               <tooltip>
+                  <Tooltip text="How long the simulation should last (in loops)" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" text="-" />
+                  <TextField fx:id="simTime" />
+                  <Button mnemonicParsing="false" text="+" />
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
+            <Label text="Machine count">
+               <tooltip>
+                  <Tooltip text="How many different rides/attractions to simulate" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" text="-" />
+                  <TextField fx:id="machineCount" />
+                  <Button mnemonicParsing="false" text="+" />
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+      <VBox fx:id="machines" prefHeight="200.0" prefWidth="100.0" styleClass="machine-settings" />
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
+            <Label text="Restaurant capacity">
+               <tooltip>
+                  <Tooltip text="How many customers can visit the restaurant at once" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" text="-" />
+                  <TextField fx:id="restaurantCap" />
+                  <Button mnemonicParsing="false" text="+" />
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
+            <Label text="Delay">
+               <tooltip>
+                  <Tooltip text="How many ms are between events" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" text="-" />
+                  <TextField fx:id="simDelay" />
+                  <Button mnemonicParsing="false" text="+" />
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
+            <Label text="Wristband likeliness">
+               <tooltip>
+                  <Tooltip text="\% chance of customers having wristbands (no need to buy tickets)" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" text="-" />
+                  <TextField fx:id="wristbandChance" />
+                  <Button mnemonicParsing="false" text="+" />
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+         <children>
+            <Button mnemonicParsing="false" text="Launch simulation" />
+         </children>
+      </HBox>
+   </children>
+</VBox>
