@@ -1,12 +1,11 @@
 package simu.model;
 
-import controller.IControllerForM;
+import controller.ISettingsControllerForM;
 import distributions.Bernoulli;
 import distributions.Negexp;
 import distributions.Normal;
 import simu.framework.*;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -26,7 +25,7 @@ public class OwnEngine extends Engine {
 	private int readyCustomers = 0;
 
 
-	public OwnEngine(IControllerForM controller, int rideCount){
+	public OwnEngine(ISettingsControllerForM controller, int rideCount){
 
 		super(controller);
 		this.rideCount = rideCount;

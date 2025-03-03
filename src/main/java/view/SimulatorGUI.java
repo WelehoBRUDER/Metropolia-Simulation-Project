@@ -1,7 +1,7 @@
 package view;
 
 
-import controller.IControllerForV;
+import controller.ISettingsControllerForV;
 import controller.Controller;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -26,7 +26,7 @@ import java.text.DecimalFormat;
 public class SimulatorGUI extends Application implements ISimulatorUI {
 
     //Kontrollerin esittely (tarvitaan käyttöliittymässä)
-    private IControllerForV controller;
+    private ISettingsControllerForV controller;
 
     // Käyttöliittymäkomponentit:
     private TextField time;

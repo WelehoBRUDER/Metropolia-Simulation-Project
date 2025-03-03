@@ -1,0 +1,28 @@
+#settings {
+    -fx-pref-width: 400;
+}
+
+.setting-row {
+    -fx-padding: 0;
+    -fx-pref-height: 40;
+}
+
+.setting-row Label {
+    -fx-font-size: 15px;
+    -fx-pref-width: 150;
+}
+
+.machine-settings {
+    -fx-pref-height: 0;
+    -fx-max-height: 200;
+    -fx-min-height: 40;
+}
+
+.num-setting {
+    -fx-padding: 0;
+    -fx-pref-width: 150;
+}
+
+.num-setting TextField {
+    -fx-pref-width: 80;
+}

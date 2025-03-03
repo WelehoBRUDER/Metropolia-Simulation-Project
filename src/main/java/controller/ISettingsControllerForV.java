@@ -2,14 +2,12 @@ package controller;
 
 import java.util.HashMap;
 
-public interface IControllerForV {
+public interface ISettingsControllerForV {
 
     // Rajapinta, joka tarjotaan  käyttöliittymälle:
-
-    public void startSimulation();
-    public void speedUp();
     public void slowDown();
-
+    public void speedUp();
+    public void startSimulation();
     public int getRideCount();
     public void setWristbandChance(double amount);
     public double getWristbandChance();
