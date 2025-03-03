@@ -13,9 +13,10 @@
 }
 
 .machine-settings {
-    -fx-pref-height: 0;
+    -fx-pref-width: 200;
     -fx-max-height: 200;
     -fx-min-height: 40;
+
 }
 
 .num-setting {

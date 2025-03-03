@@ -2,13 +2,15 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="873.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
+<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
@@ -20,7 +22,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementSimTime" text="-" />
-                  <TextField fx:id="simTime" />
+                  <TextField fx:id="simTime" onKeyReleased="#setSimTime" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementSimTime" text="+" />
                </children>
             </FlowPane>
@@ -36,13 +38,21 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementRideCount" text="-" />
-                  <TextField fx:id="rideCount" />
+                  <TextField fx:id="rideCount" onKeyTyped="#setRideCount" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementRideCount" text="+" />
                </children>
             </FlowPane>
          </children>
       </HBox>
-      <VBox fx:id="rides" prefHeight="200.0" prefWidth="100.0" styleClass="machine-settings" />
+      <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="0.0" prefWidth="200.0" styleClass="machine-settings" VBox.vgrow="ALWAYS">
+         <content>
+            <StackPane prefWidth="200.0">
+               <children>
+                  <VBox fx:id="rides" alignment="TOP_CENTER" prefWidth="200.0" />
+               </children>
+            </StackPane>
+         </content>
+      </ScrollPane>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
             <Label text="Restaurant capacity">
@@ -53,7 +63,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementRestaurantCap" text="-" />
-                  <TextField fx:id="restaurantCap" />
+                  <TextField fx:id="restaurantCap" onKeyTyped="#setRestaurantCap" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementRestaurantCap" text="+" />
                </children>
             </FlowPane>
@@ -69,7 +79,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementSimDelay" text="-" />
-                  <TextField fx:id="simDelay" />
+                  <TextField fx:id="simDelay" onKeyTyped="#setSimDelay" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementSimDelay" text="+" />
                </children>
             </FlowPane>
@@ -85,7 +95,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementWristbandChance" text="-" />
-                  <TextField fx:id="wristbandChance" />
+                  <TextField fx:id="wristbandChance" onKeyTyped="#setWristbandChance" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementWristbandChance" text="+" />
                </children>
             </FlowPane>

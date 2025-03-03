@@ -51,13 +51,9 @@ public class SettingsController {
             ride.setPromptText("Ride " + (i + 1));
             ride.setId("ride" + i);
             ride.setPrefWidth(100);
-            ride.setPrefHeight(25);
+            ride.setPrefHeight(40);
             ride.setStyle("-fx-font-size: 12px;");
-            ride.textProperty().addListener((observable, oldValue, newValue) -> {
-                if (!newValue.matches("\\d*")) {
-                    ride.setText(newValue.replaceAll("[^\\d]", ""));
-                }
-            });
+            sanitizeInput(ride);
             rides.getChildren().add(ride);
         }
     }
@@ -199,36 +195,62 @@ public class SettingsController {
     }
 
     public void setSimTime() {
-        simTimeValue = Integer.parseInt(simTime.getText());
+        if (!simTime.getText().isEmpty()) {
+            simTimeValue = Integer.parseInt(simTime.getText());
+            if (simTimeValue < 0) {
+                simTimeValue = 0;
+                simTime.setText("0");
+            }
+        }
     }
 
     public void setRideCount() {
-        rideCountValue = Integer.parseInt(rideCount.getText());
-        if (rideCountValue < 1) {
-            rideCountValue = 1;
-        } else if (rideCountValue > maxRideCount) {
-            rideCountValue = maxRideCount;
+        if (!rideCount.getText().isEmpty()) {
+            rideCountValue = Integer.parseInt(rideCount.getText());
+            if (rideCountValue < 1 || rideCountValue > maxRideCount) {
+                if (rideCountValue < 1) {
+                    rideCountValue = 1;
+                } else if (rideCountValue > maxRideCount) {
+                    rideCountValue = maxRideCount;
+                }
+                rideCount.setText(String.valueOf(rideCountValue));
+            }
+            displayRides();
         }
-        rideCount.setText(String.valueOf(rideCountValue));
-        displayRides();
     }
 
     public void setRestaurantCap() {
-        restaurantCapValue = Integer.parseInt(restaurantCap.getText());
+        if (!restaurantCap.getText().isEmpty()) {
+            restaurantCapValue = Integer.parseInt(restaurantCap.getText());
+            if (restaurantCapValue < 0) {
+                restaurantCapValue = 0;
+                restaurantCap.setText("0");
+            }
+        }
     }
 
     public void setSimDelay() {
-        simDelayValue = Double.parseDouble(simDelay.getText());
+        if (!simDelay.getText().isEmpty()) {
+            simDelayValue = Double.parseDouble(simDelay.getText());
+            if (simDelayValue < 0) {
+                simDelayValue = 0;
+                simDelay.setText("0");
+            }
+        }
     }
 
     public void setWristbandChance() {
-        wristbandChanceValue = Integer.parseInt(wristbandChance.getText());
-        if (wristbandChanceValue < 1) {
-            wristbandChanceValue = 1;
-        } else if (wristbandChanceValue > 100) {
-            wristbandChanceValue = 100;
+        if (!wristbandChance.getText().isEmpty()) {
+            wristbandChanceValue = Integer.parseInt(wristbandChance.getText());
+            if (wristbandChanceValue < 1 || wristbandChanceValue > 100) {
+                wristbandChance.setText(String.valueOf(wristbandChanceValue));
+                if (wristbandChanceValue < 1) {
+                    wristbandChanceValue = 1;
+                } else if (wristbandChanceValue > 100) {
+                    wristbandChanceValue = 100;
+                }
+            }
         }
-        wristbandChance.setText(String.valueOf(wristbandChanceValue));
     }
 
 
@@ -238,7 +260,7 @@ public class SettingsController {
 
 
     public int getRideCount() {
-        return 0;
+        return rideCountValue;
     }
 
 
@@ -248,6 +270,6 @@ public class SettingsController {
 
 
     public double getWristbandChance() {
-        return 0;
+        return wristbandChanceValue;
     }
 }
