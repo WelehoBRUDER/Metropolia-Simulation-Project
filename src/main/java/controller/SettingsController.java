@@ -10,6 +10,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import simu.framework.IEngine;
+import simu.model.OwnEngine;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,9 +34,11 @@ public class SettingsController {
     private int simTimeValue = 0;
     private int rideCountValue = 1;
     private int restaurantCapValue = 0;
-    private double simDelayValue = 0;
+    private long simDelayValue = 0;
     private int wristbandChanceValue = 0;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
+
+    private IEngine engine;
 
     private final int maxRideCount = 25;
 
@@ -262,7 +267,7 @@ public class SettingsController {
 
     public void setSimDelay() {
         if (!simDelay.getText().isEmpty()) {
-            simDelayValue = Double.parseDouble(simDelay.getText());
+            simDelayValue = Long.parseLong(simDelay.getText());
             if (simDelayValue < 0) {
                 simDelayValue = 0;
                 simDelay.setText("0");
@@ -286,7 +291,8 @@ public class SettingsController {
 
 
     public void startSimulation() {
-
+        Stage stage = (Stage) simTime.getScene().getWindow();
+        stage.close();
     }
 
 
@@ -295,12 +301,12 @@ public class SettingsController {
     }
 
 
-    public void setWristbandChance(double amount) {
+    public void setWristbandChance(long amount) {
 
     }
 
 
-    public double getWristbandChance() {
+    public long getWristbandChance() {
         return wristbandChanceValue;
     }
 }

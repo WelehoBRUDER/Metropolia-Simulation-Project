@@ -71,7 +71,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
-            <Label text="Delay">
+            <Label text="Delay (ms)">
                <tooltip>
                   <Tooltip text="How many ms are between events" />
                </tooltip>
@@ -87,7 +87,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
-            <Label text="Wristband likeliness">
+            <Label text="Wristband chance (%)">
                <tooltip>
                   <Tooltip text="\% chance of customers having wristbands (no need to buy tickets)" />
                </tooltip>
