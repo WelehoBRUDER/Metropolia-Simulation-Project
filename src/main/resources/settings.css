@@ -27,3 +27,25 @@
 .num-setting TextField {
     -fx-pref-width: 80;
 }
+
+.num-setting-small {
+    -fx-padding: 0;
+    -fx-pref-width: 90;
+}
+
+.num-setting-small TextField {
+    -fx-pref-width: 50;
+    -fx-pref-height: 20;
+    -fx-font-size: 10px;
+}
+
+.num-setting-small Button {
+    -fx-pref-width: 20;
+    -fx-pref-height: 20;
+    -fx-font-size: 10px;
+}
+
+.ride-label {
+    -fx-pref-width: 80;
+    -fx-font-weight: bold;
+}

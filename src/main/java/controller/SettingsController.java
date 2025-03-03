@@ -3,8 +3,11 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -29,7 +32,7 @@ public class SettingsController {
     private int restaurantCapValue = 0;
     private double simDelayValue = 0;
     private int wristbandChanceValue = 0;
-    private ArrayList<Integer> rideCapacities = new ArrayList<Integer>();
+    private ArrayList<int[]> rideProperties = new ArrayList<>();
 
     private final int maxRideCount = 25;
 
@@ -44,16 +47,35 @@ public class SettingsController {
     }
 
     @FXML
+    public FlowPane createNumberInput() {
+        FlowPane numberInput = new FlowPane();
+        numberInput.getStyleClass().add("num-setting-small");
+        TextField number = new TextField();
+        Button increment = new Button("+");
+        Button decrement = new Button("-");
+        sanitizeInput(number);
+        numberInput.getChildren().addAll(decrement, number, increment);
+        return numberInput;
+    }
+
+    @FXML
     public void displayRides() {
         rides.getChildren().clear();
         for (int i = 0; i < rideCountValue; i++) {
-            TextField ride = new TextField();
-            ride.setPromptText("Ride " + (i + 1));
+            FlowPane ride = new FlowPane();
+            Label rideLabel = new Label("Ride " + (i + 1));
+            Label varianceLabel = new Label("Variance:");
+            Label meanLabel = new Label("Mean:");
+            rideLabel.getStyleClass().add("ride-label");
+            FlowPane variance = createNumberInput();
+            FlowPane mean = createNumberInput();
             ride.setId("ride" + i);
-            ride.setPrefWidth(100);
             ride.setPrefHeight(40);
-            ride.setStyle("-fx-font-size: 12px;");
-            sanitizeInput(ride);
+            ride.setMinHeight(40);
+            ride.hgapProperty().setValue(5);
+            ride.alignmentProperty().setValue(javafx.geometry.Pos.CENTER);
+            ride.setRowValignment(javafx.geometry.VPos.CENTER);
+            ride.getChildren().addAll(rideLabel, varianceLabel, variance, meanLabel, mean);
             rides.getChildren().add(ride);
         }
     }
