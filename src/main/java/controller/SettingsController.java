@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -66,6 +67,14 @@ public class SettingsController {
             Label rideLabel = new Label("Ride " + (i + 1));
             Label varianceLabel = new Label("Variance:");
             Label meanLabel = new Label("Mean:");
+
+            //FIXME: joku joka osaa niin pls korjaa tooltipit
+            // en tajuu miten variance ja mean toimii lmao
+            Tooltip varianceTip = new Tooltip("Variance of the ride time");
+            Tooltip meanTip = new Tooltip("Mean of the ride time");
+
+            Tooltip.install(varianceLabel, varianceTip);
+            Tooltip.install(meanLabel, meanTip);
             rideLabel.getStyleClass().add("ride-label");
             FlowPane variance = createNumberInput();
             FlowPane mean = createNumberInput();
