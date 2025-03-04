@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
@@ -37,11 +39,18 @@ public class SimController implements ISettingsControllerForM {
     // Canvas drawing parameters
     private final int CANVAS_WIDTH = 800;
     private final int CANVAS_HEIGHT = 500;
-    private final int SERVICE_POINT_SIZE = 20;
+    private final int SERVICE_POINT_SIZE = 24;
     private final int RIDE_AREA_SIZE = 200;
     private final int TICKET_AREA_SIZE = 150;
     private final int ENTRANCE_AREA_SIZE = 50;
     private final int RESTAURANT_AREA_SIZE = 200;
+    private final int FONT_SIZE = SERVICE_POINT_SIZE / 2;
+
+    // Canvas style definitions
+    private final Color ENTRANCE_COLOR = Color.GREEN;
+    private final Color TICKET_COLOR = Color.BLUE;
+    private final Color RIDE_COLOR = Color.ORANGE;
+    private final Color RESTAURANT_COLOR = Color.RED;
 
     // Leevin pätkä koodia
     public int[][] circleOfElements(int area, int size, int amount) {
@@ -87,10 +96,13 @@ public class SimController implements ISettingsControllerForM {
         customerCtx.clearRect(0, 0, customerCanvas.getWidth(), customerCanvas.getHeight());
     }
 
-    public void drawServicePoint(int x, int y) {
-        serviceCtx.setFill(Color.BLUE);
-        serviceCtx.strokeRect(x, y, SERVICE_POINT_SIZE, SERVICE_POINT_SIZE);
-        serviceCtx.fillText("0", x, y);
+    public void drawServicePoint(int x, int y, Color color) {
+        serviceCtx.setFill(color);
+        serviceCtx.fillRect(x, y, SERVICE_POINT_SIZE, SERVICE_POINT_SIZE);
+        serviceCtx.setFill(Color.BLACK);
+        serviceCtx.setFont(new Font("Arial", FONT_SIZE));
+        serviceCtx.setTextAlign(TextAlignment.CENTER);
+        serviceCtx.fillText("1", x + calcCenterX(SERVICE_POINT_SIZE, 0), y - (double) FONT_SIZE / 2);
     }
 
 
@@ -147,19 +159,19 @@ public class SimController implements ISettingsControllerForM {
         calcServicePointCords();
 
         // Entrance
-        drawServicePoint(entrance[0], entrance[1]);
+        drawServicePoint(entrance[0], entrance[1], ENTRANCE_COLOR);
 
         // Ticket booths
         for (int i = 0; i < ticketBoothCountValue; i++) {
             int[] cords = getTicketBooth(i);
-            drawServicePoint(cords[0], cords[1]);
+            drawServicePoint(cords[0], cords[1], TICKET_COLOR);
         }
         for (int i = 0; i < rideCountValue; i++) {
             int[] cords = getRide(i);
-            drawServicePoint(cords[0], cords[1]);
+            drawServicePoint(cords[0], cords[1], RIDE_COLOR);
         }
         // Restaurant
-        drawServicePoint(restaurant[0], restaurant[1]);
+        drawServicePoint(restaurant[0], restaurant[1], RESTAURANT_COLOR);
     }
 
     @Override
