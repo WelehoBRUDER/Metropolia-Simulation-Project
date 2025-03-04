@@ -7,7 +7,7 @@ import view.ISimulatorUI;
 
 import java.util.HashMap;
 
-public class Controller implements IControllerForM, IControllerForV {   // UUSI
+public class Controller implements ISettingsControllerForM, ISettingsControllerForV {   // UUSI
 	
 	private IEngine engine;
 	private ISimulatorUI ui;
@@ -35,6 +35,7 @@ public class Controller implements IControllerForM, IControllerForV {   // UUSI
 		engine.setDelay((long)(engine.getDelay()*1.10));
 	}
 
+
 	@Override
 	public void speedUp() { // nopeutetaan moottorisäiettä
 		engine.setDelay((long)(engine.getDelay()*0.9));
@@ -43,6 +44,7 @@ public class Controller implements IControllerForM, IControllerForV {   // UUSI
 	// Simulointitulosten välittämistä käyttöliittymään.
 	// Koska FX-ui:n päivitykset tulevat moottorisäikeestä, ne pitää ohjata JavaFX-säikeeseen:
 		
+
 	@Override
 	public void showEndTime(double time) {
 		Platform.runLater(()->ui.setEndTime(time));

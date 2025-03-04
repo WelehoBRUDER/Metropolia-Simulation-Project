@@ -1,7 +1,7 @@
 package simu.framework;
 
 
-import controller.IControllerForM;
+import controller.ISettingsControllerForM;
 
 public abstract class Engine extends Thread implements IEngine {  // UUDET MÄÄRITYKSET
 	
@@ -12,10 +12,10 @@ public abstract class Engine extends Thread implements IEngine {  // UUDET MÄÄ
 	
 	protected EventList eventList;
 
-	protected IControllerForM controller; // UUSI
+	protected ISettingsControllerForM controller; // UUSI
 	
 
-	public Engine(IControllerForM controller){  // UUSITTU
+	public Engine(ISettingsControllerForM controller){  // UUSITTU
 		
 		this.controller = controller;  //UUSI
 
