@@ -36,9 +36,11 @@ public class SettingsController {
     @FXML
     private TextField wristbandChance;
 
+    private final boolean GUI_DEBUG = true;
+
     private int simTimeValue = 250;
-    private int ticketBoothCountValue = 1;
-    private int rideCountValue = 3;
+    private int ticketBoothCountValue = 4;
+    private int rideCountValue = 9;
     private int restaurantCapValue = 20;
     private long simDelayValue = 50;
     private int wristbandChanceValue = 30;
@@ -47,7 +49,7 @@ public class SettingsController {
     private final int maxTicketBoothCount = 18;
     private final int maxRideCount = 25;
 
-    public void initialize() {
+    public void initialize() throws Exception {
         sanitizeInput(simTime);
         sanitizeInput(ticketBoothCount);
         sanitizeInput(rideCount);
@@ -61,6 +63,9 @@ public class SettingsController {
         simDelay.setText(String.valueOf(simDelayValue));
         wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setRideCount();
+        if (GUI_DEBUG) {
+            startSimulation();
+        }
     }
 
     @FXML
@@ -384,8 +389,6 @@ public class SettingsController {
 
 
     public void startSimulation() throws Exception {
-//        Stage stage = (Stage) simTime.getScene().getWindow();
-//        stage.close();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
         Parent root = loader.load();
         SimController simController = loader.getController();
