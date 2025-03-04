@@ -15,15 +15,23 @@ public class OwnEngine extends Engine {
 	private ArrivalProgress arrivalProgress;
 	private ServicePoint[] servicePoints;
 	private ArrayList<Integer> rideOrder = new ArrayList<>();
+	private ArrayList<Integer> ticketOrder = new ArrayList<>();
 
-	private double wristbandChance = 0.5;
+	private double wristbandChance = 0.1;
+	private int RESTAURANT_CAPASITY = 20;
 	private Bernoulli bernoulli = new Bernoulli(wristbandChance);
 	private int rideCount;
+	private int ticketBoothCount = 1;
+	private int minTicketPurchase = 1;
+	private int maxTicketPurchase = 1;
+	private ArrayList<int[]> rideParameters;
 
 	private ArrayList<Double> wristbandAverages = new ArrayList<>();
 	private ArrayList<Double> ticketAverages = new ArrayList<>();
 	private HashMap<String, Double> results = new HashMap<>();
 	private int readyCustomers = 0;
+
+	private int ticketBoothCounter = -1;
 
 
 	public OwnEngine(IControllerForM controller, int rideCount){
@@ -31,15 +39,23 @@ public class OwnEngine extends Engine {
 		super(controller);
 		this.rideCount = rideCount;
 
-		servicePoints = new ServicePoint[rideCount + 2];
+		//TESTI PARAMETREJÄ!!!
+		rideParameters = new ArrayList<>();
+		rideParameters.add(new int[]{5, 2});
+		rideParameters.add(new int[]{10, 10});
+		//TESTI PARAMETREJÄ!!!
 
-		servicePoints[0]=new ServicePoint(new Normal(5,2), eventList, EventType.DEP_TICKET_BOOTH, rideCount);  //lipunmyynti
+		servicePoints = new ServicePoint[rideCount + ticketBoothCount + 1];
 
-		for (int i = 1; i <= rideCount; i++) {
-			servicePoints[i]=new ServicePoint(new Normal(10,10), eventList, EventType.DEP_RIDE, rideCount); //Laitteet
+		for (int i = 0; i < ticketBoothCount; i++) {
+			servicePoints[i] = new ServicePoint(new Normal(5, 2), eventList, EventType.DEP_TICKET_BOOTH, rideCount);//lipunmyynti
 		}
 
-		servicePoints[rideCount+1]=new RestaurantServicePoint(new Normal(80,3), eventList, EventType.DEP_RESTAURANT, rideCount, 20); //Ravintola
+		for (int i = ticketBoothCount; i < ticketBoothCount+rideCount; i++) {
+			servicePoints[i]=new ServicePoint(new Normal(rideParameters.get(i-ticketBoothCount)[0],rideParameters.get(i-ticketBoothCount)[1]), eventList, EventType.DEP_RIDE, rideCount); //Laitteet
+		}
+
+		servicePoints[rideCount+ticketBoothCount]=new RestaurantServicePoint(new Normal(80,3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY); //Ravintola
 
 		//arrivalProgress = new ArrivalProgress(new Negexp(15, 5), eventList, EventType.ARRIVAL); //Saapuminen, Tällä asiakkaat saapuvat n. 15 aikayksikön välein eli aika harvoin
 		arrivalProgress = new ArrivalProgress(new Negexp(5, 5), eventList, EventType.ARRIVAL); //Saapuminen
@@ -69,7 +85,7 @@ public class OwnEngine extends Engine {
 		switch ((EventType) t.getType()){
 			case ARRIVAL:
 				double sample = bernoulli.sample();
-				c = new Customer(rideCount, sample);
+				c = new Customer(rideCount, sample, minTicketPurchase, maxTicketPurchase);
 
 				if (c.hasWristband()) {
 					p = findRideByID(c.getNextRideID());
@@ -82,7 +98,9 @@ public class OwnEngine extends Engine {
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
 
 				} else {
-					servicePoints[0].addToQueue(c);
+					c.addTickets();
+					servicePoints[nextTicketBooth()].addToQueue(c);
+					ticketOrder.add(ticketBoothCounter);
 					controller.visualizeCustomer(c.getId(), 0, false);
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
 				}
@@ -91,8 +109,8 @@ public class OwnEngine extends Engine {
 				break;
 
 			case DEP_TICKET_BOOTH:
-				c = servicePoints[0].fetchFromQueue();
-				servicePoints[0].incrementCustomerCounter();
+				c = servicePoints[ticketOrder.get(0)].fetchFromQueue();
+				servicePoints[ticketOrder.remove(0)].incrementCustomerCounter();
 				c.incrementTicketboothCounter();
 
 				p = findRideByID(c.getNextRideID());
@@ -101,17 +119,18 @@ public class OwnEngine extends Engine {
 				p.addToQueue(c);
 				c.removeNextRide();
 				rideOrder.add(p.getRideID());
+				c.removeTicket();
 
 				Trace.out(Trace.Level.INFO, "Asiakas: " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
 
 				break;
 
 			case DEP_RIDE:
-				servicePoints[rideOrder.get(0)].incrementCustomerCounter();
-				c = servicePoints[rideOrder.remove(0)].fetchFromQueue();
+				servicePoints[rideOrder.get(0)+ticketBoothCount-1].incrementCustomerCounter();
+				c = servicePoints[rideOrder.remove(0)+ticketBoothCount-1].fetchFromQueue();
 
 				if (c.ridesLeft()) {
-					if (c.hasWristband()) {
+					if (c.hasWristband() || c.getTickets() > 0) {
 						p = findRideByID(c.getNextRideID());
 						controller.visualizeCustomer(c.getId(), p.getRideID(), c.hasWristband());
 
@@ -121,12 +140,13 @@ public class OwnEngine extends Engine {
 
 						Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteeseen: " + p.getRideID());
 					} else {
-						servicePoints[0].addToQueue(c);
+						servicePoints[nextTicketBooth()].addToQueue(c);
+						ticketOrder.add(ticketBoothCounter);
 						controller.visualizeCustomer(c.getId(), 0, c.hasWristband());
 						Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
 					}
 				} else {
-					servicePoints[rideCount + 1].addToQueue(c);
+					servicePoints[rideCount + ticketBoothCount].addToQueue(c);
 					controller.visualizeCustomer(c.getId(), rideCount + 1, c.hasWristband());
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee ravintolajonoon");
 				}
@@ -134,8 +154,8 @@ public class OwnEngine extends Engine {
 				break;
 
 			case DEP_RESTAURANT:
-				c = servicePoints[rideCount + 1].fetchFromCustomerList();
-				servicePoints[rideCount + 1].incrementCustomerCounter();
+				c = servicePoints[rideCount + ticketBoothCount].fetchFromCustomerList();
+				servicePoints[rideCount + ticketBoothCount].incrementCustomerCounter();
 				controller.visualizeCustomer(c.getId(), rideCount + 2, c.hasWristband());
 				c.setDepartureTime(Clock.getInstance().getTime());
 				readyCustomers++;
@@ -162,6 +182,14 @@ public class OwnEngine extends Engine {
 				p.beginService();
 			}
 		}
+	}
+
+	public int nextTicketBooth() {
+		ticketBoothCounter++;
+		if (ticketBoothCounter >= ticketBoothCount) {
+			ticketBoothCounter = 0;
+		}
+		return ticketBoothCounter;
 	}
 
 	public void setWristbandChance(double amount){

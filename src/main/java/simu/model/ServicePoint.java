@@ -18,6 +18,7 @@ public class ServicePoint {
 	protected final EventType scheduledEventType;
 	protected int rideID = 0;
 	protected static int i = 0;
+	protected static int j = 0;
 	private HashMap<Integer, List<Double>> serviceTimes = new HashMap<>();
 	private HashMap<Integer, List<Double>> queueTimes = new HashMap<>();
 	private int customerCounter = 0;
@@ -32,7 +33,8 @@ public class ServicePoint {
 		this.generator = generator;
 		this.scheduledEventType = type;
 		if (this.scheduledEventType == EventType.DEP_TICKET_BOOTH) {
-			rideID = 0;
+			j--;
+			rideID = j;
 		} else if (this.scheduledEventType == EventType.DEP_RESTAURANT) {
 			rideID = rideCount + 2;
 		}else {

@@ -24,9 +24,14 @@ public class Customer {
 	private double queueDepartureTime;
 	private int ticketboothCounter = 0;
 	private static int ticketboothCounterSum = 0;
+	private int tickets = 0;
+	private int maxTicketPurchase;
+	private int minTicketPurchase;
 	
-	public Customer(int rideCount, double wristbandChance) {
+	public Customer(int rideCount, double wristbandChance, int minTicketPurchase, int maxTicketPurchase) {
 	    id = i++;
+		this.minTicketPurchase = minTicketPurchase;
+		this.maxTicketPurchase = maxTicketPurchase;
 
 		if (wristbandChance == 1) {
 			wristband = true;
@@ -155,6 +160,18 @@ public class Customer {
 			System.out.println("Lippu-asiakkaiden läpimenoaikojen keskiarvo "+ average);
 		}
 		return average;
+	}
+
+	public void addTickets() {
+		tickets += (Math.random() * maxTicketPurchase) + minTicketPurchase;
+	}
+
+	public int getTickets() {
+		return tickets;
+	}
+
+	public void removeTicket() {
+		tickets -= 1;
 	}
 
 }
