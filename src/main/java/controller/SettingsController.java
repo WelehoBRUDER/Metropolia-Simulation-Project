@@ -44,8 +44,6 @@ public class SettingsController {
     private int wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
-    private IEngine engine;
-
     private final int maxTicketBoothCount = 18;
     private final int maxRideCount = 25;
 
@@ -392,10 +390,16 @@ public class SettingsController {
         Parent root = loader.load();
         SimController simController = loader.getController();
 
+        System.out.println(simController);
+
+        simController.setSimulationParameters(simTimeValue, ticketBoothCountValue, rideCountValue, restaurantCapValue, simDelayValue, wristbandChanceValue, rideProperties);
+
         // Show new stage
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.show();
+
+        simController.startSim();
     }
 
 

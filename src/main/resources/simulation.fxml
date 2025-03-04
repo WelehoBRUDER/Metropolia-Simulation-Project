@@ -3,12 +3,17 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@simulation.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@simulation.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SimController">
    <children>
-      <Canvas height="500.0" styleClass="sim-canvas" width="800.0" />
+      <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="sim-canvas">
+         <children>
+            <Canvas fx:id="servicePointCanvas" height="500.0" styleClass="sim-canvas" width="800.0" />
+            <Canvas fx:id="customerCanvas" height="500.0" styleClass="sim-canvas" width="800.0" />
+         </children>
+      </StackPane>
       <HBox prefHeight="100.0" prefWidth="200.0" styleClass="footer">
          <children>
             <Label text="Total time: 90.73" />
