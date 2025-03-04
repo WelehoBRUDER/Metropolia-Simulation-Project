@@ -30,6 +30,22 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
+            <Label text="Ticket Booth Count">
+               <tooltip>
+                  <Tooltip text="How long the simulation should last (in loops)" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" onMouseClicked="#decrementTicketBooths" text="-" />
+                  <TextField fx:id="ticketBoothCount" onKeyReleased="#setTicketBoothCount" />
+                  <Button mnemonicParsing="false" onMouseClicked="#incrementTicketBooths" text="+" />
+               </children>
+            </FlowPane>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
             <Label text="Ride count">
                <tooltip>
                   <Tooltip text="How many different rides/attractions to simulate" />

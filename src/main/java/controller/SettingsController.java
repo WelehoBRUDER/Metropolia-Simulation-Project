@@ -21,6 +21,8 @@ public class SettingsController {
     @FXML
     private TextField simTime;
     @FXML
+    private TextField ticketBoothCount;
+    @FXML
     private TextField rideCount;
     @FXML
     private VBox rides;
@@ -32,6 +34,7 @@ public class SettingsController {
     private TextField wristbandChance;
 
     private int simTimeValue = 0;
+    private int ticketBoothCountValue = 1;
     private int rideCountValue = 1;
     private int restaurantCapValue = 0;
     private long simDelayValue = 0;
@@ -40,28 +43,66 @@ public class SettingsController {
 
     private IEngine engine;
 
+    private final int maxTicketBoothCount = 18;
     private final int maxRideCount = 25;
 
     public void initialize() {
         sanitizeInput(simTime);
+        sanitizeInput(ticketBoothCount);
         sanitizeInput(rideCount);
         sanitizeInput(restaurantCap);
         sanitizeInput(simDelay);
         sanitizeInput(wristbandChance);
+        ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
         rideCount.setText(String.valueOf(rideCountValue));
         setRideCount();
     }
 
     @FXML
-    public FlowPane createNumberInput() {
+    public FlowPane createNumberInput(int index, int type) {
         FlowPane numberInput = new FlowPane();
         numberInput.getStyleClass().add("num-setting-small");
         TextField number = new TextField();
         Button increment = new Button("+");
         Button decrement = new Button("-");
+        number.setText(String.valueOf(rideProperties.get(index)[type]));
         sanitizeInput(number);
         numberInput.getChildren().addAll(decrement, number, increment);
+        number.setOnKeyTyped(e -> setRideParam(index, type, number));
+        decrement.setOnMouseClicked(e -> changeRideParam(index, type, e, number, -1));
+        increment.setOnMouseClicked(e -> changeRideParam(index, type, e, number, 1));
         return numberInput;
+    }
+
+    public void changeRideParam(int index, int type, MouseEvent e, TextField field, int power) {
+        int value = power;
+        if (e.isShiftDown() && !e.isControlDown()) {
+            value = 5 * power;
+        } else if (e.isControlDown()) {
+            value = 25 * power;
+        }
+        rideProperties.get(index)[type] += value;
+        if (rideProperties.get(index)[type] < 0) {
+            rideProperties.get(index)[type] = 0;
+        } else if (rideProperties.get(index)[type] > 100) {
+            rideProperties.get(index)[type] = 100;
+        }
+        field.setText(String.valueOf(rideProperties.get(index)[type]));
+    }
+
+    public void setRideParam(int index, int type, TextField field) {
+        if (!field.getText().isEmpty()) {
+            int value = Integer.parseInt(field.getText());
+            if (value < 0 || value > 100) {
+                if (value < 0) {
+                    value = 0;
+                } else {
+                    value = 100;
+                }
+                field.setText(String.valueOf(value));
+            }
+            rideProperties.get(index)[type] = value;
+        }
     }
 
     @FXML
@@ -81,8 +122,8 @@ public class SettingsController {
             Tooltip.install(varianceLabel, varianceTip);
             Tooltip.install(meanLabel, meanTip);
             rideLabel.getStyleClass().add("ride-label");
-            FlowPane variance = createNumberInput();
-            FlowPane mean = createNumberInput();
+            FlowPane variance = createNumberInput(i, 0);
+            FlowPane mean = createNumberInput(i, 1);
             ride.setId("ride" + i);
             ride.setPrefHeight(40);
             ride.setMinHeight(40);
@@ -91,6 +132,18 @@ public class SettingsController {
             ride.setRowValignment(javafx.geometry.VPos.CENTER);
             ride.getChildren().addAll(rideLabel, varianceLabel, variance, meanLabel, mean);
             rides.getChildren().add(ride);
+        }
+    }
+
+    public void changeRideProperties() {
+        if (rideProperties.size() < rideCountValue) {
+            for (int i = rideProperties.size(); i < rideCountValue; i++) {
+                rideProperties.add(new int[]{5, 2});
+            }
+        } else if (rideProperties.size() > rideCountValue) {
+            for (int i = rideProperties.size(); i > rideCountValue; i--) {
+                rideProperties.remove(i - 1);
+            }
         }
     }
 
@@ -128,6 +181,26 @@ public class SettingsController {
         }
         simTime.setText(String.valueOf(simTimeValue));
         setSimTime();
+    }
+
+    public void incrementTicketBooths(MouseEvent e) {
+        if (e.isShiftDown()) {
+            ticketBoothCountValue += 5;
+        } else {
+            ticketBoothCountValue++;
+        }
+        ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
+        setTicketBoothCount();
+    }
+
+    public void decrementTicketBooths(MouseEvent e) {
+        if (e.isShiftDown()) {
+            ticketBoothCountValue -= 5;
+        } else {
+            ticketBoothCountValue--;
+        }
+        ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
+        setTicketBoothCount();
     }
 
     public void incrementRideCount(MouseEvent e) {
@@ -240,17 +313,32 @@ public class SettingsController {
         }
     }
 
+    public void setTicketBoothCount() {
+        if (!ticketBoothCount.getText().isEmpty()) {
+            ticketBoothCountValue = Integer.parseInt(ticketBoothCount.getText());
+            if (ticketBoothCountValue < 1 || ticketBoothCountValue > maxTicketBoothCount) {
+                if (ticketBoothCountValue < 1) {
+                    ticketBoothCountValue = 1;
+                } else {
+                    ticketBoothCountValue = maxTicketBoothCount;
+                }
+                ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
+            }
+        }
+    }
+
     public void setRideCount() {
         if (!rideCount.getText().isEmpty()) {
             rideCountValue = Integer.parseInt(rideCount.getText());
             if (rideCountValue < 1 || rideCountValue > maxRideCount) {
                 if (rideCountValue < 1) {
                     rideCountValue = 1;
-                } else if (rideCountValue > maxRideCount) {
+                } else {
                     rideCountValue = maxRideCount;
                 }
                 rideCount.setText(String.valueOf(rideCountValue));
             }
+            changeRideProperties();
             displayRides();
         }
     }
