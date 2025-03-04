@@ -32,7 +32,7 @@
          <children>
             <Label text="Ticket Booth Count">
                <tooltip>
-                  <Tooltip text="How long the simulation should last (in loops)" />
+                  <Tooltip text="How many ticket booths are available to the customers" />
                </tooltip>
             </Label>
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">

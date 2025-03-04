@@ -3,6 +3,9 @@ package controller;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -33,12 +36,12 @@ public class SettingsController {
     @FXML
     private TextField wristbandChance;
 
-    private int simTimeValue = 0;
+    private int simTimeValue = 250;
     private int ticketBoothCountValue = 1;
-    private int rideCountValue = 1;
-    private int restaurantCapValue = 0;
-    private long simDelayValue = 0;
-    private int wristbandChanceValue = 0;
+    private int rideCountValue = 3;
+    private int restaurantCapValue = 20;
+    private long simDelayValue = 50;
+    private int wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
     private IEngine engine;
@@ -53,8 +56,12 @@ public class SettingsController {
         sanitizeInput(restaurantCap);
         sanitizeInput(simDelay);
         sanitizeInput(wristbandChance);
+        simTime.setText(String.valueOf(simTimeValue));
         ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
         rideCount.setText(String.valueOf(rideCountValue));
+        restaurantCap.setText(String.valueOf(restaurantCapValue));
+        simDelay.setText(String.valueOf(simDelayValue));
+        wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setRideCount();
     }
 
@@ -378,9 +385,17 @@ public class SettingsController {
     }
 
 
-    public void startSimulation() {
-        Stage stage = (Stage) simTime.getScene().getWindow();
-        stage.close();
+    public void startSimulation() throws Exception {
+//        Stage stage = (Stage) simTime.getScene().getWindow();
+//        stage.close();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
+        Parent root = loader.load();
+        SimController simController = loader.getController();
+
+        // Show new stage
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
 
