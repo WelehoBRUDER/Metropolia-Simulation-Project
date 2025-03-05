@@ -61,7 +61,7 @@ public class SimController implements ISettingsControllerForM {
 
     // DEBUG PARAMS!!!
 
-    private int[] customerCords = new int[]{0, 0};
+    private double[] customerCords = new double[]{0, 0};
     private int[] customerDestination = new int[]{0, 0};
     private int step = 0;
 
@@ -190,8 +190,8 @@ public class SimController implements ISettingsControllerForM {
     public void moveCustomerAnimation() {
         customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         int steps = (int) simDelayValue / UPDATE_RATE_MS;
-        int[] origin = new int[]{30, 75};
-        int[] destination = new int[]{560, 90};
+        double[] origin = new double[]{30, 75};
+        int[] destination = new int[]{560, 110};
         customerCords = origin;
         customerDestination = destination;
         step = 0;
@@ -219,24 +219,30 @@ public class SimController implements ISettingsControllerForM {
         Platform.runLater(() -> {
             customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Clear canvas
             customerCtx.setFill(Color.BLUE);
-            customerCtx.fillOval(customerCords[0], customerCords[1], CUSTOMER_SIZE, CUSTOMER_SIZE); // Draw moving circle
+            customerCtx.fillOval(getCustomerCords()[0], getCustomerCords()[1], CUSTOMER_SIZE, CUSTOMER_SIZE); // Draw moving circle
         });
 
 
         // update cords
-        customerCords = calculatePath(customerCords, customerDestination, getAnimationSteps() - step);
+        double[] nextStep = calculatePath(customerCords, customerDestination, getAnimationSteps());
+        customerCords[0] += nextStep[0];
+        customerCords[1] += nextStep[1];
         step++;
     }
 
-    public int[] calculatePath(int[] origin, int[] destination, int steps) {
+    public int[] getCustomerCords() {
+        return new int[]{(int) customerCords[0], (int) customerCords[1]};
+    }
+
+    public double[] calculatePath(double[] origin, int[] destination, int steps) {
         int midX = destination[0] - CUSTOMER_SIZE / 2;
         int midY = destination[1] - CUSTOMER_SIZE / 2;
         // Calculate delta x and y
-        int dx = midX - origin[0];
-        int dy = midY - origin[1];
-        int x = dx / steps;
-        int y = dy / steps;
-        return new int[]{x, y};
+        double dx = midX - origin[0];
+        double dy = midY - origin[1];
+        double x = dx / steps;
+        double y = dy / steps;
+        return new double[]{x, y};
     }
 
     public int getAnimationSteps() {

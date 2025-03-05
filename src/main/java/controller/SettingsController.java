@@ -42,7 +42,7 @@ public class SettingsController {
     private int ticketBoothCountValue = 4;
     private int rideCountValue = 9;
     private int restaurantCapValue = 20;
-    private long simDelayValue = 500;
+    private long simDelayValue = 250;
     private int wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
