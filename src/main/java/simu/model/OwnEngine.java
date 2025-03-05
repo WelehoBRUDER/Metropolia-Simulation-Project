@@ -84,7 +84,7 @@ public class OwnEngine extends Engine {
 	@Override
 	protected void runEvent(Event t){  // B-vaiheen tapahtumat
 
-		Trace.out(Trace.Level.INFO, "Ravintolassa on " + servicePoints[rideCount + 1].getCustomerListSize() + " asiakasta.");
+		Trace.out(Trace.Level.INFO, "Ravintolassa on " + servicePoints[rideCount+ticketBoothCount].getCustomerListSize() + " asiakasta.");
 
 		Customer c;
 		ServicePoint p;
@@ -101,6 +101,7 @@ public class OwnEngine extends Engine {
 					p.addToQueue(c);
 					c.removeNextRide();
 					rideOrder.add(p.getRideID());
+					System.out.println("from " + -100 + " to " + p.getRideID()); //FROMTO
 
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
 
@@ -108,6 +109,8 @@ public class OwnEngine extends Engine {
 					c.addTickets();
 					servicePoints[nextTicketBooth()].addToQueue(c);
 					ticketOrder.add(ticketBoothCounter);
+					System.out.println("from " + -100 + " to " + (ticketBoothCounter+1)/-1); //FROMTO
+
 					controller.visualizeCustomer(c.getId(), 0, false);
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
 				}
@@ -117,7 +120,7 @@ public class OwnEngine extends Engine {
 
 			case DEP_TICKET_BOOTH:
 				c = servicePoints[ticketOrder.get(0)].fetchFromQueue();
-				servicePoints[ticketOrder.remove(0)].incrementCustomerCounter();
+				servicePoints[ticketOrder.get(0)].incrementCustomerCounter();
 				c.incrementTicketboothCounter();
 
 				p = findRideByID(c.getNextRideID());
@@ -127,6 +130,7 @@ public class OwnEngine extends Engine {
 				c.removeNextRide();
 				rideOrder.add(p.getRideID());
 				c.removeTicket();
+				System.out.println("from " + servicePoints[ticketOrder.remove(0)].getRideID() + " to " + p.getRideID()); //FROMTO
 
 				Trace.out(Trace.Level.INFO, "Asiakas: " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
 
@@ -134,7 +138,7 @@ public class OwnEngine extends Engine {
 
 			case DEP_RIDE:
 				servicePoints[rideOrder.get(0)+ticketBoothCount-1].incrementCustomerCounter();
-				c = servicePoints[rideOrder.remove(0)+ticketBoothCount-1].fetchFromQueue();
+				c = servicePoints[rideOrder.get(0)+ticketBoothCount-1].fetchFromQueue();
 
 				if (c.ridesLeft()) {
 					if (c.hasWristband() || c.getTickets() > 0) {
@@ -144,17 +148,22 @@ public class OwnEngine extends Engine {
 						p.addToQueue(c);
 						c.removeNextRide();
 						rideOrder.add(p.getRideID());
+						System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + p.getRideID()); //FROMTO
 
 						Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteeseen: " + p.getRideID());
 					} else {
 						servicePoints[nextTicketBooth()].addToQueue(c);
 						ticketOrder.add(ticketBoothCounter);
 						controller.visualizeCustomer(c.getId(), 0, c.hasWristband());
+						System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + (ticketBoothCounter+1)/-1); //FROMTO
+
 						Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
 					}
 				} else {
 					servicePoints[rideCount + ticketBoothCount].addToQueue(c);
 					controller.visualizeCustomer(c.getId(), rideCount + 1, c.hasWristband());
+					System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + 100); //FROMTO
+
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee ravintolajonoon");
 				}
 
@@ -166,6 +175,8 @@ public class OwnEngine extends Engine {
 				controller.visualizeCustomer(c.getId(), rideCount + 2, c.hasWristband());
 				c.setDepartureTime(Clock.getInstance().getTime());
 				readyCustomers++;
+				System.out.println("from " + 100 + " to " + -101); //FROMTO
+
 				double average = c.report();
 				double ticketWristRatio = getWristbandTicketAverageRatio();
 				if (!Double.isNaN(ticketWristRatio)) {
