@@ -75,12 +75,12 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public void startSim() {
-        //engine = new OwnEngine(this, rideCountValue); // luodaan uusi moottorisäie jokaista simulointia varten
-        //engine.setSimulationTime(simTimeValue);
-        //engine.setDelay(simDelayValue);
         clearScreen();
         drawAllServicePoints();
-        //((Thread)engine).start();
+        engine = new OwnEngine(this, rideCountValue, ticketBoothCountValue, rideProperties); // luodaan uusi moottorisäie jokaista simulointia varten
+        engine.setSimulationTime(simTimeValue);
+        engine.setDelay(simDelayValue);
+        ((Thread)engine).start();
     }
 
     public int calcCenterX(int width, int offset) {
@@ -148,7 +148,6 @@ public class SimController implements ISettingsControllerForM {
         int xOffset = TICKET_AREA_SIZE + ENTRANCE_AREA_SIZE + RIDE_AREA_SIZE ;
         int yOffset = CANVAS_HEIGHT / 2 - RIDE_AREA_SIZE;
         for (int i = 0; i < rideCountValue; i++) {
-            System.out.println(cords[i][0] + " " + cords[i][1]);
             addToRides(xOffset + cords[i][0], cords[i][1] + RIDE_AREA_SIZE + yOffset);
         }
 

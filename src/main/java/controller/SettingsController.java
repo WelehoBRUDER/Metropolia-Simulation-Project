@@ -46,7 +46,7 @@ public class SettingsController {
     private int wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
-    private final int maxTicketBoothCount = 18;
+    private final int maxTicketBoothCount = 9;
     private final int maxRideCount = 25;
 
     public void initialize() throws Exception {
@@ -140,7 +140,7 @@ public class SettingsController {
             ride.hgapProperty().setValue(5);
             ride.alignmentProperty().setValue(javafx.geometry.Pos.CENTER);
             ride.setRowValignment(javafx.geometry.VPos.CENTER);
-            ride.getChildren().addAll(rideLabel, varianceLabel, variance, meanLabel, mean);
+            ride.getChildren().addAll(rideLabel, meanLabel, mean, varianceLabel, variance);
             rides.getChildren().add(ride);
         }
     }
@@ -148,7 +148,7 @@ public class SettingsController {
     public void changeRideProperties() {
         if (rideProperties.size() < rideCountValue) {
             for (int i = rideProperties.size(); i < rideCountValue; i++) {
-                rideProperties.add(new int[]{5, 2});
+                rideProperties.add(new int[]{2, 5});
             }
         } else if (rideProperties.size() > rideCountValue) {
             for (int i = rideProperties.size(); i > rideCountValue; i--) {

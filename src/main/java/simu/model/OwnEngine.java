@@ -33,10 +33,11 @@ public class OwnEngine extends Engine {
 	private int ticketBoothCounter = -1;
 
 
-	public OwnEngine(ISettingsControllerForM controller, int rideCount){
+	public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties) {
 
 		super(controller);
 		this.rideCount = rideCount;
+		this.ticketBoothCount = ticketBoothCount;
 
 		//TESTI PARAMETREJÄ!!!
 		rideParameters = new ArrayList<>();
@@ -45,13 +46,17 @@ public class OwnEngine extends Engine {
 		//TESTI PARAMETREJÄ!!!
 
 		servicePoints = new ServicePoint[rideCount + ticketBoothCount + 1];
+		System.out.println("Palvelupisteitä: " + servicePoints.length);
 
 		for (int i = 0; i < ticketBoothCount; i++) {
+
 			servicePoints[i] = new ServicePoint(new Normal(5, 2), eventList, EventType.DEP_TICKET_BOOTH, rideCount);//lipunmyynti
 		}
 
 		for (int i = ticketBoothCount; i < ticketBoothCount+rideCount; i++) {
-			servicePoints[i]=new ServicePoint(new Normal(rideParameters.get(i-ticketBoothCount)[0],rideParameters.get(i-ticketBoothCount)[1]), eventList, EventType.DEP_RIDE, rideCount); //Laitteet
+			int mean = rideProperties.get(i-ticketBoothCount)[0];
+			int variance = rideProperties.get(i-ticketBoothCount)[1];
+			servicePoints[i]=new ServicePoint(new Normal(mean, variance), eventList, EventType.DEP_RIDE, rideCount); //Laitteet
 		}
 
 		servicePoints[rideCount+ticketBoothCount]=new RestaurantServicePoint(new Normal(80,3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY); //Ravintola
