@@ -33,11 +33,13 @@ public class OwnEngine extends Engine {
 	private int ticketBoothCounter = -1;
 
 
-	public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties) {
+	public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
 		super(controller);
 		this.rideCount = rideCount;
 		this.ticketBoothCount = ticketBoothCount;
+		this.RESTAURANT_CAPASITY = restaurantCap;
+		this.wristbandChance = wristbandChance;
 
 		//TESTI PARAMETREJÄ!!!
 		rideParameters = new ArrayList<>();
@@ -86,6 +88,7 @@ public class OwnEngine extends Engine {
 
 		Customer c;
 		ServicePoint p;
+		controller.moveCustomerAnimation();
 		switch ((EventType) t.getType()){
 			case ARRIVAL:
 				double sample = bernoulli.sample();

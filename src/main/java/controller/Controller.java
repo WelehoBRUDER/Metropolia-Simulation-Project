@@ -68,6 +68,11 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		});
 	}
 
+	@Override
+	public void moveCustomerAnimation() {
+
+	}
+
 	public void setWristbandChance(double amount) {
 		((OwnEngine)engine).setWristbandChance(amount);
 	}

@@ -42,12 +42,13 @@ public class SettingsController {
     private int ticketBoothCountValue = 4;
     private int rideCountValue = 9;
     private int restaurantCapValue = 20;
-    private long simDelayValue = 50;
+    private long simDelayValue = 500;
     private int wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
     private final int maxTicketBoothCount = 9;
     private final int maxRideCount = 25;
+    private final int minDelay = 20;
 
     public void initialize() throws Exception {
         sanitizeInput(simTime);
@@ -316,9 +317,9 @@ public class SettingsController {
     public void setSimTime() {
         if (!simTime.getText().isEmpty()) {
             simTimeValue = Integer.parseInt(simTime.getText());
-            if (simTimeValue < 0) {
-                simTimeValue = 0;
-                simTime.setText("0");
+            if (simTimeValue < minDelay) {
+                simTimeValue = minDelay;
+                simTime.setText(String.valueOf(simTimeValue));
             }
         }
     }
@@ -356,9 +357,9 @@ public class SettingsController {
     public void setRestaurantCap() {
         if (!restaurantCap.getText().isEmpty()) {
             restaurantCapValue = Integer.parseInt(restaurantCap.getText());
-            if (restaurantCapValue < 0) {
-                restaurantCapValue = 0;
-                restaurantCap.setText("0");
+            if (restaurantCapValue < 1) {
+                restaurantCapValue = 1;
+                restaurantCap.setText("1");
             }
         }
     }

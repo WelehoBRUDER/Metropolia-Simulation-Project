@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,6 +11,7 @@ import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
 import java.util.ArrayList;
+import java.util.concurrent.*;
 
 public class SimController implements ISettingsControllerForM {
     private IEngine engine;
@@ -39,18 +41,29 @@ public class SimController implements ISettingsControllerForM {
     // Canvas drawing parameters
     private final int CANVAS_WIDTH = 800;
     private final int CANVAS_HEIGHT = 500;
+    private final int CUSTOMER_SIZE = 10;
     private final int SERVICE_POINT_SIZE = 24;
     private final int RIDE_AREA_SIZE = 200;
     private final int TICKET_AREA_SIZE = 150;
     private final int ENTRANCE_AREA_SIZE = 50;
     private final int RESTAURANT_AREA_SIZE = 200;
     private final int FONT_SIZE = SERVICE_POINT_SIZE / 2;
+    private final int UPDATE_RATE_MS = 10;
 
     // Canvas style definitions
     private final Color ENTRANCE_COLOR = Color.GREEN;
     private final Color TICKET_COLOR = Color.BLUE;
     private final Color RIDE_COLOR = Color.ORANGE;
     private final Color RESTAURANT_COLOR = Color.RED;
+
+    // Animation executor
+    private ScheduledExecutorService executorService;
+
+    // DEBUG PARAMS!!!
+
+    private int[] customerCords = new int[]{0, 0};
+    private int[] customerDestination = new int[]{0, 0};
+    private int step = 0;
 
     // Leevin pätkä koodia
     public int[][] circleOfElements(int area, int size, int amount) {
@@ -77,10 +90,10 @@ public class SimController implements ISettingsControllerForM {
     public void startSim() {
         clearScreen();
         drawAllServicePoints();
-        engine = new OwnEngine(this, rideCountValue, ticketBoothCountValue, rideProperties); // luodaan uusi moottorisäie jokaista simulointia varten
+        engine = new OwnEngine(this, rideCountValue, ticketBoothCountValue, rideProperties, restaurantCapValue, wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
         engine.setSimulationTime(simTimeValue);
         engine.setDelay(simDelayValue);
-        ((Thread)engine).start();
+        ((Thread) engine).start();
     }
 
     public int calcCenterX(int width, int offset) {
@@ -145,7 +158,7 @@ public class SimController implements ISettingsControllerForM {
         }
 
         int[][] cords = circleOfElements(RIDE_AREA_SIZE, SERVICE_POINT_SIZE, rideCountValue);
-        int xOffset = TICKET_AREA_SIZE + ENTRANCE_AREA_SIZE + RIDE_AREA_SIZE ;
+        int xOffset = TICKET_AREA_SIZE + ENTRANCE_AREA_SIZE + RIDE_AREA_SIZE;
         int yOffset = CANVAS_HEIGHT / 2 - RIDE_AREA_SIZE;
         for (int i = 0; i < rideCountValue; i++) {
             addToRides(xOffset + cords[i][0], cords[i][1] + RIDE_AREA_SIZE + yOffset);
@@ -171,6 +184,63 @@ public class SimController implements ISettingsControllerForM {
         }
         // Restaurant
         drawServicePoint(restaurant[0], restaurant[1], RESTAURANT_COLOR);
+    }
+
+    @Override
+    public void moveCustomerAnimation() {
+        customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        int steps = (int) simDelayValue / UPDATE_RATE_MS;
+        int[] origin = new int[]{30, 75};
+        int[] destination = new int[]{560, 90};
+        customerCords = origin;
+        customerDestination = destination;
+        step = 0;
+//        ScheduledFuture<?> scheduleAtFixedRate(e -> (),0, )
+//        for (int i = 0; i < steps; i++) {
+//             int[] currentStep = calculatePath(origin, destination, steps - i);
+//            origin[0] += currentStep[0];
+//            origin[1] += currentStep[1];
+//            System.out.println(origin[0] + " " + origin[1] + " " + destination[0] + " " + destination[1]);
+//        }
+        executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(this::renderCustomer, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS);
+    }
+
+    public void stopAnimation() {
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+    }
+
+    public void renderCustomer() {
+        if (step >= getAnimationSteps()) {
+            stopAnimation();
+        }
+        Platform.runLater(() -> {
+            customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Clear canvas
+            customerCtx.setFill(Color.BLUE);
+            customerCtx.fillOval(customerCords[0], customerCords[1], CUSTOMER_SIZE, CUSTOMER_SIZE); // Draw moving circle
+        });
+
+
+        // update cords
+        customerCords = calculatePath(customerCords, customerDestination, getAnimationSteps() - step);
+        step++;
+    }
+
+    public int[] calculatePath(int[] origin, int[] destination, int steps) {
+        int midX = destination[0] - CUSTOMER_SIZE / 2;
+        int midY = destination[1] - CUSTOMER_SIZE / 2;
+        // Calculate delta x and y
+        int dx = midX - origin[0];
+        int dy = midY - origin[1];
+        int x = dx / steps;
+        int y = dy / steps;
+        return new int[]{x, y};
+    }
+
+    public int getAnimationSteps() {
+        return (int) (simDelayValue / UPDATE_RATE_MS);
     }
 
     @Override
