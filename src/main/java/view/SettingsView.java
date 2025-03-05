@@ -1,12 +1,20 @@
 package view;
 
+import controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import simu.framework.Trace;
 
 public class SettingsView extends Application {
+
+    @Override
+    public void init() {
+        Trace.setTraceLevel(Trace.Level.INFO);
+
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
