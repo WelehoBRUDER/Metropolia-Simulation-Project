@@ -24,6 +24,10 @@ public class SimController implements ISettingsControllerForM {
     private int wristbandChanceValue = 0;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
+    private int entranceID = -100;
+    private int restaurantID = 100;
+    private int exitID = -101;
+
 
     @FXML
     private Canvas servicePointCanvas;
@@ -37,6 +41,7 @@ public class SimController implements ISettingsControllerForM {
     private ArrayList<int[]> tickets = new ArrayList<>();
     private ArrayList<int[]> rides = new ArrayList<>();
     private int[] restaurant;
+    private int[] exit;
 
     // Canvas drawing parameters
     private final int CANVAS_WIDTH = 800;
@@ -135,6 +140,10 @@ public class SimController implements ISettingsControllerForM {
         restaurant = new int[]{x, y};
     }
 
+    public void setExit(int x, int y) {
+        exit = new int[]{x, y};
+    }
+
     public int[] getTicketBooth(int id) {
         return tickets.get(id);
     }
@@ -165,6 +174,7 @@ public class SimController implements ISettingsControllerForM {
         }
 
         setRestaurant(xOffset + calcCenterX(RESTAURANT_AREA_SIZE, SERVICE_POINT_SIZE) + RIDE_AREA_SIZE, calcCenterY(SERVICE_POINT_SIZE));
+        setExit(CANVAS_WIDTH, calcCenterY(SERVICE_POINT_SIZE));
     }
 
     public void drawAllServicePoints() {
@@ -190,20 +200,9 @@ public class SimController implements ISettingsControllerForM {
     public void moveCustomerAnimation() {
         customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         int steps = (int) simDelayValue / UPDATE_RATE_MS;
-        double[] origin = new double[]{30, 75};
-        int[] destination = new int[]{560, 110};
-        customerCords = origin;
-        customerDestination = destination;
         step = 0;
-//        ScheduledFuture<?> scheduleAtFixedRate(e -> (),0, )
-//        for (int i = 0; i < steps; i++) {
-//             int[] currentStep = calculatePath(origin, destination, steps - i);
-//            origin[0] += currentStep[0];
-//            origin[1] += currentStep[1];
-//            System.out.println(origin[0] + " " + origin[1] + " " + destination[0] + " " + destination[1]);
-//        }
         executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(this::renderCustomer, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS);
+        executorService.scheduleAtFixedRate(this::renderCustomers, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -212,11 +211,27 @@ public class SimController implements ISettingsControllerForM {
         customerDestination.clear();
     }
 
+    public int[] getLocation(int id) {
+        if (id == entranceID) {
+            return entrance;
+        } else if (id == restaurantID) {
+            return restaurant;
+        } else if (id == exitID) {
+            return exit;
+        } else if (id < 0) {
+            return getTicketBooth(Math.abs(id));
+        } else {
+            return getRide(id);
+        }
+    }
+
     @Override
     public void addCustomerToAnimation(int from, int to) {
         // extract details for this
-        customerCords.add(new double[]{from});
-        customerDestination.add(new int[]{to});
+        double x = getLocation(from)[0];
+        double y = getLocation(from)[1];
+        customerCords.add(new double[]{x, y});
+        customerDestination.add(getLocation(to));
     }
 
     public void stopAnimation() {
@@ -225,26 +240,30 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
-    public void renderCustomer() {
+    public void renderCustomers() {
         if (step >= getAnimationSteps()) {
             stopAnimation();
         }
         Platform.runLater(() -> {
             customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Clear canvas
-            customerCtx.setFill(Color.BLUE);
-            customerCtx.fillOval(getCustomerCords()[0], getCustomerCords()[1], CUSTOMER_SIZE, CUSTOMER_SIZE); // Draw moving circle
+            for (int i = 0; i < customerCords.size(); i++) {
+                customerCtx.setFill(Color.BLUE);
+                customerCtx.fillOval(getCustomerCords(i)[0], getCustomerCords(i)[1], CUSTOMER_SIZE, CUSTOMER_SIZE); // Draw moving circle
+            }
         });
 
 
         // update cords
-        double[] nextStep = calculatePath(customerCords, customerDestination, getAnimationSteps());
-        customerCords[0] += nextStep[0];
-        customerCords[1] += nextStep[1];
+        for (int i = 0; i < customerCords.size(); i++) {
+            double[] nextStep = calculatePath(customerCords.get(i), customerDestination.get(i), getAnimationSteps());
+            customerCords.get(i)[0] += nextStep[0];
+            customerCords.get(i)[1] += nextStep[1];
+        }
         step++;
     }
 
-    public int[] getCustomerCords() {
-        return new int[]{(int) customerCords[0], (int) customerCords[1]};
+    public int[] getCustomerCords(int id) {
+        return new int[]{(int) customerCords.get(id)[0], (int) customerCords.get(id)[1]};
     }
 
     public double[] calculatePath(double[] origin, int[] destination, int steps) {
