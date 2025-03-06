@@ -45,6 +45,7 @@ public class SimController implements ISettingsControllerForM {
 
     // Customer numbers
     private ArrayList<ArrayList<Integer>> customerNumbers = new ArrayList<>();
+    private int[] defaults = new int[]{0, -1, -1, -20, 0};
 
     // Cords
     private int[] entrance;
@@ -63,7 +64,7 @@ public class SimController implements ISettingsControllerForM {
     private final int ENTRANCE_AREA_SIZE = 50;
     private final int RESTAURANT_AREA_SIZE = 200;
     private final int FONT_SIZE = SERVICE_POINT_SIZE / 2;
-    private final int UPDATE_RATE_MS = 10;
+    private final int UPDATE_RATE_MS = 5;
 
     // Canvas style definitions
     private final Color ENTRANCE_COLOR = Color.GREEN;
@@ -91,19 +92,19 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public void setSimulationParameters(int simTime, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, int wristbandChance, ArrayList<int[]> rideProperties) {
-        simTimeValue = simTime;
-        ticketBoothCountValue = ticketBoothCount;
-        rideCountValue = rideCount;
-        restaurantCapValue = restaurantCap;
-        simDelayValue = simDelay;
-        wristbandChanceValue = wristbandChance;
+        this.simTimeValue = simTime;
+        this.ticketBoothCountValue = ticketBoothCount;
+        this.rideCountValue = rideCount;
+        this.restaurantCapValue = restaurantCap;
+        this.simDelayValue = simDelay;
+        this.wristbandChanceValue = wristbandChance;
         this.rideProperties = rideProperties;
-        serviceCtx = servicePointCanvas.getGraphicsContext2D();
-        customerCtx = customerCanvas.getGraphicsContext2D();
-        customerNumbers.clear();
-        for (int i = 0; i < servicePoints; i++) {
-            customerNumbers.add(new ArrayList<>());
-            customerNumbers.get(i).add(0);
+        this.serviceCtx = servicePointCanvas.getGraphicsContext2D();
+        this.customerCtx = customerCanvas.getGraphicsContext2D();
+        this.customerNumbers.clear();
+        this.defaults[3] = this.restaurantCapValue * -1;
+        for (int i = 0; i < this.servicePoints; i++) {
+            this.customerNumbers.add(new ArrayList<>());
         }
     }
 
@@ -111,10 +112,10 @@ public class SimController implements ISettingsControllerForM {
         clearScreen();
         drawAllServicePoints();
         System.out.println("Starting simulation");
-        engine = new OwnEngine(this, rideCountValue, ticketBoothCountValue, rideProperties, restaurantCapValue, wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
-        engine.setSimulationTime(simTimeValue);
-        engine.setDelay(simDelayValue);
-        ((Thread) engine).start();
+        this.engine = new OwnEngine(this, this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
+        this.engine.setSimulationTime(this.simTimeValue);
+        this.engine.setDelay(this.simDelayValue);
+        ((Thread) this.engine).start();
     }
 
     public void stopSim() {
@@ -128,29 +129,36 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public int calcCenterY(int offset) {
-        return CANVAS_HEIGHT / 2 - offset / 2;
+        return this.CANVAS_HEIGHT / 2 - offset / 2;
     }
 
     public void clearScreen() {
-        serviceCtx.clearRect(0, 0, servicePointCanvas.getWidth(), servicePointCanvas.getHeight());
-        customerCtx.clearRect(0, 0, customerCanvas.getWidth(), customerCanvas.getHeight());
+        this.serviceCtx.clearRect(0, 0, this.servicePointCanvas.getWidth(), this.servicePointCanvas.getHeight());
+        this.customerCtx.clearRect(0, 0, this.customerCanvas.getWidth(), this.customerCanvas.getHeight());
     }
 
     public void drawServicePoint(int x, int y, Color color) {
-        serviceCtx.setFill(color);
-        serviceCtx.fillRect(x, y, SERVICE_POINT_SIZE, SERVICE_POINT_SIZE);
-        drawServicePointNumber(x, y, 0);
+        this.serviceCtx.setFill(color);
+        this.serviceCtx.fillRect(x, y, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        drawServicePointNumber(x, y, 0, 0);
     }
 
-    public void drawServicePointNumber(int x, int y, int number) {
-        if (number < 0) {
+    public void drawServicePointNumber(int x, int y, int number, int defaultValue) {
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
+        this.serviceCtx.setTextAlign(TextAlignment.CENTER);
+        if (defaultValue == 0 && number >= 0) {
+            this.serviceCtx.clearRect(x, y - this.FONT_SIZE - 2, this.SERVICE_POINT_SIZE * 1.3, this.FONT_SIZE + 2);
+            this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
             return;
         }
-        serviceCtx.setFill(Color.BLACK);
-        serviceCtx.setFont(new Font("Arial", FONT_SIZE));
-        serviceCtx.setTextAlign(TextAlignment.CENTER);
-        serviceCtx.clearRect(x, y - FONT_SIZE - 2, SERVICE_POINT_SIZE, FONT_SIZE + 2);
-        serviceCtx.fillText(String.valueOf(number), x + calcCenterX(SERVICE_POINT_SIZE, 0), y - (double) FONT_SIZE / 2);
+        else if (defaultValue == 0 && number < 0) {
+            return;
+        }
+        int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
+        int waiting = Math.max(number, 0);
+        this.serviceCtx.clearRect(x, y - this.FONT_SIZE - 2, this.SERVICE_POINT_SIZE * 1.3, this.FONT_SIZE + 2);
+        this.serviceCtx.fillText(waiting + "(" + beingServed + ")", x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
     }
 
 
@@ -175,87 +183,87 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public int[] getTicketBooth(int id) {
-        if (id >= ticketBoothCountValue) {
-            return tickets.get(ticketBoothCountValue - 1);
+        if (id >= this.ticketBoothCountValue) {
+            return this.tickets.get(this.ticketBoothCountValue - 1);
         }
-        return tickets.get(id);
+        return this.tickets.get(id);
     }
 
     public int[] getRide(int id) {
-        if (id >= rideCountValue) {
-            return rides.get(rideCountValue - 1);
+        if (id >= this.rideCountValue) {
+            return this.rides.get(this.rideCountValue - 1);
         }
-        return rides.get(id);
+        return this.rides.get(id);
     }
 
     public void calcServicePointCords() {
-        rides.clear();
-        tickets.clear();
+        this.rides.clear();
+        this.tickets.clear();
 
-        setEntrance(ENTRANCE_AREA_SIZE / 2, calcCenterY(SERVICE_POINT_SIZE));
+        setEntrance(this.ENTRANCE_AREA_SIZE / 2, calcCenterY(this.SERVICE_POINT_SIZE));
 
-        int area = ticketBoothCountValue * SERVICE_POINT_SIZE * 2;
+        int area = this.ticketBoothCountValue * this.SERVICE_POINT_SIZE * 2;
         int yStart = calcCenterY(area);
 
-        for (int i = 0; i < ticketBoothCountValue; i++) {
-            int x = calcCenterX(TICKET_AREA_SIZE + ENTRANCE_AREA_SIZE, SERVICE_POINT_SIZE);
-            addToTickets(x, yStart + (i * SERVICE_POINT_SIZE * 2));
+        for (int i = 0; i < this.ticketBoothCountValue; i++) {
+            int x = calcCenterX(this.TICKET_AREA_SIZE + this.ENTRANCE_AREA_SIZE, this.SERVICE_POINT_SIZE);
+            addToTickets(x, yStart + (i * this.SERVICE_POINT_SIZE * 2));
         }
 
-        int[][] cords = circleOfElements(RIDE_AREA_SIZE, SERVICE_POINT_SIZE, rideCountValue);
-        int xOffset = TICKET_AREA_SIZE + ENTRANCE_AREA_SIZE + RIDE_AREA_SIZE;
-        int yOffset = CANVAS_HEIGHT / 2 - RIDE_AREA_SIZE;
-        for (int i = 0; i < rideCountValue; i++) {
-            addToRides(xOffset + cords[i][0], cords[i][1] + RIDE_AREA_SIZE + yOffset);
+        int[][] cords = circleOfElements(this.RIDE_AREA_SIZE, this.SERVICE_POINT_SIZE, this.rideCountValue);
+        int xOffset = this.TICKET_AREA_SIZE + this.ENTRANCE_AREA_SIZE + this.RIDE_AREA_SIZE;
+        int yOffset = this.CANVAS_HEIGHT / 2 - this.RIDE_AREA_SIZE;
+        for (int i = 0; i < this.rideCountValue; i++) {
+            addToRides(xOffset + cords[i][0], cords[i][1] + this.RIDE_AREA_SIZE + yOffset);
         }
 
-        setRestaurant(xOffset + calcCenterX(RESTAURANT_AREA_SIZE, SERVICE_POINT_SIZE) + RIDE_AREA_SIZE, calcCenterY(SERVICE_POINT_SIZE));
-        setExit(CANVAS_WIDTH - SERVICE_POINT_SIZE, calcCenterY(0));
+        setRestaurant(xOffset + calcCenterX(this.RESTAURANT_AREA_SIZE, this.SERVICE_POINT_SIZE) + this.RIDE_AREA_SIZE, calcCenterY(this.SERVICE_POINT_SIZE));
+        setExit(this.CANVAS_WIDTH - this.SERVICE_POINT_SIZE, calcCenterY(0));
     }
 
     public void drawAllServicePoints() {
         calcServicePointCords();
 
         // Entrance
-        drawServicePoint(entrance[0], entrance[1], ENTRANCE_COLOR);
+        drawServicePoint(this.entrance[0], this.entrance[1], this.ENTRANCE_COLOR);
 
         // Ticket booths
-        for (int i = 0; i < ticketBoothCountValue; i++) {
+        for (int i = 0; i < this.ticketBoothCountValue; i++) {
             int[] cords = getTicketBooth(i);
-            drawServicePoint(cords[0], cords[1], TICKET_COLOR);
+            drawServicePoint(cords[0], cords[1], this.TICKET_COLOR);
         }
-        for (int i = 0; i < rideCountValue; i++) {
+        for (int i = 0; i < this.rideCountValue; i++) {
             int[] cords = getRide(i);
-            drawServicePoint(cords[0], cords[1], RIDE_COLOR);
+            drawServicePoint(cords[0], cords[1], this.RIDE_COLOR);
         }
         // Restaurant
-        drawServicePoint(restaurant[0], restaurant[1], RESTAURANT_COLOR);
+        drawServicePoint(this.restaurant[0], this.restaurant[1], this.RESTAURANT_COLOR);
     }
 
     @Override
     public void moveCustomerAnimation() {
         stopAnimation();
-        customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        step = 0;
-        executorService = Executors.newSingleThreadScheduledExecutor();
-        future = executorService.scheduleAtFixedRate(
-                this::renderCustomers, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS
+        this.customerCtx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
+        this.step = 0;
+        this.executorService = Executors.newSingleThreadScheduledExecutor();
+        this.future = this.executorService.scheduleAtFixedRate(
+                this::renderCustomers, 0, this.UPDATE_RATE_MS, TimeUnit.MILLISECONDS
         );
     }
 
     @Override
     public void newAnimation() {
-        customerCords.clear();
-        customerDestination.clear();
+        this.customerCords.clear();
+        this.customerDestination.clear();
     }
 
     public int[] getLocation(int id) {
-        if (id == entranceID) {
-            return entrance;
-        } else if (id == restaurantID) {
-            return restaurant;
-        } else if (id == exitID) {
-            return exit;
+        if (id == this.entranceID) {
+            return this.entrance;
+        } else if (id == this.restaurantID) {
+            return this.restaurant;
+        } else if (id == this.exitID) {
+            return this.exit;
         } else if (id < 0) {
             return getTicketBooth(Math.abs(id) - 1);
         } else {
@@ -264,11 +272,11 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public int[] getIndex(int id) {
-        if (id == entranceID) {
+        if (id == this.entranceID) {
             return new int[]{0, 0};
-        } else if (id == restaurantID) {
+        } else if (id == this.restaurantID) {
             return new int[]{3, 0};
-        } else if (id == exitID) {
+        } else if (id == this.exitID) {
             return new int[]{4, 0};
         } else if (id < 0) {
             return new int[]{1, Math.abs(id)};
@@ -289,71 +297,73 @@ public class SimController implements ISettingsControllerForM {
         // s = step
         double sx = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[0];
         double sy = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[1];
-        customerCords.add(new double[]{x, y, sx, sy});
-        customerDestination.add(getLocation(to));
-        drawServicePointNumber((int) x, (int) y, customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]));
-        drawServicePointNumber(toX, toY, customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]));
+        this.customerCords.add(new double[]{x, y, sx, sy});
+        this.customerDestination.add(getLocation(to));
+        int defaultFrom = this.defaults[getIndex(from)[0]];
+        int defaultTo = this.defaults[getIndex(to)[0]];
+        drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
+        drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
     }
 
     public void changeCustomerNumber(int id, int amount) {
         int[] index = getIndex(id);
         int row = index[0];
         int col = index[1];
-        if (col >= customerNumbers.get(row).size()) {
-            while (col >= customerNumbers.get(row).size()) {
-                customerNumbers.get(row).add(0);
+        int defaultValue = this.defaults[row];
+        if (col >= this.customerNumbers.get(row).size()) {
+            while (col >= this.customerNumbers.get(row).size()) {
+                this.customerNumbers.get(row).add(defaultValue);
             }
         }
-        customerNumbers.get(row).set(col, customerNumbers.get(row).get(col) + amount);
+        this.customerNumbers.get(row).set(col, this.customerNumbers.get(row).get(col) + amount);
     }
 
     public void stopAnimation() {
-        if (future != null) {
-            future.cancel(true); // Cancel the scheduled task
+        if (this.future != null) {
+            this.future.cancel(true); // Cancel the scheduled task
         }
-        if (executorService != null) {
-            executorService.shutdownNow();
+        if (this.executorService != null) {
+            this.executorService.shutdownNow();
             try {
-                if (!executorService.awaitTermination(simDelayValue, TimeUnit.MILLISECONDS)) {
-                    executorService.shutdownNow();
+                if (!this.executorService.awaitTermination(this.simDelayValue, TimeUnit.MILLISECONDS)) {
+                    this.executorService.shutdownNow();
                 }
             } catch (InterruptedException e) {
-                executorService.shutdownNow();
+                this.executorService.shutdownNow();
             }
         }
     }
 
     public void renderCustomers() {
-        if (step >= getAnimationSteps()) {
+        if (this.step >= getAnimationSteps()) {
             stopAnimation();
             return;
         }
 
         Platform.runLater(() -> {
-
-            customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Clear canvas
+            this.customerCtx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT); // Clear canvas
             for (int i = 0; i < customerCords.size(); i++) {
-                customerCtx.setFill(Color.BLUE);
-                customerCtx.fillOval(getCustomerCords(i)[0], getCustomerCords(i)[1], CUSTOMER_SIZE, CUSTOMER_SIZE); // Draw moving circle
+                this.customerCtx.setFill(Color.BLUE);
+                this.customerCtx.fillOval(getCustomerCords(i)[0], getCustomerCords(i)[1], this.CUSTOMER_SIZE, this.CUSTOMER_SIZE); // Draw moving circle
             }
         });
 
 
         // update cords
-        for (int i = 0; i < customerCords.size(); i++) {
-            customerCords.get(i)[0] += customerCords.get(i)[2];
-            customerCords.get(i)[1] += customerCords.get(i)[3];
+        for (int i = 0; i < this.customerCords.size(); i++) {
+            this.customerCords.get(i)[0] += this.customerCords.get(i)[2];
+            this.customerCords.get(i)[1] += this.customerCords.get(i)[3];
         }
-        step++;
+        this.step++;
     }
 
     public int[] getCustomerCords(int id) {
-        return new int[]{(int) customerCords.get(id)[0], (int) customerCords.get(id)[1]};
+        return new int[]{(int) this.customerCords.get(id)[0], (int) this.customerCords.get(id)[1]};
     }
 
     public double[] calculatePath(double[] origin, int[] destination, int steps) {
-        int midX = destination[0] - CUSTOMER_SIZE / 2;
-        int midY = destination[1] - CUSTOMER_SIZE / 2;
+        int midX = destination[0] - this.CUSTOMER_SIZE / 2;
+        int midY = destination[1] - this.CUSTOMER_SIZE / 2;
         // Calculate delta x and y
         double dx = midX - origin[0];
         double dy = midY - origin[1];
@@ -363,7 +373,7 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public int getAnimationSteps() {
-        return (int) (simDelayValue / UPDATE_RATE_MS) + 1;
+        return (int) (this.simDelayValue / this.UPDATE_RATE_MS) + 1;
     }
 
     @Override
