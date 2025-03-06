@@ -73,6 +73,7 @@ public class SimController implements ISettingsControllerForM {
 
     // Animation executor
     private ScheduledExecutorService executorService;
+    private ScheduledFuture<?> future;
 
     // Animation parameters
     private ArrayList<double[]> customerCords = new ArrayList<>();
@@ -117,6 +118,7 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public void stopSim() {
+        stopAnimation();
         ((Thread) engine).stop();
         ((Thread) engine).interrupt();
     }
@@ -232,11 +234,13 @@ public class SimController implements ISettingsControllerForM {
 
     @Override
     public void moveCustomerAnimation() {
+        stopAnimation();
         customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        int steps = (int) simDelayValue / UPDATE_RATE_MS;
         step = 0;
         executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(this::renderCustomers, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS);
+        future = executorService.scheduleAtFixedRate(
+                this::renderCustomers, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS
+        );
     }
 
     @Override
@@ -282,7 +286,10 @@ public class SimController implements ISettingsControllerForM {
         int toY = getLocation(to)[1];
         changeCustomerNumber(from, -1);
         changeCustomerNumber(to, 1);
-        customerCords.add(new double[]{x, y});
+        // s = step
+        double sx = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[0];
+        double sy = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[1];
+        customerCords.add(new double[]{x, y, sx, sy});
         customerDestination.add(getLocation(to));
         drawServicePointNumber((int) x, (int) y, customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]));
         drawServicePointNumber(toX, toY, customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]));
@@ -297,21 +304,33 @@ public class SimController implements ISettingsControllerForM {
                 customerNumbers.get(row).add(0);
             }
         }
-        System.out.println("Customer number: " + customerNumbers.get(row).get(col));
         customerNumbers.get(row).set(col, customerNumbers.get(row).get(col) + amount);
     }
 
     public void stopAnimation() {
+        if (future != null) {
+            future.cancel(true); // Cancel the scheduled task
+        }
         if (executorService != null) {
-            executorService.shutdown();
+            executorService.shutdownNow();
+            try {
+                if (!executorService.awaitTermination(simDelayValue, TimeUnit.MILLISECONDS)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                executorService.shutdownNow();
+            }
         }
     }
 
     public void renderCustomers() {
         if (step >= getAnimationSteps()) {
             stopAnimation();
+            return;
         }
+
         Platform.runLater(() -> {
+
             customerCtx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); // Clear canvas
             for (int i = 0; i < customerCords.size(); i++) {
                 customerCtx.setFill(Color.BLUE);
@@ -322,9 +341,8 @@ public class SimController implements ISettingsControllerForM {
 
         // update cords
         for (int i = 0; i < customerCords.size(); i++) {
-            double[] nextStep = calculatePath(customerCords.get(i), customerDestination.get(i), getAnimationSteps());
-            customerCords.get(i)[0] += nextStep[0];
-            customerCords.get(i)[1] += nextStep[1];
+            customerCords.get(i)[0] += customerCords.get(i)[2];
+            customerCords.get(i)[1] += customerCords.get(i)[3];
         }
         step++;
     }
@@ -345,12 +363,12 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public int getAnimationSteps() {
-        return (int) (simDelayValue / UPDATE_RATE_MS);
+        return (int) (simDelayValue / UPDATE_RATE_MS) + 1;
     }
 
     @Override
     public void updateEventTime(double time) {
-        this.time.setText("Total time: " + time);
+        //this.time.setText("Total time: " + time);
     }
 
     @Override
