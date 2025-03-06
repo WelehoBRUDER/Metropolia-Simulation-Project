@@ -4,7 +4,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -23,7 +25,7 @@ public class SimController implements ISettingsControllerForM {
     private int rideCountValue = 0;
     private int restaurantCapValue = 0;
     private long simDelayValue = 0;
-    private int wristbandChanceValue = 0;
+    private double wristbandChanceValue = 0;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
     private int servicePoints = 5;
 
@@ -31,9 +33,17 @@ public class SimController implements ISettingsControllerForM {
     private int restaurantID = 100;
     private int exitID = -101;
 
+    private boolean running = false;
+
     // UI Elements
     @FXML
     private Label time;
+    @FXML
+    private Button simPause;
+    @FXML
+    private Label currentDelay;
+    @FXML
+    private Label wristbandChanceLabel;
 
     // Canvas elements
     @FXML
@@ -91,7 +101,7 @@ public class SimController implements ISettingsControllerForM {
         return coordinates;
     }
 
-    public void setSimulationParameters(int simTime, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, int wristbandChance, ArrayList<int[]> rideProperties) {
+    public void setSimulationParameters(int simTime, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties) {
         this.simTimeValue = simTime;
         this.ticketBoothCountValue = ticketBoothCount;
         this.rideCountValue = rideCount;
@@ -116,12 +126,40 @@ public class SimController implements ISettingsControllerForM {
         this.engine.setSimulationTime(this.simTimeValue);
         this.engine.setDelay(this.simDelayValue);
         ((Thread) this.engine).start();
+        running = true;
     }
 
     public void stopSim() {
         stopAnimation();
-        ((Thread) engine).stop();
-        ((Thread) engine).interrupt();
+        ((Thread) this.engine).stop();
+        ((Thread) this.engine).interrupt();
+    }
+
+    public void toggleSimRunning() throws Exception {
+        if (this.running) {
+            pauseSim();
+
+        } else {
+            resumeSim();
+
+        }
+    }
+
+    public void pauseSim() throws Exception {
+        stopAnimation();
+        running = false;
+        changePauseButtonText("▶");
+        ((Thread) this.engine).suspend();
+    }
+
+    public void resumeSim() {
+        running = true;
+        changePauseButtonText("⏸");
+        ((Thread) this.engine).resume();
+    }
+
+    public void changePauseButtonText(String text) {
+        this.simPause.setText(text);
     }
 
     public int calcCenterX(int width, int offset) {
@@ -373,6 +411,56 @@ public class SimController implements ISettingsControllerForM {
 
     public int getAnimationSteps() {
         return (int) (this.simDelayValue / this.UPDATE_RATE_MS) + 1;
+    }
+
+    public void changeDelay(MouseEvent e, long type) {
+        if (e.isShiftDown() && !e.isControlDown()) {
+            simDelayValue += 5 * type;
+        } else if (e.isControlDown() && !e.isShiftDown()) {
+            simDelayValue += 25 * type;
+        } else if (e.isControlDown() && e.isShiftDown()) {
+            simDelayValue += 100 * type;
+        } else {
+            simDelayValue += type;
+        }
+        if (this.simDelayValue < 1) {
+            this.simDelayValue = 1;
+        }
+        this.engine.setDelay(this.simDelayValue);
+        this.currentDelay.setText("Current delay: " + this.simDelayValue + "ms");
+    }
+
+    public void increaseDelay(MouseEvent e) {
+        changeDelay(e, 1);
+    }
+
+    public void decreaseDelay(MouseEvent e) {
+        changeDelay(e, -1);
+    }
+
+    public void changeWristbandChance(MouseEvent e, int type) {
+        if (e.isShiftDown() && !e.isControlDown()) {
+            this.wristbandChanceValue += type;
+        } else if (e.isControlDown()) {
+            this.wristbandChanceValue += 5 * type;
+        } else {
+            this.wristbandChanceValue += 0.1 * type;
+        }
+        if (this.wristbandChanceValue < 0) {
+            this.wristbandChanceValue = 0;
+        } else if (this.wristbandChanceValue > 100) {
+            this.wristbandChanceValue = 100;
+        }
+       this.engine.setWristbandChance(this.wristbandChanceValue);
+        this.wristbandChanceLabel.setText(String.format("%.1f", this.wristbandChanceValue) + "%");
+    }
+
+    public void increaseWristbandChance(MouseEvent e) {
+        changeWristbandChance(e, 1);
+    }
+
+    public void decreaseWristbandChance(MouseEvent e) {
+        changeWristbandChance(e, -1);
     }
 
     @Override

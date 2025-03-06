@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -16,7 +20,45 @@
       </StackPane>
       <HBox prefHeight="100.0" prefWidth="200.0" styleClass="footer">
          <children>
-            <Label fx:id="time" text="Total time: 0" />
+            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="controls">
+               <children>
+                  <Label fx:id="time" text="Total time: 0">
+                     <padding>
+                        <Insets left="10.0" top="10.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" styleClass="controls">
+               <children>
+                  <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="400.0">
+                     <children>
+                        <Label fx:id="currentDelay" prefWidth="135.0" text="Current Delay: 100ms" />
+                        <Button mnemonicParsing="false" onMouseClicked="#decreaseDelay" text="▼" />
+                        <Button fx:id="simPause" mnemonicParsing="false" onAction="#toggleSimRunning" styleClass="pause-button" text="⏸" textOverrun="CLIP">
+                           <tooltip>
+                              <Tooltip text="Pause/Resume execution of the simulation" />
+                           </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onMouseClicked="#increaseDelay" text="▲" />
+                     </children>
+                     <padding>
+                        <Insets right="10.0" top="10.0" />
+                     </padding>
+                  </FlowPane>
+                  <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="400.0">
+                     <children>
+                        <Label fx:id="currentDelay1" prefWidth="125.0" text="Wristband chance" />
+                        <Button mnemonicParsing="false" onMouseClicked="#decreaseWristbandChance" text="▼" />
+                        <Label fx:id="wristbandChanceLabel" alignment="CENTER" prefWidth="50.0" text="30%" />
+                        <Button mnemonicParsing="false" onMouseClicked="#increaseWristbandChance" text="▲" />
+                     </children>
+                     <padding>
+                        <Insets right="10.0" top="10.0" />
+                     </padding>
+                  </FlowPane>
+               </children>
+            </VBox>
          </children>
       </HBox>
    </children>

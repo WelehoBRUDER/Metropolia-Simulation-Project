@@ -6,3 +6,14 @@
 .footer {
     -fx-background-color: silver;
 }
+
+.pause-button {
+    -fx-pref-width: 40;
+    -fx-pref-height: 25;
+    -fx-min-width: 40;
+    -fx-min-height: 25;
+}
+
+.controls {
+    -fx-pref-width: 400;
+}

@@ -43,7 +43,7 @@ public class SettingsController {
     private int rideCountValue = 9;
     private int restaurantCapValue = 20;
     private long simDelayValue = 100;
-    private int wristbandChanceValue = 30;
+    private double wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
     private final int maxTicketBoothCount = 9;
@@ -292,11 +292,11 @@ public class SettingsController {
 
     public void incrementWristbandChance(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
-            wristbandChanceValue += 5;
-        } else if (e.isControlDown()) {
-            wristbandChanceValue += 25;
-        } else {
             wristbandChanceValue++;
+        } else if (e.isControlDown()) {
+            wristbandChanceValue += 5;
+        } else {
+            wristbandChanceValue += 0.1;
         }
         wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setWristbandChance();
@@ -304,11 +304,11 @@ public class SettingsController {
 
     public void decrementWristbandChance(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
-            wristbandChanceValue -= 5;
-        } else if (e.isControlDown()) {
-            wristbandChanceValue -= 25;
-        } else {
             wristbandChanceValue--;
+        } else if (e.isControlDown()) {
+            wristbandChanceValue -= 5;
+        } else {
+            wristbandChanceValue -= 0.1;
         }
         wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setWristbandChance();
@@ -426,6 +426,6 @@ public class SettingsController {
 
 
     public long getWristbandChance() {
-        return wristbandChanceValue;
+        return (long) wristbandChanceValue;
     }
 }
