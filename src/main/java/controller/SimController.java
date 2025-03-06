@@ -23,6 +23,7 @@ public class SimController implements ISettingsControllerForM {
     private long simDelayValue = 0;
     private int wristbandChanceValue = 0;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
+    private int servicePoints = 5;
 
     private int entranceID = -100;
     private int restaurantID = 100;
@@ -35,6 +36,9 @@ public class SimController implements ISettingsControllerForM {
     private Canvas customerCanvas;
     private GraphicsContext serviceCtx;
     private GraphicsContext customerCtx;
+
+    // Customer numbers
+    private ArrayList<ArrayList<Integer>> customerNumbers = new ArrayList<>();
 
     // Cords
     private int[] entrance;
@@ -90,6 +94,11 @@ public class SimController implements ISettingsControllerForM {
         this.rideProperties = rideProperties;
         serviceCtx = servicePointCanvas.getGraphicsContext2D();
         customerCtx = customerCanvas.getGraphicsContext2D();
+        customerNumbers.clear();
+        for (int i = 0; i < servicePoints; i++) {
+            customerNumbers.add(new ArrayList<>());
+            customerNumbers.get(i).add(0);
+        }
     }
 
     public void startSim() {
@@ -117,10 +126,18 @@ public class SimController implements ISettingsControllerForM {
     public void drawServicePoint(int x, int y, Color color) {
         serviceCtx.setFill(color);
         serviceCtx.fillRect(x, y, SERVICE_POINT_SIZE, SERVICE_POINT_SIZE);
+        drawServicePointNumber(x, y, 0);
+    }
+
+    public void drawServicePointNumber(int x, int y, int number) {
+        if (number < 0) {
+            return;
+        }
         serviceCtx.setFill(Color.BLACK);
         serviceCtx.setFont(new Font("Arial", FONT_SIZE));
         serviceCtx.setTextAlign(TextAlignment.CENTER);
-        serviceCtx.fillText("1", x + calcCenterX(SERVICE_POINT_SIZE, 0), y - (double) FONT_SIZE / 2);
+        serviceCtx.clearRect(x, y - FONT_SIZE - 2, SERVICE_POINT_SIZE, FONT_SIZE + 2);
+        serviceCtx.fillText(String.valueOf(number), x + calcCenterX(SERVICE_POINT_SIZE, 0), y - (double) FONT_SIZE / 2);
     }
 
 
@@ -231,13 +248,46 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
+    public int[] getIndex(int id) {
+        if (id == entranceID) {
+            return new int[]{0, 0};
+        } else if (id == restaurantID) {
+            return new int[]{3, 0};
+        } else if (id == exitID) {
+            return new int[]{4, 0};
+        } else if (id < 0) {
+            return new int[]{1, Math.abs(id)};
+        } else {
+            return new int[]{2, id};
+        }
+    }
+
     @Override
     public void addCustomerToAnimation(int from, int to) {
         // extract details for this
         double x = getLocation(from)[0];
         double y = getLocation(from)[1];
+        int toX = getLocation(to)[0];
+        int toY = getLocation(to)[1];
+        changeCustomerNumber(from, -1);
+        changeCustomerNumber(to, 1);
         customerCords.add(new double[]{x, y});
         customerDestination.add(getLocation(to));
+        drawServicePointNumber((int) x, (int) y, customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]));
+        drawServicePointNumber(toX, toY, customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]));
+    }
+
+    public void changeCustomerNumber(int id, int amount) {
+        int[] index = getIndex(id);
+        int row = index[0];
+        int col = index[1];
+        if (col >= customerNumbers.get(row).size()) {
+            while (col >= customerNumbers.get(row).size()) {
+                customerNumbers.get(row).add(0);
+            }
+        }
+        System.out.println("Customer number: " + customerNumbers.get(row).get(col));
+        customerNumbers.get(row).set(col, customerNumbers.get(row).get(col) + amount);
     }
 
     public void stopAnimation() {
