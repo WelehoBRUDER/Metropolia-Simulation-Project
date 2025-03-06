@@ -197,7 +197,7 @@ public class SimController implements ISettingsControllerForM {
         }
 
         setRestaurant(xOffset + calcCenterX(RESTAURANT_AREA_SIZE, SERVICE_POINT_SIZE) + RIDE_AREA_SIZE, calcCenterY(SERVICE_POINT_SIZE));
-        setExit(CANVAS_WIDTH, calcCenterY(SERVICE_POINT_SIZE));
+        setExit(CANVAS_WIDTH - SERVICE_POINT_SIZE, calcCenterY(0));
     }
 
     public void drawAllServicePoints() {
