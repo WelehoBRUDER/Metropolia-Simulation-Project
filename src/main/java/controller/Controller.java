@@ -83,6 +83,11 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 
 	}
 
+	@Override
+	public void updateEventTime(double time) {
+
+	}
+
 	public void setWristbandChance(double amount) {
 		((OwnEngine)engine).setWristbandChance(amount);
 	}

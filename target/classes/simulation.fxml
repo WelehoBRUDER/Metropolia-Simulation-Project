@@ -16,7 +16,7 @@
       </StackPane>
       <HBox prefHeight="100.0" prefWidth="200.0" styleClass="footer">
          <children>
-            <Label text="Total time: 90.73" />
+            <Label fx:id="time" text="Total time: 0" />
          </children>
       </HBox>
    </children>

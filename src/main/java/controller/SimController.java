@@ -4,9 +4,11 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import simu.framework.Clock;
 import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
@@ -29,7 +31,11 @@ public class SimController implements ISettingsControllerForM {
     private int restaurantID = 100;
     private int exitID = -101;
 
+    // UI Elements
+    @FXML
+    private Label time;
 
+    // Canvas elements
     @FXML
     private Canvas servicePointCanvas;
     @FXML
@@ -68,8 +74,7 @@ public class SimController implements ISettingsControllerForM {
     // Animation executor
     private ScheduledExecutorService executorService;
 
-    // DEBUG PARAMS!!!
-
+    // Animation parameters
     private ArrayList<double[]> customerCords = new ArrayList<>();
     private ArrayList<int[]> customerDestination = new ArrayList<>();
     private int step = 0;
@@ -341,6 +346,11 @@ public class SimController implements ISettingsControllerForM {
 
     public int getAnimationSteps() {
         return (int) (simDelayValue / UPDATE_RATE_MS);
+    }
+
+    @Override
+    public void updateEventTime(double time) {
+        this.time.setText("Total time: " + time);
     }
 
     @Override

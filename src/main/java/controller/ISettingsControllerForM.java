@@ -9,4 +9,5 @@ public interface ISettingsControllerForM {
     public void moveCustomerAnimation();
     public void newAnimation();
     public void addCustomerToAnimation(int from, int to);
+    public void updateEventTime(double time);
 }
