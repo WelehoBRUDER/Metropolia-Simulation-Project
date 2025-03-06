@@ -145,10 +145,16 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public int[] getTicketBooth(int id) {
+        if (id >= ticketBoothCountValue) {
+            return tickets.get(ticketBoothCountValue - 1);
+        }
         return tickets.get(id);
     }
 
     public int[] getRide(int id) {
+        if (id >= rideCountValue) {
+            return rides.get(rideCountValue - 1);
+        }
         return rides.get(id);
     }
 
