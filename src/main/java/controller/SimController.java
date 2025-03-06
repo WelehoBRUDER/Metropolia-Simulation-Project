@@ -61,8 +61,8 @@ public class SimController implements ISettingsControllerForM {
 
     // DEBUG PARAMS!!!
 
-    private double[] customerCords = new double[]{0, 0};
-    private int[] customerDestination = new int[]{0, 0};
+    private ArrayList<double[]> customerCords = new ArrayList<>();
+    private ArrayList<int[]> customerDestination = new ArrayList<>();
     private int step = 0;
 
     // Leevin pätkä koodia
@@ -204,6 +204,19 @@ public class SimController implements ISettingsControllerForM {
 //        }
         executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(this::renderCustomer, 0, UPDATE_RATE_MS, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public void newAnimation() {
+        customerCords.clear();
+        customerDestination.clear();
+    }
+
+    @Override
+    public void addCustomerToAnimation(int from, int to) {
+        // extract details for this
+        customerCords.add(new double[]{from});
+        customerDestination.add(new int[]{to});
     }
 
     public void stopAnimation() {

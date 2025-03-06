@@ -88,7 +88,8 @@ public class OwnEngine extends Engine {
 
 		Customer c;
 		ServicePoint p;
-		controller.moveCustomerAnimation();
+		int from = -100;
+		int to = -101;
 		switch ((EventType) t.getType()){
 			case ARRIVAL:
 				double sample = bernoulli.sample();
@@ -101,6 +102,8 @@ public class OwnEngine extends Engine {
 					p.addToQueue(c);
 					c.removeNextRide();
 					rideOrder.add(p.getRideID());
+					from = -100;
+					to =  p.getRideID();
 					System.out.println("from " + -100 + " to " + p.getRideID()); //FROMTO
 
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
@@ -109,6 +112,8 @@ public class OwnEngine extends Engine {
 					c.addTickets();
 					servicePoints[nextTicketBooth()].addToQueue(c);
 					ticketOrder.add(ticketBoothCounter);
+					from = -100;
+					to = (ticketBoothCounter+1)/-1;
 					System.out.println("from " + -100 + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
 					controller.visualizeCustomer(c.getId(), 0, false);
@@ -130,6 +135,8 @@ public class OwnEngine extends Engine {
 				c.removeNextRide();
 				rideOrder.add(p.getRideID());
 				c.removeTicket();
+				from =  servicePoints[ticketOrder.remove(0)].getRideID();
+				to = p.getRideID();
 				System.out.println("from " + servicePoints[ticketOrder.remove(0)].getRideID() + " to " + p.getRideID()); //FROMTO
 
 				Trace.out(Trace.Level.INFO, "Asiakas: " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
@@ -148,6 +155,8 @@ public class OwnEngine extends Engine {
 						p.addToQueue(c);
 						c.removeNextRide();
 						rideOrder.add(p.getRideID());
+						from = servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID();
+						to = p.getRideID();
 						System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + p.getRideID()); //FROMTO
 
 						Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteeseen: " + p.getRideID());
@@ -155,6 +164,8 @@ public class OwnEngine extends Engine {
 						servicePoints[nextTicketBooth()].addToQueue(c);
 						ticketOrder.add(ticketBoothCounter);
 						controller.visualizeCustomer(c.getId(), 0, c.hasWristband());
+						from = servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID();
+						to = (ticketBoothCounter+1)/-1;
 						System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
 						Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
@@ -162,6 +173,8 @@ public class OwnEngine extends Engine {
 				} else {
 					servicePoints[rideCount + ticketBoothCount].addToQueue(c);
 					controller.visualizeCustomer(c.getId(), rideCount + 1, c.hasWristband());
+					from = servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID();
+					to = 100;
 					System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + 100); //FROMTO
 
 					Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee ravintolajonoon");
@@ -175,6 +188,8 @@ public class OwnEngine extends Engine {
 				controller.visualizeCustomer(c.getId(), rideCount + 2, c.hasWristband());
 				c.setDepartureTime(Clock.getInstance().getTime());
 				readyCustomers++;
+				from = 100;
+				to = -101;
 				System.out.println("from " + 100 + " to " + -101); //FROMTO
 
 				double average = c.report();
@@ -191,6 +206,7 @@ public class OwnEngine extends Engine {
 				}
 				break;
 		}
+		controller.addCustomerToAnimation(from, to);
 	}
 
 	@Override

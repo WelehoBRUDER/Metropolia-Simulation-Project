@@ -7,4 +7,6 @@ public interface ISettingsControllerForM {
     public void visualizeCustomer(int id, int rideid, boolean wristband);
     public void visualizeResults();
     public void moveCustomerAnimation();
+    public void newAnimation();
+    public void addCustomerToAnimation(int from, int to);
 }
