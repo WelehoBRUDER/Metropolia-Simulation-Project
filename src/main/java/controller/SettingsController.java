@@ -403,6 +403,14 @@ public class SettingsController {
         stage.setScene(new Scene(root));
         stage.show();
 
+        stage.setOnHidden(e -> {
+            try {
+                simController.stopSim();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+
         simController.startSim();
     }
 

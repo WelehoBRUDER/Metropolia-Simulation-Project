@@ -110,6 +110,11 @@ public class SimController implements ISettingsControllerForM {
         ((Thread) engine).start();
     }
 
+    public void stopSim() {
+        ((Thread) engine).stop();
+        ((Thread) engine).interrupt();
+    }
+
     public int calcCenterX(int width, int offset) {
         return width / 2 - offset / 2;
     }
@@ -242,9 +247,9 @@ public class SimController implements ISettingsControllerForM {
         } else if (id == exitID) {
             return exit;
         } else if (id < 0) {
-            return getTicketBooth(Math.abs(id));
+            return getTicketBooth(Math.abs(id) - 1);
         } else {
-            return getRide(id);
+            return getRide(id - 1);
         }
     }
 
