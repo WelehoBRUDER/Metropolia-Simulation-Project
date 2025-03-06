@@ -104,6 +104,7 @@ public class SimController implements ISettingsControllerForM {
     public void startSim() {
         clearScreen();
         drawAllServicePoints();
+        System.out.println("Starting simulation");
         engine = new OwnEngine(this, rideCountValue, ticketBoothCountValue, rideProperties, restaurantCapValue, wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
         engine.setSimulationTime(simTimeValue);
         engine.setDelay(simDelayValue);
