@@ -33,7 +33,7 @@
                <children>
                   <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="400.0">
                      <children>
-                        <Label fx:id="currentDelay" prefWidth="135.0" text="Current Delay: 100ms" />
+                        <Label fx:id="currentDelay" prefWidth="125.0" text="Current Delay: 100ms" />
                         <Button mnemonicParsing="false" onMouseClicked="#decreaseDelay" text="▼" />
                         <Button fx:id="simPause" mnemonicParsing="false" onAction="#toggleSimRunning" styleClass="pause-button" text="⏸" textOverrun="CLIP">
                            <tooltip>
