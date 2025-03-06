@@ -211,6 +211,7 @@ public class OwnEngine extends Engine {
                 }
                 break;
         }
+        controller.updateEventTime(Clock.getInstance().getTime());
         controller.addCustomerToAnimation(from, to);
     }
 

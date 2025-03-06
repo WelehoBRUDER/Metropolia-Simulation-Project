@@ -151,8 +151,7 @@ public class SimController implements ISettingsControllerForM {
             this.serviceCtx.clearRect(x, y - this.FONT_SIZE - 2, this.SERVICE_POINT_SIZE * 1.3, this.FONT_SIZE + 2);
             this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
             return;
-        }
-        else if (defaultValue == 0 && number < 0) {
+        } else if (defaultValue == 0 && number < 0) {
             return;
         }
         int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
@@ -378,7 +377,9 @@ public class SimController implements ISettingsControllerForM {
 
     @Override
     public void updateEventTime(double time) {
-        //this.time.setText("Total time: " + time);
+        Platform.runLater(() -> {
+            this.time.setText("Total time: " + String.format("%.2f", time));
+        });
     }
 
     @Override
