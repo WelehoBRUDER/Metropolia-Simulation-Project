@@ -36,20 +36,21 @@ public class SettingsController {
     @FXML
     private TextField wristbandChance;
 
+    private final boolean GUI_DEBUG = true;
+
     private int simTimeValue = 250;
-    private int ticketBoothCountValue = 1;
-    private int rideCountValue = 3;
+    private int ticketBoothCountValue = 4;
+    private int rideCountValue = 9;
     private int restaurantCapValue = 20;
-    private long simDelayValue = 50;
-    private int wristbandChanceValue = 30;
+    private long simDelayValue = 100;
+    private double wristbandChanceValue = 30;
     private ArrayList<int[]> rideProperties = new ArrayList<>();
 
-    private IEngine engine;
-
-    private final int maxTicketBoothCount = 18;
+    private final int maxTicketBoothCount = 9;
     private final int maxRideCount = 25;
+    private final int minDelay = 20;
 
-    public void initialize() {
+    public void initialize() throws Exception {
         sanitizeInput(simTime);
         sanitizeInput(ticketBoothCount);
         sanitizeInput(rideCount);
@@ -63,6 +64,9 @@ public class SettingsController {
         simDelay.setText(String.valueOf(simDelayValue));
         wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setRideCount();
+        if (GUI_DEBUG) {
+            startSimulation();
+        }
     }
 
     @FXML
@@ -137,7 +141,7 @@ public class SettingsController {
             ride.hgapProperty().setValue(5);
             ride.alignmentProperty().setValue(javafx.geometry.Pos.CENTER);
             ride.setRowValignment(javafx.geometry.VPos.CENTER);
-            ride.getChildren().addAll(rideLabel, varianceLabel, variance, meanLabel, mean);
+            ride.getChildren().addAll(rideLabel, meanLabel, mean, varianceLabel, variance);
             rides.getChildren().add(ride);
         }
     }
@@ -145,7 +149,7 @@ public class SettingsController {
     public void changeRideProperties() {
         if (rideProperties.size() < rideCountValue) {
             for (int i = rideProperties.size(); i < rideCountValue; i++) {
-                rideProperties.add(new int[]{5, 2});
+                rideProperties.add(new int[]{2, 5});
             }
         } else if (rideProperties.size() > rideCountValue) {
             for (int i = rideProperties.size(); i > rideCountValue; i--) {
@@ -288,11 +292,11 @@ public class SettingsController {
 
     public void incrementWristbandChance(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
-            wristbandChanceValue += 5;
-        } else if (e.isControlDown()) {
-            wristbandChanceValue += 25;
-        } else {
             wristbandChanceValue++;
+        } else if (e.isControlDown()) {
+            wristbandChanceValue += 5;
+        } else {
+            wristbandChanceValue += 0.1;
         }
         wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setWristbandChance();
@@ -300,11 +304,11 @@ public class SettingsController {
 
     public void decrementWristbandChance(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
-            wristbandChanceValue -= 5;
-        } else if (e.isControlDown()) {
-            wristbandChanceValue -= 25;
-        } else {
             wristbandChanceValue--;
+        } else if (e.isControlDown()) {
+            wristbandChanceValue -= 5;
+        } else {
+            wristbandChanceValue -= 0.1;
         }
         wristbandChance.setText(String.valueOf(wristbandChanceValue));
         setWristbandChance();
@@ -313,9 +317,9 @@ public class SettingsController {
     public void setSimTime() {
         if (!simTime.getText().isEmpty()) {
             simTimeValue = Integer.parseInt(simTime.getText());
-            if (simTimeValue < 0) {
-                simTimeValue = 0;
-                simTime.setText("0");
+            if (simTimeValue < minDelay) {
+                simTimeValue = minDelay;
+                simTime.setText(String.valueOf(simTimeValue));
             }
         }
     }
@@ -353,9 +357,9 @@ public class SettingsController {
     public void setRestaurantCap() {
         if (!restaurantCap.getText().isEmpty()) {
             restaurantCapValue = Integer.parseInt(restaurantCap.getText());
-            if (restaurantCapValue < 0) {
-                restaurantCapValue = 0;
-                restaurantCap.setText("0");
+            if (restaurantCapValue < 1) {
+                restaurantCapValue = 1;
+                restaurantCap.setText("1");
             }
         }
     }
@@ -386,16 +390,28 @@ public class SettingsController {
 
 
     public void startSimulation() throws Exception {
-//        Stage stage = (Stage) simTime.getScene().getWindow();
-//        stage.close();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
         Parent root = loader.load();
         SimController simController = loader.getController();
+
+        System.out.println(simController);
+
+        simController.setSimulationParameters(simTimeValue, ticketBoothCountValue, rideCountValue, restaurantCapValue, simDelayValue, wristbandChanceValue, rideProperties);
 
         // Show new stage
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.show();
+
+        stage.setOnHidden(e -> {
+            try {
+                simController.stopSim();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        });
+
+        simController.startSim();
     }
 
 
@@ -410,6 +426,6 @@ public class SettingsController {
 
 
     public long getWristbandChance() {
-        return wristbandChanceValue;
+        return (long) wristbandChanceValue;
     }
 }

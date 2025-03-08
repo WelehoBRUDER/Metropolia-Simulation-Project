@@ -4,5 +4,20 @@
 }
 
 .footer {
+    -fx-background-color: lightgray;
+}
+
+.pause-button {
+    -fx-pref-width: 50;
+    -fx-pref-height: 25;
+    -fx-min-width: 50;
+    -fx-min-height: 25;
+}
+
+.controls {
+    -fx-pref-width: 400;
+}
+
+Button {
     -fx-background-color: silver;
 }

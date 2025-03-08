@@ -22,11 +22,11 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		
 	@Override
 	public void startSimulation() {
-		engine = new OwnEngine(this, ui.getRideCount()); // luodaan uusi moottorisäie jokaista simulointia varten
-		engine.setSimulationTime(ui.getTime());
-		engine.setDelay(ui.getDelay());
-		ui.getVisualization().clearScreen();
-		((Thread)engine).start();
+//		engine = new OwnEngine(this, ui.getRideCount()); // luodaan uusi moottorisäie jokaista simulointia varten
+//		engine.setSimulationTime(ui.getTime());
+//		engine.setDelay(ui.getDelay());
+//		ui.getVisualization().clearScreen();
+//		((Thread)engine).start();
 		//((Thread)moottori).run(); // Ei missään tapauksessa näin. Miksi?		
 	}
 	
@@ -66,6 +66,26 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 				ui.getVisualization().showResults();
 			}
 		});
+	}
+
+	@Override
+	public void moveCustomerAnimation() {
+
+	}
+
+	@Override
+	public void newAnimation() {
+
+	}
+
+	@Override
+	public void addCustomerToAnimation(int from, int to) {
+
+	}
+
+	@Override
+	public void updateEventTime(double time) {
+
 	}
 
 	public void setWristbandChance(double amount) {
