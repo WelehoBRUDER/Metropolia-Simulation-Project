@@ -257,9 +257,10 @@ public class Customer {
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " poistui:" +departureTime);
 		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " viipyi:" +(departureTime-arrivalTime));
 		double average;
+		double time = departureTime - arrivalTime;
 		if (wristband) {
 			wristbandCount++;
-			wristbandSum += (departureTime - arrivalTime);
+			wristbandSum += (time);
 			average = wristbandSum / wristbandCount;
 			System.out.println("Rannekkeellisten asiakkaiden läpimenoaikojen keskiarvo "+ average);
 
@@ -267,11 +268,11 @@ public class Customer {
 			ticketCount++;
 			System.out.println("Asiakas kävi " + ticketboothCounter + " kertaa lipunmyyntipisteessä");
 			addTicketboothCounterSum();
-			ticketSum += (departureTime - arrivalTime);
+			ticketSum += (time);
 			average = ticketSum / ticketCount;
 			System.out.println("Lippu-asiakkaiden läpimenoaikojen keskiarvo "+ average);
 		}
-		return average;
+		return time;
 	}
 
 	/**

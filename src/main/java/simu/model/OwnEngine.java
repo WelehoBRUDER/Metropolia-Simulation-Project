@@ -1,3 +1,8 @@
+/**
+ * OwnEngine.java
+ * This class is the main class for the simulation engine.
+ */
+
 package simu.model;
 
 import controller.ISettingsControllerForM;
@@ -7,36 +12,94 @@ import distributions.Negexp;
 import distributions.Normal;
 import simu.framework.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
 public class OwnEngine extends Engine {
-
+    /**
+     * ArrivalProgress: Arrival of customers
+     */
     private ArrivalProgress arrivalProgress;
+    /**
+     * ServicePoints: Service points in the simulation
+     */
     private ServicePoint[] servicePoints;
+    /**
+     * RideOrder: Order of rides
+     */
     private ArrayList<Integer> rideOrder = new ArrayList<>();
+    /**
+     * TicketOrder: Order of tickets
+     */
     private ArrayList<Integer> ticketOrder = new ArrayList<>();
-
+    /**
+     * WristbandChance: Chance of getting a wristband
+     */
     private double wristbandChance = 0.1;
+    /**
+     * RestaurantCapacity: Capacity of the restaurant
+     */
     private int RESTAURANT_CAPASITY = 20;
+    /**
+     * Bernoulli: Bernoulli distribution used for wristband chance
+     */
     private Bernoulli bernoulli = new Bernoulli(wristbandChance);
+    /**
+     * RideCount: Number of rides in the simulation
+     */
     private int rideCount;
+    /**
+     * TicketBoothCount: Number of ticket booths in the simulation
+     */
     private int ticketBoothCount = 1;
+    /**
+     * MinTicketPurchase: Minimum amount of tickets that can be purchased
+     */
     private int minTicketPurchase = 1;
+    /**
+     * MaxTicketPurchase: Maximum amount of tickets that can be purchased
+     */
     private int maxTicketPurchase = 1;
+    /**
+     * RideParameters: Parameters for the rides
+     */
     private ArrayList<int[]> rideParameters;
 
-    private ArrayList<Double> wristbandAverages = new ArrayList<>();
-    private ArrayList<Double> ticketAverages = new ArrayList<>();
-    private HashMap<String, Double> results = new HashMap<>();
+    /**
+     * WristbandTimes: List of times that wristband customers spend in the simulation
+     */
+    private ArrayList<Double> wristbandTimes = new ArrayList<>();
+    /**
+     * TicketAverages: List of times that ticket customers spend in the simulation
+     */
+    private ArrayList<Double> ticketTimes = new ArrayList<>();
+    /**
+     * Results: The static part of the results of the simulation
+     */
+    private HashMap<String, Double> staticResults = new HashMap<>();
+    /**
+     * DynamicResults: The dynamic part of the results of the simulation
+     */
     private TreeMap<String, Double> dynamicResults = new TreeMap<>();
+    /**
+     * ReadyCustomers: Number of customers that have finished the simulation
+     */
     private int readyCustomers = 0;
-
+    /**
+     * TicketBoothCounter: Counter for the ticket booths
+     */
     private int ticketBoothCounter = -1;
 
-
+    /**
+     * OwnEngine: Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters and creates arrival process and service points.
+     * @param controller: Controller for the simulation
+     * @param rideCount: Number of rides in the simulation
+     * @param ticketBoothCount: Number of ticket booths in the simulation
+     * @param rideProperties: Properties for the rides
+     * @param restaurantCap: Capacity of the restaurant
+     * @param wristbandChance: Chance of getting a wristband
+     */
     public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
         super(controller);
@@ -74,6 +137,11 @@ public class OwnEngine extends Engine {
         arrivalProgress = new ArrivalProgress(new Negexp(5, 5), eventList, EventType.ARRIVAL); //Saapuminen
     }
 
+    /**
+     * FindRideByID: Finds a ride by its ID
+     * @param id: ID of the ride
+     * @return: The ride with the given ID
+     */
     private ServicePoint findRideByID(int id) {
         for (ServicePoint p : servicePoints) {
             System.out.println("Palvelupisteen id on " + p.getRideID());
@@ -85,11 +153,18 @@ public class OwnEngine extends Engine {
         return null;
     }
 
+    /**
+     * Init: Initializes the simulation engine and generates the first arrival to the system
+     */
     @Override
     protected void init() {
         arrivalProgress.generateNext(); // Ensimmäinen saapuminen järjestelmään
     }
 
+    /**
+     * RunEvent: Runs the B events in the simulation. Checks the type of the event and runs the corresponding event.
+     * @param t: Event to be run
+     */
     @Override
     protected void runEvent(Event t) {  // B-vaiheen tapahtumat
 
@@ -209,9 +284,9 @@ public class OwnEngine extends Engine {
                     System.out.println("Lippu-asiakkaiden ja rannekkeellisten viipymäaikojen suhde ei voida vielä laskea.");
                 }
                 if (c.hasWristband()) {
-                    wristbandAverages.add(average);
+                    wristbandTimes.add(average);
                 } else {
-                    ticketAverages.add(average);
+                    ticketTimes.add(average);
                 }
                 break;
         }
@@ -219,6 +294,9 @@ public class OwnEngine extends Engine {
         controller.addCustomerToAnimation(from, to);
     }
 
+    /**
+     * AttemptCEvents: Attempts to run the C events in the simulation. Begins service if the service point is not reserved and there are customers in the queue.
+     */
     @Override
     protected void attemptCEvents() {
         for (ServicePoint p : servicePoints) {
@@ -228,6 +306,10 @@ public class OwnEngine extends Engine {
         }
     }
 
+    /**
+     * NextTicketBooth: Returns the next ticket booth to be used
+     * @return: The next ticket booth to be used
+     */
     public int nextTicketBooth() {
         ticketBoothCounter++;
         if (ticketBoothCounter >= ticketBoothCount) {
@@ -236,6 +318,10 @@ public class OwnEngine extends Engine {
         return ticketBoothCounter;
     }
 
+    /**
+     * SetWristbandChance: Sets the chance of getting a wristband
+     * @param amount: Amount to be added to the wristband chance
+     */
     public void setWristbandChance(double amount) {
         wristbandChance += amount;
         if (wristbandChance > 1) {
@@ -251,36 +337,39 @@ public class OwnEngine extends Engine {
         return wristbandChance;
     }
 
+    /**
+     * Results: Prints the results of the simulation and visualizes them.
+     */
     @Override
     protected void results() {
         double endTime = Clock.getInstance().getTime();
         System.out.println("Simulointi päättyi kello " + endTime);
-        results.put("End time", endTime);
+        staticResults.put("End time", endTime);
 
         //Asiakkaat:
         int unreadyCustomers = Customer.getI() - readyCustomers;
-        System.out.println("Valmiita asiakkaita: " + readyCustomers + ", joista rannekeasiakkaita oli " + wristbandAverages.size() + " ja lippuasiakkaita " + ticketAverages.size());
+        System.out.println("Valmiita asiakkaita: " + readyCustomers + ", joista rannekeasiakkaita oli " + wristbandTimes.size() + " ja lippuasiakkaita " + ticketTimes.size());
         System.out.println("Kesken jääneiden asiakkaiden määrä: " + unreadyCustomers);
-        results.put("Ready customers", (double) readyCustomers);
-        results.put("Ticket customers", (double) ticketAverages.size());
-        results.put("Wristband customers", (double) wristbandAverages.size());
-        results.put("Unready customers", (double) unreadyCustomers);
+        staticResults.put("Ready customers", (double) readyCustomers);
+        staticResults.put("Ticket customers", (double) ticketTimes.size());
+        staticResults.put("Wristband customers", (double) wristbandTimes.size());
+        staticResults.put("Unready customers", (double) unreadyCustomers);
 
         //Lippuluukku (ticketboothCounterSumiin lisätään vasta kun asiakas valmis, joten lasketaan valmiilla asiakkailla:
         System.out.printf("Lippuasiakas kävi keskimäärin %.2f kertaa lippuluukulla.\n", Customer.getTicketboothCounterAverage());
         System.out.printf(("Simulaation aikana ostetut liput: %d \n"), Customer.getTotalTicketCount());
-        results.put("Ticket booth average", Customer.getTicketboothCounterAverage());
-        results.put("Total ticket count", (double)Customer.getTotalTicketCount());
+        staticResults.put("Ticket booth average", Customer.getTicketboothCounterAverage());
+        staticResults.put("Total ticket count", (double)Customer.getTotalTicketCount());
 
         //Viipymät:
         System.out.printf("Rannekkeellisten keskimääräinen viipymäaika: %.2f\n", getAverageWristbandTime());
         System.out.printf("Lippujen ostajien keskimääräinen viipymäaika: %.2f\n", getAverageTicketTime());
         System.out.printf("Asiakkaiden keskimääräinen viipymäaika: %.2f\n", getWholeAverage());
         System.out.printf("Lippuja ostaneiden viipymä suhteessa rannekkeellisten viipymään: %.2f\n", getWristbandTicketAverageRatio());
-        results.put("Wristband average time", getAverageWristbandTime());
-        results.put("Ticket average time", getAverageTicketTime());
-        results.put("Whole average time", getWholeAverage());
-        results.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
+        staticResults.put("Wristband average time", getAverageWristbandTime());
+        staticResults.put("Ticket average time", getAverageTicketTime());
+        staticResults.put("Whole average time", getWholeAverage());
+        staticResults.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
 
         //Palvelupisteiden tulokset:
         for (ServicePoint point : servicePoints) {
@@ -318,44 +407,67 @@ public class OwnEngine extends Engine {
         }
 
         //Tulokset hashmapissa:
-        System.out.println("Results hashmap: " + results);
+        System.out.println("Results hashmap: " + staticResults);
         System.out.println("DynamicResults hashmap: " + dynamicResults);
 
         // UUTTA graafista
         ResultsController resultsController = new ResultsController();
-        resultsController.visualizeResults(results, dynamicResults);
+        resultsController.visualizeResults(staticResults, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
     }
 
-
+    /**
+     * GetWholeAverage: Returns the average time that customers spend in the simulation regardless of the type of the customer
+     * @return: The average time that customers spend in the simulation
+     */
     protected double getWholeAverage() {
         return (getAverageTicketTime() + getAverageWristbandTime()) / 2;
     }
 
+    /**
+     * GetAverageWristbandTime: Returns the average time that wristband customers spend in the simulation
+     * @return
+     */
     public double getAverageWristbandTime() {
         double sum = 0;
-        for (double time : wristbandAverages) {
+        for (double time : wristbandTimes) {
             sum += time;
         }
-        return sum / wristbandAverages.size();
+        return sum / wristbandTimes.size();
     }
 
+    /**
+     * GetAverageTicketTime: Returns the average time that ticket customers spend in the simulation
+     * @return: The average time that ticket customers spend in the simulation
+     */
     public double getAverageTicketTime() {
         double sum = 0;
-        for (double time : ticketAverages) {
+        for (double time : ticketTimes) {
             sum += time;
         }
-        return sum / ticketAverages.size();
+        return sum / ticketTimes.size();
     }
 
+    /**
+     * GetWristbandTicketAverageRatio: Returns the ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
+     * @return: The ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
+     */
     public double getWristbandTicketAverageRatio() {
         return getAverageTicketTime() / getAverageWristbandTime();
     }
 
+    /**
+     * GetStaticResults: Returns the static results of the simulation
+     * @return: The static results of the simulation
+     */
     public HashMap<String, Double> getStaticResults() {
-        return results;
+        return staticResults;
     }
 
+    /**
+     * GetDynamicResults: Returns the dynamic results of the simulation
+     * @return: The dynamic results of the simulation
+     */
     public TreeMap<String, Double> getDynamicResults() {
         return dynamicResults;
     }

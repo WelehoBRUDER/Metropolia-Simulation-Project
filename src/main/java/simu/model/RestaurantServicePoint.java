@@ -1,3 +1,7 @@
+/**
+ * RestaurantServicePoint.java is a class that extends ServicePoint.java and represents a restaurant service point in the simulation.
+ * It differs from other service points in that it has a capacity for customers and a list of customers currently being served.
+ */
 package simu.model;
 
 import distributions.ContinuousGenerator;
@@ -9,31 +13,67 @@ import simu.framework.Trace;
 import java.util.ArrayList;
 
 public class RestaurantServicePoint extends ServicePoint{
+    /**
+     * The ID of the restaurant service point.
+     */
     protected int rideID = 100;
+    /**
+     * The capacity of the restaurant service point.
+     */
     private int capacity;
+    /**
+     * The list of customers currently being served.
+     */
     private ArrayList<Customer> CustomerList = new ArrayList<>();
+    /**
+     * The list of service times for customers.
+     */
     private ArrayList<Double> serviceTimes = new ArrayList<>();
 
+    /**
+     * Constructor for the RestaurantServicePoint class.
+     * @param generator The generator for the service point.
+     * @param eventList The event list for the simulation.
+     * @param type The type of event.
+     * @param rideCount The number of rides in the simulation.
+     * @param capacity The capacity of the restaurant service point.
+     */
     public RestaurantServicePoint(ContinuousGenerator generator, EventList eventList, EventType type, int rideCount, int capacity) {
         super(generator, eventList, type, rideCount);
         this.capacity = capacity;
     }
 
+    /**
+     * Fetches a customer from the customer list.
+     * @return The customer fetched from the customer list.
+     */
     @Override
     public Customer fetchFromCustomerList() {
         return CustomerList.remove(0);
     }
 
+    /**
+     * Checks if the restaurant service point is reserved.
+     * @return True if the restaurant service point is reserved, false otherwise.
+     */
     @Override
     public boolean isReserved() {
         return CustomerList.size() >= capacity;
     }
 
+    /**
+     * Gets the size of the customer list.
+     * @return The size of the customer list.
+     */
     @Override
     public int getCustomerListSize() {
         return CustomerList.size();
     }
 
+    /**
+     * The method to begin a new service in the service point. The method starts a new service and the customer is in the queue during the service.
+     * Scheduled event is added to the event list at the end of the service time. Service time is sampled from the generator.
+     */
     @Override
     public void beginService(){  //Aloitetaan uusi palvelu, asiakas on jonossa palvelun aikana
         Customer c = queue.peek();
@@ -53,6 +93,10 @@ public class RestaurantServicePoint extends ServicePoint{
         }
     }
 
+    /**
+     * Gets the average service time for the restaurant service point.
+     * @return The average service time for the restaurant service point.
+     */
     public double getAverageServiceTime() {
         double sum = 0;
         for (double time : serviceTimes) {
