@@ -1,13 +1,16 @@
 package simu.model;
 
 import controller.ISettingsControllerForM;
+import controller.ResultsController;
 import distributions.Bernoulli;
 import distributions.Negexp;
 import distributions.Normal;
 import simu.framework.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public class OwnEngine extends Engine {
 
@@ -28,6 +31,7 @@ public class OwnEngine extends Engine {
     private ArrayList<Double> wristbandAverages = new ArrayList<>();
     private ArrayList<Double> ticketAverages = new ArrayList<>();
     private HashMap<String, Double> results = new HashMap<>();
+    private TreeMap<String, Double> dynamicResults = new TreeMap<>();
     private int readyCustomers = 0;
 
     private int ticketBoothCounter = -1;
@@ -255,13 +259,18 @@ public class OwnEngine extends Engine {
 
         //Asiakkaat:
         int unreadyCustomers = Customer.getI() - readyCustomers;
-        System.out.println("Valmiita asiakkaita: " + readyCustomers);
+        System.out.println("Valmiita asiakkaita: " + readyCustomers + ", joista rannekeasiakkaita oli " + wristbandAverages.size() + " ja lippuasiakkaita " + ticketAverages.size());
         System.out.println("Kesken jääneiden asiakkaiden määrä: " + unreadyCustomers);
         results.put("Ready customers", (double) readyCustomers);
+        results.put("Ticket customers", (double) ticketAverages.size());
+        results.put("Wristband customers", (double) wristbandAverages.size());
         results.put("Unready customers", (double) unreadyCustomers);
 
         //Lippuluukku (ticketboothCounterSumiin lisätään vasta kun asiakas valmis, joten lasketaan valmiilla asiakkailla:
         System.out.printf("Lippuasiakas kävi keskimäärin %.2f kertaa lippuluukulla.\n", Customer.getTicketboothCounterAverage());
+        System.out.printf(("Simulaation aikana ostetut liput: %d \n"), Customer.getTotalTicketCount());
+        results.put("Ticket booth average", Customer.getTicketboothCounterAverage());
+        results.put("Total ticket count", (double)Customer.getTotalTicketCount());
 
         //Viipymät:
         System.out.printf("Rannekkeellisten keskimääräinen viipymäaika: %.2f\n", getAverageWristbandTime());
@@ -278,40 +287,46 @@ public class OwnEngine extends Engine {
             int customerCount = point.getCustomerCounter();
             double averageServiceTime = point.getAverageServiceTime();
             double averageQueueTime = point.getAverageQueueTime();
+            int ticketBoothCustomerCount = 0;
 
             if (!(point instanceof RestaurantServicePoint)) {
-                if (point.getRideID() == 0) {
-                    System.out.println("Lippupisteessä käytiin " + customerCount + " kertaa.");
-                    System.out.println("Lippupisteessä keskimääräinen palveluaika: " + averageServiceTime);
-                    System.out.println("Lippupisteessä keskimääräinen jonotusaika: " + averageQueueTime);
-                    results.put("Ticket booth count", (double) customerCount);
-                    results.put("Ticket booth average service time", averageServiceTime);
-                    results.put("Ticket booth average queue time", averageQueueTime);
+                if (point.getRideID() < 0) {
+                    int ticketBoothNumber = point.getRideID() * -1;
+                    ticketBoothCustomerCount += customerCount;
+                    System.out.println("Lippupisteessä " + ticketBoothNumber + " käytiin " + customerCount + " kertaa.");
+                    System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen palveluaika: " + averageServiceTime);
+                    System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen jonotusaika: " + averageQueueTime);
+                    dynamicResults.put("Ticket booth " + ticketBoothNumber + " count", (double) customerCount);
+                    dynamicResults.put("Ticket booth " + ticketBoothNumber + " average service time", averageServiceTime);
+                    dynamicResults.put("Ticket booth " + ticketBoothNumber + " average queue time", averageQueueTime);
                 } else {
                     System.out.println("Laitteessa " + point.getRideID() + " palveltiin " + customerCount + " asiakasta.");
                     System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen palveluaika: " + averageServiceTime);
                     System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen jonotusaika: " + averageQueueTime);
-                    results.put("Ride " + point.getRideID() + " count", (double) customerCount);
-                    results.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
-                    results.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
+                    dynamicResults.put("Ride " + point.getRideID() + " count", (double) customerCount);
+                    dynamicResults.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
+                    dynamicResults.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
                 }
             } else {
                 System.out.println("Ravintolassa palveltiin " + customerCount + " asiakasta.");
                 System.out.println("Ravintolassa keskimääräinen palveluaika: " + averageServiceTime);
                 System.out.println("Ravintolassa keskimääräinen jonotusaika: " + averageQueueTime);
-                results.put("Restaurant count", (double) customerCount);
-                results.put("Restaurant average service time", averageServiceTime);
-                results.put("Restaurant average queue time", averageQueueTime);
+                dynamicResults.put("Restaurant count", (double) customerCount);
+                dynamicResults.put("Restaurant average service time", averageServiceTime);
+                dynamicResults.put("Restaurant average queue time", averageQueueTime);
             }
         }
 
         //Tulokset hashmapissa:
-        System.out.println("Results hashmap: " + getResults());
+        System.out.println("Results hashmap: " + results);
+        System.out.println("DynamicResults hashmap: " + dynamicResults);
 
         // UUTTA graafista
-        controller.visualizeResults();
+        ResultsController resultsController = new ResultsController();
+        resultsController.visualizeResults(results, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
     }
+
 
     protected double getWholeAverage() {
         return (getAverageTicketTime() + getAverageWristbandTime()) / 2;
@@ -337,7 +352,11 @@ public class OwnEngine extends Engine {
         return getAverageTicketTime() / getAverageWristbandTime();
     }
 
-    public HashMap<String, Double> getResults() {
+    public HashMap<String, Double> getStaticResults() {
         return results;
+    }
+
+    public TreeMap<String, Double> getDynamicResults() {
+        return dynamicResults;
     }
 }
