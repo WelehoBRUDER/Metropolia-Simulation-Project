@@ -60,13 +60,18 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		});
 	}
 
-	public void visualizeResults(){
-		Platform.runLater(new Runnable(){
-			public void run(){
-				ui.getVisualization().showResults();
-			}
-		});
+	@Override
+	public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults) {
+
 	}
+
+//	public void visualizeResults(){
+//		Platform.runLater(new Runnable(){
+//			public void run(){
+//				ui.getVisualization().showResults();
+//			}
+//		});
+//	}
 
 	@Override
 	public void moveCustomerAnimation() {

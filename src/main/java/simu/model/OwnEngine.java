@@ -1,6 +1,7 @@
 package simu.model;
 
 import controller.ISettingsControllerForM;
+import controller.ResultsController;
 import distributions.Bernoulli;
 import distributions.Negexp;
 import distributions.Normal;
@@ -321,8 +322,8 @@ public class OwnEngine extends Engine {
         System.out.println("DynamicResults hashmap: " + dynamicResults);
 
         // UUTTA graafista
-        //ResultsController resultsController = new ResultsController();
-        //resultsController.visualizeResults(results, dynamicResults);
+        ResultsController resultsController = new ResultsController();
+        resultsController.visualizeResults(results, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
     }
 

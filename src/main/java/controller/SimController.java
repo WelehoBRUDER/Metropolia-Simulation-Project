@@ -15,6 +15,8 @@ import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.concurrent.*;
 
 public class SimController implements ISettingsControllerForM {
@@ -481,7 +483,7 @@ public class SimController implements ISettingsControllerForM {
     }
 
     @Override
-    public void visualizeResults() {
+    public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults){
 
     }
 }
