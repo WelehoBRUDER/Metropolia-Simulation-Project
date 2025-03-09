@@ -376,7 +376,7 @@ public class SettingsController {
 
     public void setWristbandChance() {
         if (!wristbandChance.getText().isEmpty()) {
-            wristbandChanceValue = Integer.parseInt(wristbandChance.getText());
+            wristbandChanceValue = Double.parseDouble(wristbandChance.getText());
             if (wristbandChanceValue < 1 || wristbandChanceValue > 100) {
                 wristbandChance.setText(String.valueOf(wristbandChanceValue));
                 if (wristbandChanceValue < 1) {

@@ -114,6 +114,8 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx = servicePointCanvas.getGraphicsContext2D();
         this.customerCtx = customerCanvas.getGraphicsContext2D();
         this.customerNumbers.clear();
+        this.currentDelay.setText("Current delay: " + this.simDelayValue + "ms");
+        this.wristbandChanceLabel.setText(String.format("%.1f", this.wristbandChanceValue) + "%");
         this.defaults[3] = this.restaurantCapValue * -1;
         for (int i = 0; i < this.servicePoints; i++) {
             this.customerNumbers.add(new ArrayList<>());
@@ -453,7 +455,7 @@ public class SimController implements ISettingsControllerForM {
         } else if (this.wristbandChanceValue > 100) {
             this.wristbandChanceValue = 100;
         }
-       this.engine.setWristbandChance(this.wristbandChanceValue);
+        this.engine.setWristbandChance(this.wristbandChanceValue);
         this.wristbandChanceLabel.setText(String.format("%.1f", this.wristbandChanceValue) + "%");
     }
 
@@ -483,7 +485,7 @@ public class SimController implements ISettingsControllerForM {
     }
 
     @Override
-    public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults){
+    public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults) {
 
     }
 }
