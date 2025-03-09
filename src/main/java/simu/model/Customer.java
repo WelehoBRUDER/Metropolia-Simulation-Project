@@ -1,6 +1,3 @@
-/**
- * Customer class for the simulation model. Contains data for the customers and methods for handling the data.
- */
 
 package simu.model;
 
@@ -12,6 +9,10 @@ import java.util.ArrayList;
 
 // TODO:
 // Asiakas koodataan simulointimallin edellyttämällä tavalla (data!)
+/**
+ * Customer.java is the class for customers in the simulation model. Contains data for the customers and methods for handling the data.
+ */
+
 public class Customer {
 	/** Arrival time of the customer in the system */
 	private double arrivalTime;

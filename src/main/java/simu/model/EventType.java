@@ -1,12 +1,12 @@
-/**
- * EventType.java
- * Enumerates the types of events that can occur in the simulation model.
- */
 
 package simu.model;
 
 // TODO:
 // Tapahtumien tyypit määritellään simulointimallin vaatimusten perusteella
+/**
+ * EventType.java
+ * Enumerates the types of events that can occur in the simulation model.
+ */
 
 public enum EventType {
 	/**

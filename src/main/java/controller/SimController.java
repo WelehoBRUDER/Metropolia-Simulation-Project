@@ -156,7 +156,7 @@ public class SimController implements ISettingsControllerForM {
 
     public void resumeSim() {
         running = true;
-        changePauseButtonText("⏸");
+        changePauseButtonText(" || ");
         ((Thread) this.engine).resume();
     }
 

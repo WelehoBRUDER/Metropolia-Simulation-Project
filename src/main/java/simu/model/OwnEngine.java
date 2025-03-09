@@ -1,7 +1,3 @@
-/**
- * OwnEngine.java
- * This class is the main class for the simulation engine.
- */
 
 package simu.model;
 
@@ -15,6 +11,9 @@ import simu.framework.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
+/**
+ * OwnEngine.java class is the main class for the simulation engine.
+ */
 
 public class OwnEngine extends Engine {
     /**
@@ -92,13 +91,13 @@ public class OwnEngine extends Engine {
     private int ticketBoothCounter = -1;
 
     /**
-     * OwnEngine: Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters and creates arrival process and service points.
-     * @param controller: Controller for the simulation
-     * @param rideCount: Number of rides in the simulation
-     * @param ticketBoothCount: Number of ticket booths in the simulation
-     * @param rideProperties: Properties for the rides
-     * @param restaurantCap: Capacity of the restaurant
-     * @param wristbandChance: Chance of getting a wristband
+     * Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters and creates arrival process and service points.
+     * @param controller Controller for the simulation
+     * @param rideCount Number of rides in the simulation
+     * @param ticketBoothCount Number of ticket booths in the simulation
+     * @param rideProperties Properties for the rides
+     * @param restaurantCap Capacity of the restaurant
+     * @param wristbandChance Chance of getting a wristband
      */
     public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
@@ -139,8 +138,8 @@ public class OwnEngine extends Engine {
 
     /**
      * FindRideByID: Finds a ride by its ID
-     * @param id: ID of the ride
-     * @return: The ride with the given ID
+     * @param id ID of the ride
+     * @return The ride with the given ID
      */
     private ServicePoint findRideByID(int id) {
         for (ServicePoint p : servicePoints) {
@@ -163,7 +162,7 @@ public class OwnEngine extends Engine {
 
     /**
      * RunEvent: Runs the B events in the simulation. Checks the type of the event and runs the corresponding event.
-     * @param t: Event to be run
+     * @param t Event to be run
      */
     @Override
     protected void runEvent(Event t) {  // B-vaiheen tapahtumat
@@ -308,7 +307,7 @@ public class OwnEngine extends Engine {
 
     /**
      * NextTicketBooth: Returns the next ticket booth to be used
-     * @return: The next ticket booth to be used
+     * @return The next ticket booth to be used
      */
     public int nextTicketBooth() {
         ticketBoothCounter++;
@@ -320,7 +319,7 @@ public class OwnEngine extends Engine {
 
     /**
      * SetWristbandChance: Sets the chance of getting a wristband
-     * @param amount: Amount to be added to the wristband chance
+     * @param amount Amount to be added to the wristband chance
      */
     public void setWristbandChance(double amount) {
         wristbandChance += amount;
@@ -418,7 +417,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetWholeAverage: Returns the average time that customers spend in the simulation regardless of the type of the customer
-     * @return: The average time that customers spend in the simulation
+     * @return The average time that customers spend in the simulation
      */
     protected double getWholeAverage() {
         return (getAverageTicketTime() + getAverageWristbandTime()) / 2;
@@ -426,7 +425,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetAverageWristbandTime: Returns the average time that wristband customers spend in the simulation
-     * @return
+     * @return The average time that wristband customers spend in the simulation
      */
     public double getAverageWristbandTime() {
         double sum = 0;
@@ -438,7 +437,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetAverageTicketTime: Returns the average time that ticket customers spend in the simulation
-     * @return: The average time that ticket customers spend in the simulation
+     * @return The average time that ticket customers spend in the simulation
      */
     public double getAverageTicketTime() {
         double sum = 0;
@@ -450,7 +449,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetWristbandTicketAverageRatio: Returns the ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
-     * @return: The ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
+     * @return The ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
      */
     public double getWristbandTicketAverageRatio() {
         return getAverageTicketTime() / getAverageWristbandTime();
@@ -458,7 +457,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetStaticResults: Returns the static results of the simulation
-     * @return: The static results of the simulation
+     * @return The static results of the simulation
      */
     public HashMap<String, Double> getStaticResults() {
         return staticResults;
@@ -466,7 +465,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetDynamicResults: Returns the dynamic results of the simulation
-     * @return: The dynamic results of the simulation
+     * @return The dynamic results of the simulation
      */
     public TreeMap<String, Double> getDynamicResults() {
         return dynamicResults;

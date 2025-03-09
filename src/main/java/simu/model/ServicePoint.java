@@ -1,6 +1,4 @@
-/**
- * ServicePoint.java is the class for the service points in the simulation. The class is used to manage the service points and the customers in the service points.
- */
+
 package simu.model;
 import distributions.ContinuousGenerator;
 import simu.framework.Clock;
@@ -12,6 +10,9 @@ import java.util.*;
 
 // TODO:
 // Palvelupistekohtaiset toiminnallisuudet, laskutoimitukset (+ tarvittavat muuttujat) ja raportointi koodattava
+/**
+ * ServicePoint.java is the class for the service points in the simulation. The class is used to manage the service points and the customers in the service points.
+ */
 public class ServicePoint {
 	/**
 	 * The queue of customers in the service point.
@@ -61,10 +62,10 @@ public class ServicePoint {
 	/**
 	 * The constructor for the ServicePoint class. The constructor initializes the service point with the given parameters and sets the ride ID (service point ID) for the service point.
 	 *
-	 * @param generator: The generator for the service point.
-	 * @param eventList: The event list for the service point.
-	 * @param type:      The type of the scheduled event.
-	 * @param rideCount: The number of rides in the simulation.
+	 * @param generator The generator for the service point.
+	 * @param eventList The event list for the service point.
+	 * @param type      The type of the scheduled event.
+	 * @param rideCount The number of rides in the simulation.
 	 */
 	public ServicePoint(ContinuousGenerator generator, EventList eventList, EventType type, int rideCount) {
 		this.eventList = eventList;
@@ -93,7 +94,7 @@ public class ServicePoint {
 	/**
 	 * The method to add a customer to the queue of the service point.
 	 *
-	 * @param a: The customer to be added to the queue.
+	 * @param a The customer to be added to the queue.
 	 */
 	public void addToQueue(Customer a) {   // Jonon 1. asiakas aina palvelussa
 		queue.add(a);
@@ -181,8 +182,8 @@ public class ServicePoint {
 	/**
 	 * The method to add the service time of a customer to the service point.
 	 *
-	 * @param servicePointID: The ID of the service point.
-	 * @param serviceTime:    The service time of the customer.
+	 * @param servicePointID The ID of the service point.
+	 * @param serviceTime    The service time of the customer.
 	 */
 	public void addServiceTime(int servicePointID, double serviceTime) {
 		if (!serviceTimes.containsKey(servicePointID)) {
@@ -209,7 +210,7 @@ public class ServicePoint {
 	/**
 	 * The method to add the queue time of a customer to the service point.
 	 *
-	 * @param customer: The customer whose queue time is added to the service point.
+	 * @param customer The customer whose queue time is added to the service point.
 	 */
 	public void addQueueTime(Customer customer){
 		double queueTime = customer.getQueueDepartureTime() - customer.getQueueArrivalTime();

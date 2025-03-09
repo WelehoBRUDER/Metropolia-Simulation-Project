@@ -1,7 +1,4 @@
-/**
- * RestaurantServicePoint.java is a class that extends ServicePoint.java and represents a restaurant service point in the simulation.
- * It differs from other service points in that it has a capacity for customers and a list of customers currently being served.
- */
+
 package simu.model;
 
 import distributions.ContinuousGenerator;
@@ -11,7 +8,10 @@ import simu.framework.EventList;
 import simu.framework.Trace;
 
 import java.util.ArrayList;
-
+/**
+ * RestaurantServicePoint.java is a class that extends ServicePoint.java and represents a restaurant service point in the simulation.
+ * It differs from other service points in that it has a capacity for customers and a list of customers currently being served.
+ */
 public class RestaurantServicePoint extends ServicePoint{
     /**
      * The ID of the restaurant service point.
