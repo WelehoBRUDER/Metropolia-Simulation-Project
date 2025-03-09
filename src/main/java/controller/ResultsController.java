@@ -93,61 +93,56 @@ public class ResultsController implements ISettingsControllerForM{
             // Split the key into parts to identify categories like "Ticket booth", "Ride", "Restaurant"
             String[] parts = key.split(" ");
 
-            // Handling "Ticket booth" keys
             if (key.contains("Ticket booth")) {
                 // Extract the ticket booth number from the key
-                String ticketBoothNumber = parts[2];  // Get the number part (e.g., "1", "2", "3")
+                String ticketBoothNumber = parts[2];
 
                 if (key.contains("count")) {
-                    // For count, we gather service and queue times
+
                     double count = value;
                     double averageServiceTime = dynamicResults.getOrDefault("Ticket booth " + ticketBoothNumber + " average service time", 0.0);
                     double averageQueueTime = dynamicResults.getOrDefault("Ticket booth " + ticketBoothNumber + " average queue time", 0.0);
 
-                    // Add to the results list
                     ObservableList<String> row = FXCollections.observableArrayList();
-                    row.add("Ticket booth " + ticketBoothNumber);  // Service Point Name
-                    row.add(intF.format((int) count));  // Count
-                    row.add(df.format(averageServiceTime));  // Average Service Time
-                    row.add(df.format(averageQueueTime));  // Average Queue Time
+                    row.add("Ticket booth " + ticketBoothNumber);
+                    row.add(intF.format((int) count));
+                    row.add(df.format(averageServiceTime));
+                    row.add(df.format(averageQueueTime));
                     resultsList.add(row);
                 }
             }
-            // Handling "Ride" keys
+
             else if (key.contains("Ride")) {
                 // Extract the ride number from the key
-                String rideNumber = parts[1];  // Get the ride ID (e.g., "1", "2", "3")
+                String rideNumber = parts[1];
 
                 if (key.contains("count")) {
-                    // For count, we gather service and queue times
+
                     double count = value;
                     double averageServiceTime = dynamicResults.getOrDefault("Ride " + rideNumber + " average service time", 0.0);
                     double averageQueueTime = dynamicResults.getOrDefault("Ride " + rideNumber + " average queue time", 0.0);
 
-                    // Add to the results list
+
                     ObservableList<String> row = FXCollections.observableArrayList();
-                    row.add("Ride " + rideNumber);  // Service Point Name
-                    row.add(intF.format(count));  // Count
-                    row.add(df.format(averageServiceTime));  // Average Service Time
-                    row.add(df.format(averageQueueTime));  // Average Queue Time
+                    row.add("Ride " + rideNumber);
+                    row.add(intF.format(count));
+                    row.add(df.format(averageServiceTime));
+                    row.add(df.format(averageQueueTime));
                     resultsList.add(row);
                 }
             }
-            // Handling "Restaurant" keys
             else if (key.contains("Restaurant")) {
-                // For the restaurant, there is no number, so it's handled directly
                 if (key.contains("count")) {
-                    // For count, we gather service and queue times
                     double count = value;
                     double averageServiceTime = dynamicResults.getOrDefault("Restaurant average service time", 0.0);
                     double averageQueueTime = dynamicResults.getOrDefault("Restaurant average queue time", 0.0);
 
-                    // Add to the results list
+
                     ObservableList<String> row = FXCollections.observableArrayList();
-                    row.add("Restaurant");  // Service Point Name
-                    row.add(intF.format(count));  // Count
-                    row.add(df.format(averageServiceTime));  // Average Service Time
-                    row.add(df.format(averageQueueTime));  // Average Queue Time
+                    row.add("Restaurant");
+                    row.add(intF.format(count));
+                    row.add(df.format(averageServiceTime));
+                    row.add(df.format(averageQueueTime));
                     resultsList.add(row);
                 }
             }
@@ -158,8 +153,6 @@ public class ResultsController implements ISettingsControllerForM{
     }
     @Override
     public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults){
-        System.out.println("Pääsi tänne");
-        System.out.println("End time: " + staticResults.get("End time"));
         Platform.runLater(() -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/results.fxml"));
