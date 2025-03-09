@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import simu.framework.IEngine;
 import simu.model.OwnEngine;
 import view.ISimulatorUI;
-
+import java.util.TreeMap;
 import java.util.HashMap;
 
 public class Controller implements ISettingsControllerForM, ISettingsControllerForV {   // UUSI
@@ -100,8 +100,12 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		return ui.getRideCount();
 	}
 
-	public HashMap<String, Double> getResults() {
-		return ((OwnEngine)engine).getResults();
+	public HashMap<String, Double> getStaticResults() {
+		return ((OwnEngine)engine).getStaticResults();
+	}
+
+	public TreeMap<String, Double> getDynamicResults() {
+		return ((OwnEngine)engine).getDynamicResults();
 	}
 
 }

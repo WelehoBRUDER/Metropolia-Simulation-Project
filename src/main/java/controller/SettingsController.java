@@ -36,7 +36,7 @@ public class SettingsController {
     @FXML
     private TextField wristbandChance;
 
-    private final boolean GUI_DEBUG = true;
+    private final boolean GUI_DEBUG = false;
 
     private int simTimeValue = 250;
     private int ticketBoothCountValue = 4;
