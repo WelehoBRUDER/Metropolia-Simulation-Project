@@ -190,7 +190,7 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.CENTER);
         if (defaultValue == 0 && number >= 0) {
-            this.serviceCtx.clearRect(x, y - this.FONT_SIZE - 2, this.SERVICE_POINT_SIZE * 1.3, this.FONT_SIZE + 2);
+            this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
             this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
             return;
         } else if (defaultValue == 0 && number < 0) {
@@ -198,7 +198,7 @@ public class SimController implements ISettingsControllerForM {
         }
         int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
         int waiting = Math.max(number, 0);
-        this.serviceCtx.clearRect(x, y - this.FONT_SIZE - 2, this.SERVICE_POINT_SIZE * 1.3, this.FONT_SIZE + 2);
+        this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
         this.serviceCtx.fillText(waiting + "(" + beingServed + ")", x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
     }
 

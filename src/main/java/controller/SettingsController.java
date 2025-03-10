@@ -93,8 +93,8 @@ public class SettingsController {
             value = 25 * power;
         }
         rideProperties.get(index)[type] += value;
-        if (rideProperties.get(index)[type] < 0) {
-            rideProperties.get(index)[type] = 0;
+        if (rideProperties.get(index)[type] < 1) {
+            rideProperties.get(index)[type] = 1;
         } else if (rideProperties.get(index)[type] > 100) {
             rideProperties.get(index)[type] = 100;
         }
@@ -104,9 +104,9 @@ public class SettingsController {
     public void setRideParam(int index, int type, TextField field) {
         if (!field.getText().isEmpty()) {
             int value = Integer.parseInt(field.getText());
-            if (value < 0 || value > 100) {
-                if (value < 0) {
-                    value = 0;
+            if (value < 1 || value > 100) {
+                if (value < 1) {
+                    value = 1;
                 } else {
                     value = 100;
                 }
@@ -400,6 +400,8 @@ public class SettingsController {
 
         // Show new stage
         Stage stage = new Stage();
+        stage.setTitle("Simulation running...");
+        stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.show();
 
