@@ -267,11 +267,11 @@ public class Dao {
         return list;
     }
 
-    public Restaurant getRestaurantById(int id) {
+    public ArrayList<Ride> getRideById(int id) {
 
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "SELECT * FROM restaurant WHERE sim_id = " + id + ";";
-        //System.out.println(sql);
+        String sql = "SELECT * FROM ride WHERE sim_id = " + id + ";";
+        ArrayList<Ride> list = new ArrayList();
 
         try {
             Statement s = conn.createStatement();
@@ -279,18 +279,47 @@ public class Dao {
 
             while (rs.next()) {
                 int simId = rs.getInt(1);
-                int customerAmount = rs.getInt(2);
-                double averageServeTime = rs.getDouble(3);
-                double averageWaitTime = rs.getDouble(4);
-                Restaurant Restaurant = new Restaurant(simId, customerAmount, averageServeTime, averageWaitTime);
-                return Restaurant;
+                int rideId = rs.getInt(2);
+                int count = rs.getInt(3);
+                double averageServiceTime = rs.getDouble(4);
+                double averageQueueTime = rs.getDouble(5);
+                Ride ride = new Ride(simId, rideId, count, averageServiceTime, averageQueueTime);
+                list.add(ride);
             }
+            return list;
+
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println(e.getMessage());
+            return null;
         }
-        //return Restaurant;
-        return null;
+    }
+
+    public ArrayList<Restaurant> getRestaurantById(int id) {
+
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "SELECT * FROM restaurant WHERE sim_id = " + id + ";";
+        ArrayList<Restaurant> list = new ArrayList();
+
+        try {
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery(sql);
+
+            while (rs.next()) {
+                int simId = rs.getInt(1);
+                int count = rs.getInt(2);
+                double averageServiceTime = rs.getDouble(3);
+                double averageQueueTime = rs.getDouble(4);
+                Restaurant restaurant = new Restaurant(simId, count, averageServiceTime, averageQueueTime);
+                list.add(restaurant);
+            }
+            return list;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
     public void addServicePoint(String servicePointType, int count, double averageServiceTime, double averageQueueTime, int ticketsBought){
