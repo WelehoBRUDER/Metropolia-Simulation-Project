@@ -219,27 +219,27 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.setFill(Color.LIGHTGRAY);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.LEFT);
-        this.serviceCtx.fillRect(0, 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 4);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 4);
 
         this.serviceCtx.setFill(ENTRANCE_COLOR);
-        this.serviceCtx.fillRect(4, 4 + (4 + this.SERVICE_POINT_SIZE) * 0 , this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 , this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
         this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Entrance", 8 + this.SERVICE_POINT_SIZE, 4 + (4 + this.SERVICE_POINT_SIZE) * 0 + (this.SERVICE_POINT_SIZE / 1.5));
+        this.serviceCtx.fillText("Entrance", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 + (this.SERVICE_POINT_SIZE / 1.5));
 
         this.serviceCtx.setFill(TICKET_COLOR);
-        this.serviceCtx.fillRect(4, 4 + (4 + this.SERVICE_POINT_SIZE) * 1, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 1, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
         this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Ticket booths", 8 + this.SERVICE_POINT_SIZE, 4 + (4 + this.SERVICE_POINT_SIZE) * 1 + (this.SERVICE_POINT_SIZE / 1.5));
+        this.serviceCtx.fillText("Ticket booths", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 1 + (this.SERVICE_POINT_SIZE / 1.5));
 
         this.serviceCtx.setFill(RIDE_COLOR);
-        this.serviceCtx.fillRect(4, 4 + (4 + this.SERVICE_POINT_SIZE) * 2, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 2, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
         this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Rides", 8 + this.SERVICE_POINT_SIZE, 4 + (4 + this.SERVICE_POINT_SIZE) * 2 + (this.SERVICE_POINT_SIZE / 1.5));
+        this.serviceCtx.fillText("Rides", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 2 + (this.SERVICE_POINT_SIZE / 1.5));
 
         this.serviceCtx.setFill(RESTAURANT_COLOR);
-        this.serviceCtx.fillRect(4, 4 + (4 + this.SERVICE_POINT_SIZE) * 3, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
         this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Restaurant", 8 + this.SERVICE_POINT_SIZE, 4 + (4 + this.SERVICE_POINT_SIZE) * 3 + (this.SERVICE_POINT_SIZE / 1.5));
+        this.serviceCtx.fillText("Restaurant", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3 + (this.SERVICE_POINT_SIZE / 1.5));
 
     }
 
@@ -390,7 +390,7 @@ public class SimController implements ISettingsControllerForM {
         // s = step
         double sx = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[0];
         double sy = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[1];
-        this.customerCords.add(new double[]{x, y, sx, sy});
+        this.customerCords.add(new double[]{x + (this.SERVICE_POINT_SIZE / 2) - (this.CUSTOMER_SIZE / 2), y + (this.SERVICE_POINT_SIZE / 2) - (this.CUSTOMER_SIZE / 2), sx, sy});
         this.customerDestination.add(getLocation(to));
         int defaultFrom = this.defaults[getIndex(from)[0]];
         int defaultTo = this.defaults[getIndex(to)[0]];
@@ -455,8 +455,8 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public double[] calculatePath(double[] origin, int[] destination, int steps) {
-        int midX = destination[0] + (this.SERVICE_POINT_SIZE/2) - this.CUSTOMER_SIZE / 2;
-        int midY = destination[1] + (this.SERVICE_POINT_SIZE/2) - this.CUSTOMER_SIZE / 2;
+        int midX = destination[0] + (this.SERVICE_POINT_SIZE/4) - this.CUSTOMER_SIZE / 2;
+        int midY = destination[1] + (this.SERVICE_POINT_SIZE/4) - this.CUSTOMER_SIZE / 2;
         // Calculate delta x and y
         double dx = midX - origin[0];
         double dy = midY - origin[1];
