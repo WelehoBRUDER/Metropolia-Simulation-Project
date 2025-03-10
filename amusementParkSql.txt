@@ -24,6 +24,8 @@ CREATE TABLE ride (
 	count INT,
 	average_service_time DECIMAL(12, 2),
 	average_queue_time DECIMAL(12, 2),
+	variance DECIMAL(12, 2),
+	mean DECIMAL(12,2),
 	#PRIMARY KEY (ride_id),
 	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
 );
@@ -42,6 +44,7 @@ CREATE TABLE restaurant (
 	count INT,
 	average_service_time DECIMAL(12, 2),
 	average_queue_time DECIMAL(12, 2),
+	capacity INT,
 	#PRIMARY KEY (sim_id),
 	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
 );

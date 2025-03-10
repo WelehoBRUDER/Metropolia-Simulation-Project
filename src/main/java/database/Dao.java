@@ -76,13 +76,17 @@ class Ride {
     private int count;
     private double averageServiceTime;
     private double averageQueueTime;
+    private double variance;
+    private double mean;
 
-    public Ride(int simId, int rideId, int count, double averageServiceTime, double averageQueueTime) {
+    public Ride(int simId, int rideId, int count, double averageServiceTime, double averageQueueTime, double variance, double mean) {
         this.simId = simId;
         this.rideId = rideId;
         this.count = count;
         this.averageServiceTime = averageServiceTime;
         this.averageQueueTime = averageQueueTime;
+        this.variance = variance;
+        this.mean = mean;
     }
 
     public int getSimId() {
@@ -123,6 +127,22 @@ class Ride {
 
     public void setAverageQueueTime(double averageQueueTime) {
         this.averageQueueTime = averageQueueTime;
+    }
+
+    public double getVariance() {
+        return variance;
+    }
+
+    public void setVariance(double variance) {
+        this.variance = variance;
+    }
+
+    public double getMean() {
+        return mean;
+    }
+
+    public void setMean(double mean) {
+        this.mean = mean;
     }
 }
 
@@ -177,12 +197,14 @@ class Restaurant {
     private int count;
     private double averageServiceTime;
     private double averageQueueTime;
+    private int capacity;
 
-    public Restaurant(int simId, int count, double averageServiceTime, double averageQueueTime) {
+    public Restaurant(int simId, int count, double averageServiceTime, double averageQueueTime, int capacity) {
         this.simId = simId;
         this.count = count;
         this.averageServiceTime = averageServiceTime;
         this.averageQueueTime = averageQueueTime;
+        this.capacity = capacity;
     }
 
     public int getSimId() {
@@ -216,6 +238,14 @@ class Restaurant {
     public void setAverageQueueTime(double averageQueueTime) {
         this.averageQueueTime = averageQueueTime;
     }
+
+    public int getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
 }
 
 public class Dao {
@@ -234,37 +264,22 @@ public class Dao {
         }
     }
 
-    public ArrayList testDao() {
+    public int getSimId() {
 
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "SELECT * FROM restaurant";
-        ArrayList list = new ArrayList();
+        String sql = "SELECT MAX(sim_id) FROM simulation";
 
         try {
             Statement s = conn.createStatement();
             ResultSet rs = s.executeQuery(sql);
 
-            while (rs.next()) {
-                int simId = rs.getInt(1);
-                int customerAmount = rs.getInt(2);
-                double averageServeTime = rs.getDouble(3);
-                double averageWaitTime = rs.getDouble(4);
-
-                ArrayList list2 = new ArrayList();
-                list2.add(simId);
-                list2.add(customerAmount);
-                list2.add(averageServeTime);
-                list2.add(averageWaitTime);
-                list.add(list2);
-
-                //list.add(simId + customerAmount + averageServeTime + averageWaitTime);
-
-            }
-        } catch (SQLException e) {
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e){
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-        return list;
+        return 0;
     }
 
     public ArrayList<Ride> getRideById(int id) {
@@ -283,7 +298,9 @@ public class Dao {
                 int count = rs.getInt(3);
                 double averageServiceTime = rs.getDouble(4);
                 double averageQueueTime = rs.getDouble(5);
-                Ride ride = new Ride(simId, rideId, count, averageServiceTime, averageQueueTime);
+                double variance = rs.getDouble(6);
+                double mean = rs.getDouble(7);
+                Ride ride = new Ride(simId, rideId, count, averageServiceTime, averageQueueTime, variance, mean);
                 list.add(ride);
             }
             return list;
@@ -310,7 +327,8 @@ public class Dao {
                 int count = rs.getInt(2);
                 double averageServiceTime = rs.getDouble(3);
                 double averageQueueTime = rs.getDouble(4);
-                Restaurant restaurant = new Restaurant(simId, count, averageServiceTime, averageQueueTime);
+                int capacity = rs.getInt(5);
+                Restaurant restaurant = new Restaurant(simId, count, averageServiceTime, averageQueueTime, capacity);
                 list.add(restaurant);
             }
             return list;
@@ -339,9 +357,9 @@ public class Dao {
         }
     }
 
-    public void addRide(int rideId, int count, double averageServeTime, double averageWaitTime){
+    public void addRide(int rideId, int count, double averageServeTime, double averageWaitTime, double variance, double mean){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO ride (sim_id, ride_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?);";
+        String sql = "INSERT INTO ride (sim_id, ride_id, count, average_service_time, average_queue_time, variance, mean) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
@@ -349,6 +367,8 @@ public class Dao {
             ps.setInt(2, count);
             ps.setDouble(3, averageServeTime);
             ps.setDouble(4, averageWaitTime);
+            ps.setDouble(5, variance);
+            ps.setDouble(6, mean);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
