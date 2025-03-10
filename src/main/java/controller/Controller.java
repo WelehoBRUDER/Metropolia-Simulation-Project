@@ -93,12 +93,20 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 
 	}
 
+	@Override
+	public void closeSimulation() {
+
+	}
+
 	public void setWristbandChance(double amount) {
 		((OwnEngine)engine).setWristbandChance(amount);
 	}
 
 	public double getWristbandChance() {
 		return ((OwnEngine)engine).getWristbandChance();
+	}
+
+	public void updateConsole(String msg) {
 	}
 
 	public int getRideCount() {
