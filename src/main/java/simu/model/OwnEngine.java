@@ -59,8 +59,8 @@ public class OwnEngine extends Engine {
         }
 
         for (int i = ticketBoothCount; i < ticketBoothCount + rideCount; i++) {
-            int mean = rideProperties.get(i - ticketBoothCount)[0];
-            int variance = rideProperties.get(i - ticketBoothCount)[1];
+            int mean = rideProperties.get(i - ticketBoothCount)[1];
+            int variance = rideProperties.get(i - ticketBoothCount)[0];
             servicePoints[i] = new ServicePoint(new Normal(mean, variance), eventList, EventType.DEP_RIDE, rideCount); //Laitteet
         }
 

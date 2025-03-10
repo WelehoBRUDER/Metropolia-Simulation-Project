@@ -21,6 +21,8 @@ public class SettingsView extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/settings.fxml"));
         Parent root = fxmlLoader.load();
 
+        stage.setTitle("Simulation settings");
+        stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.show();
     }
