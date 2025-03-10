@@ -7,37 +7,44 @@ CREATE TABLE simulation (
 	PRIMARY KEY (sim_id)
 );
 
-CREATE TABLE restaurant (
-	sim_id INT NOT NULL,
-	customer_amount INT,
-	average_serve_time DECIMAL(12, 2),
-	average_wait_time DECIMAL(12, 2),
-	PRIMARY KEY (sim_id),
-	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
-);
-
 CREATE TABLE service_point (
 	sim_id INT NOT NULL,
-	customer_amount INT,
-	average_serve_time DECIMAL(12, 2),
-	average_wait_time DECIMAL(12, 2),
+	service_point_type VARCHAR(60),
+	count INT,
+	average_service_time DECIMAL(12, 2),
+	average_queue_time DECIMAL(12, 2),
 	tickets_bought INT,
-	PRIMARY KEY (sim_id),
+	#PRIMARY KEY (sim_id),
 	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE rides (
+CREATE TABLE ride (
 	sim_id INT NOT NULL,
-	ride_id INT NOT NULL AUTO_INCREMENT,
-	customer_amount INT,
-	average_serve_time DECIMAL(12, 2),
-	average_wait_time DECIMAL(12, 2),
-	PRIMARY KEY (ride_id),
+	ride_id INT NOT NULL,
+	count INT,
+	average_service_time DECIMAL(12, 2),
+	average_queue_time DECIMAL(12, 2),
+	#PRIMARY KEY (ride_id),
 	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
 );
 
+CREATE TABLE ticket_booth (
+	sim_id INT NOT NULL,
+	count INT,
+	average_service_time DECIMAL(12, 2),
+	average_queue_time DECIMAL(12, 2),
+	#PRIMARY KEY (sim_id),
+	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
+);
 
+CREATE TABLE restaurant (
+	sim_id INT NOT NULL,
+	count INT,
+	average_service_time DECIMAL(12, 2),
+	average_queue_time DECIMAL(12, 2),
+	#PRIMARY KEY (sim_id),
+	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
+);
 /*
 INSERT INTO simulation (sim_id) VALUES (NULL);
 INSERT INTO rides (sim_id, customer_amount, average_serve_time, average_wait_time) VALUES
@@ -77,6 +84,6 @@ INSERT INTO service_point (id, customer_amount, average_serve_time, average_wait
 */
 
 
-DROP USER IF EXISTS 'appuser'@'localhost';
-CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'password';
-GRANT SELECT, INSERT, UPDATE, DELETE ON amusement_park.* TO 'appuser'@'localhost';
+DROP USER IF EXISTS 'amusement'@'localhost';
+CREATE USER 'amusement'@'localhost' IDENTIFIED BY 'password';
+GRANT SELECT, INSERT, UPDATE, DELETE ON amusement_park.* TO 'amusement'@'localhost';

@@ -13,7 +13,7 @@ public class DatabaseConnection {
             // connect if necessary
             try {
                 conn = DriverManager.getConnection(
-                        "jdbc:mariadb://localhost:3306/amusement_park?user=appuser&password=password");
+                        "jdbc:mariadb://localhost:3306/amusement_park?user=amusement&password=password");
             } catch (SQLException e) {
                 System.out.println("Connection failed.");
                 e.printStackTrace();

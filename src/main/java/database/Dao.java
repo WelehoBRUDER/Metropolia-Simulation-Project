@@ -3,17 +3,22 @@ package database;
 import java.sql.*;
 import java.util.*;
 
-class restaurant{
-    private int simId;
-    private int customerAmount;
-    private double average_serve_time;
-    private double average_wait_time;
 
-    public restaurant(int simId, int customerAmount, double average_serve_time, double average_wait_time) {
+class ServicePoint {
+    private int simId;
+    private String servicePointType;
+    private int count;
+    private double averageServiceTime;
+    private double averageQueueTime;
+    private int ticketsBought;
+
+    public ServicePoint(int simId, String servicePointType, int count, double averageServiceTime, double averageQueueTime, int ticketsBought) {
         this.simId = simId;
-        this.customerAmount = customerAmount;
-        this.average_serve_time = average_serve_time;
-        this.average_wait_time = average_wait_time;
+        this.servicePointType = servicePointType;
+        this.count = count;
+        this.averageServiceTime = averageServiceTime;
+        this.averageQueueTime = averageQueueTime;
+        this.ticketsBought = ticketsBought;
     }
 
     public int getSimId() {
@@ -24,44 +29,60 @@ class restaurant{
         this.simId = simId;
     }
 
-    public int getCustomerAmount() {
-        return customerAmount;
+    public String getServicePointType() {
+        return servicePointType;
     }
 
-    public void setCustomerAmount(int customerAmount) {
-        this.customerAmount = customerAmount;
+    public void setServicePointType(String servicePointType) {
+        this.servicePointType = servicePointType;
     }
 
-    public double getAverage_serve_time() {
-        return average_serve_time;
+    public int getCount() {
+        return count;
     }
 
-    public void setAverage_serve_time(double average_serve_time) {
-        this.average_serve_time = average_serve_time;
+    public void setCount(int count) {
+        this.count = count;
     }
 
-    public double getAverage_wait_time() {
-        return average_wait_time;
+    public double getAverageServiceTime() {
+        return averageServiceTime;
     }
 
-    public void setAverage_wait_time(double average_wait_time) {
-        this.average_wait_time = average_wait_time;
+    public void setAverageServiceTime(double averageServiceTime) {
+        this.averageServiceTime = averageServiceTime;
+    }
+
+    public double getAverageQueueTime() {
+        return averageQueueTime;
+    }
+
+    public void setAverageQueueTime(double averageQueueTime) {
+        this.averageQueueTime = averageQueueTime;
+    }
+
+    public int getTicketsBought() {
+        return ticketsBought;
+    }
+
+    public void setTicketsBought(int ticketsBought) {
+        this.ticketsBought = ticketsBought;
     }
 }
 
-class servicePoint{
+class Ride {
     private int simId;
-    private int customerAmount;
-    private double average_serve_time;
-    private double average_wait_time;
-    private int tickets_bought;
+    private int rideId;
+    private int count;
+    private double averageServiceTime;
+    private double averageQueueTime;
 
-    public servicePoint(int simId, int customerAmount, double average_serve_time, double average_wait_time, int tickets_bought) {
+    public Ride(int simId, int rideId, int count, double averageServiceTime, double averageQueueTime) {
         this.simId = simId;
-        this.customerAmount = customerAmount;
-        this.average_serve_time = average_serve_time;
-        this.average_wait_time = average_wait_time;
-        this.tickets_bought = tickets_bought;
+        this.rideId = rideId;
+        this.count = count;
+        this.averageServiceTime = averageServiceTime;
+        this.averageQueueTime = averageQueueTime;
     }
 
     public int getSimId() {
@@ -72,52 +93,50 @@ class servicePoint{
         this.simId = simId;
     }
 
-    public int getCustomerAmount() {
-        return customerAmount;
+    public int getRideId() {
+        return rideId;
     }
 
-    public void setCustomerAmount(int customerAmount) {
-        this.customerAmount = customerAmount;
+    public void setRideId(int rideId) {
+        this.rideId = rideId;
     }
 
-    public double getAverage_serve_time() {
-        return average_serve_time;
+    public int getCount() {
+        return count;
     }
 
-    public void setAverage_serve_time(double average_serve_time) {
-        this.average_serve_time = average_serve_time;
+    public void setCount(int count) {
+        this.count = count;
     }
 
-    public double getAverage_wait_time() {
-        return average_wait_time;
+    public double getAverageServiceTime() {
+        return averageServiceTime;
     }
 
-    public void setAverage_wait_time(double average_wait_time) {
-        this.average_wait_time = average_wait_time;
+    public void setAverageServiceTime(double averageServiceTime) {
+        this.averageServiceTime = averageServiceTime;
     }
 
-    public int getTickets_bought() {
-        return tickets_bought;
+    public double getAverageQueueTime() {
+        return averageQueueTime;
     }
 
-    public void setTickets_bought(int tickets_bought) {
-        this.tickets_bought = tickets_bought;
+    public void setAverageQueueTime(double averageQueueTime) {
+        this.averageQueueTime = averageQueueTime;
     }
 }
 
-class ride {
+class TicketBooth {
     private int simId;
-    private int ride_id;
-    private int customerAmount;
-    private double average_serve_time;
-    private double average_wait_time;
+    private int count;
+    private double averageServiceTime;
+    private double averageQueueTime;
 
-    public ride(int simId, int ride_id, int customerAmount, double average_serve_time, double average_wait_time) {
+    public TicketBooth(int simId, int count, double averageServiceTime, double averageQueueTime) {
         this.simId = simId;
-        this.ride_id = ride_id;
-        this.customerAmount = customerAmount;
-        this.average_serve_time = average_serve_time;
-        this.average_wait_time = average_wait_time;
+        this.count = count;
+        this.averageServiceTime = averageServiceTime;
+        this.averageQueueTime = averageQueueTime;
     }
 
     public int getSimId() {
@@ -128,40 +147,93 @@ class ride {
         this.simId = simId;
     }
 
-    public int getRide_id() {
-        return ride_id;
+    public int getCount() {
+        return count;
     }
 
-    public void setRide_id(int ride_id) {
-        this.ride_id = ride_id;
+    public void setCount(int count) {
+        this.count = count;
     }
 
-    public int getCustomerAmount() {
-        return customerAmount;
+    public double getAverageServiceTime() {
+        return averageServiceTime;
     }
 
-    public void setCustomerAmount(int customerAmount) {
-        this.customerAmount = customerAmount;
+    public void setAverageServiceTime(double averageServiceTime) {
+        this.averageServiceTime = averageServiceTime;
     }
 
-    public double getAverage_serve_time() {
-        return average_serve_time;
+    public double getAverageQueueTime() {
+        return averageQueueTime;
     }
 
-    public void setAverage_serve_time(double average_serve_time) {
-        this.average_serve_time = average_serve_time;
+    public void setAverageQueueTime(double averageQueueTime) {
+        this.averageQueueTime = averageQueueTime;
+    }
+}
+
+class Restaurant {
+    private int simId;
+    private int count;
+    private double averageServiceTime;
+    private double averageQueueTime;
+
+    public Restaurant(int simId, int count, double averageServiceTime, double averageQueueTime) {
+        this.simId = simId;
+        this.count = count;
+        this.averageServiceTime = averageServiceTime;
+        this.averageQueueTime = averageQueueTime;
     }
 
-    public double getAverage_wait_time() {
-        return average_wait_time;
+    public int getSimId() {
+        return simId;
     }
 
-    public void setAverage_wait_time(double average_wait_time) {
-        this.average_wait_time = average_wait_time;
+    public void setSimId(int simId) {
+        this.simId = simId;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public double getAverageServiceTime() {
+        return averageServiceTime;
+    }
+
+    public void setAverageServiceTime(double averageServiceTime) {
+        this.averageServiceTime = averageServiceTime;
+    }
+
+    public double getAverageQueueTime() {
+        return averageQueueTime;
+    }
+
+    public void setAverageQueueTime(double averageQueueTime) {
+        this.averageQueueTime = averageQueueTime;
     }
 }
 
 public class Dao {
+
+    public void incrementSimId(){
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "INSERT INTO simulation (sim_id) VALUES (NULL);";
+
+        try {
+            Statement s = conn.createStatement();
+            //ResultSet rs = s.executeQuery(sql);
+            s.executeUpdate(sql);
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     public ArrayList testDao() {
 
         Connection conn = DatabaseConnection.getConnection();
@@ -195,11 +267,11 @@ public class Dao {
         return list;
     }
 
-    public restaurant getRestaurantById(int id) {
+    public Restaurant getRestaurantById(int id) {
 
         Connection conn = DatabaseConnection.getConnection();
         String sql = "SELECT * FROM restaurant WHERE sim_id = " + id + ";";
-        System.out.println(sql);
+        //System.out.println(sql);
 
         try {
             Statement s = conn.createStatement();
@@ -210,7 +282,7 @@ public class Dao {
                 int customerAmount = rs.getInt(2);
                 double averageServeTime = rs.getDouble(3);
                 double averageWaitTime = rs.getDouble(4);
-                restaurant Restaurant = new restaurant(simId, customerAmount, averageServeTime, averageWaitTime);
+                Restaurant Restaurant = new Restaurant(simId, customerAmount, averageServeTime, averageWaitTime);
                 return Restaurant;
             }
         } catch (SQLException e) {
@@ -221,64 +293,67 @@ public class Dao {
         return null;
     }
 
-    public void incrementSimId(){
+    public void addServicePoint(String servicePointType, int count, double averageServiceTime, double averageQueueTime, int ticketsBought){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO simulation (sim_id) VALUES (NULL);";
-
-        try {
-            Statement s = conn.createStatement();
-            //ResultSet rs = s.executeQuery(sql);
-            s.executeUpdate(sql);
-
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void addRestaurant(int customerAmount, double averageServeTime, double averageWaitTime){
-        Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO restaurant (sim_id, customer_amount, average_serve_time, average_wait_time) VALUES (LAST_INSERT_ID(), ?, ?, ?);";
+        String sql = "INSERT INTO service_point (sim_id, service_point_type, count, average_service_time, average_queue_time, tickets_bought) VALUES (LAST_INSERT_ID(),?, ?, ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, customerAmount);
-            ps.setDouble(2, averageServeTime);
-            ps.setDouble(3, averageWaitTime);
+            ps.setString(1, servicePointType);
+            ps.setInt(2, count);
+            ps.setDouble(3, averageServiceTime);
+            ps.setDouble(4, averageQueueTime);
+            ps.setInt(5, ticketsBought);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
 
-    public void addServicePoint(int customerAmount, double averageServeTime, double averageWaitTime, int ticketsBought){
+    public void addRide(int rideId, int count, double averageServeTime, double averageWaitTime){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO service_point (sim_id, customer_amount, average_serve_time, average_wait_time, tickets_bought) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?);";
+        String sql = "INSERT INTO ride (sim_id, ride_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, customerAmount);
-            ps.setDouble(2, averageServeTime);
-            ps.setDouble(3, averageWaitTime);
-            ps.setInt(4, ticketsBought);
+            ps.setInt(1, rideId);
+            ps.setInt(2, count);
+            ps.setDouble(3, averageServeTime);
+            ps.setDouble(4, averageWaitTime);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
 
-    public void addRide(int customerAmount, double averageServeTime, double averageWaitTime){
+    public void addTicketBooth(int count, double averageServiceTime, double averageQueueTime){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO ride (sim_id, customer_amount, average_serve_time, average_wait_time) VALUES (LAST_INSERT_ID(), ?, ?, ?);";
+        String sql = "INSERT INTO ticket_booth (sim_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, customerAmount);
-            ps.setDouble(2, averageServeTime);
-            ps.setDouble(3, averageWaitTime);
+            ps.setInt(1, count);
+            ps.setDouble(2, averageServiceTime);
+            ps.setDouble(3, averageQueueTime);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
 
+    public void addRestaurant(int count, double averageServiceTime, double averageQueueTime){
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "INSERT INTO restaurant (sim_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?);";
+
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, count);
+            ps.setDouble(2, averageServiceTime);
+            ps.setDouble(3, averageQueueTime);
+            ps.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+    
 }
