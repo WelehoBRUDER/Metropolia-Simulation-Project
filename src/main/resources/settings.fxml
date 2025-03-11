@@ -23,7 +23,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementSimTime" text="-" />
-                  <TextField fx:id="simTime" onKeyReleased="#setSimTime">
+                  <TextField fx:id="simTime" onAction="#setSimTime">
                      <FlowPane.margin>
                         <Insets top="1.0" />
                      </FlowPane.margin></TextField>
@@ -45,7 +45,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementTicketBooths" text="-" />
-                  <TextField fx:id="ticketBoothCount" onKeyReleased="#setTicketBoothCount" />
+                  <TextField fx:id="ticketBoothCount" onAction="#setTicketBoothCount" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementTicketBooths" text="+" />
                </children>
             </FlowPane>
@@ -64,7 +64,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementRideCount" text="-" />
-                  <TextField fx:id="rideCount" onKeyTyped="#setRideCount" />
+                  <TextField fx:id="rideCount" onAction="#setRideCount" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementRideCount" text="+" />
                </children>
             </FlowPane>
@@ -92,7 +92,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementRestaurantCap" text="-" />
-                  <TextField fx:id="restaurantCap" onKeyTyped="#setRestaurantCap" />
+                  <TextField fx:id="restaurantCap" onAction="#setRestaurantCap" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementRestaurantCap" text="+" />
                </children>
             </FlowPane>
@@ -111,7 +111,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementSimDelay" text="-" />
-                  <TextField fx:id="simDelay" onKeyTyped="#setSimDelay" />
+                  <TextField fx:id="simDelay" onAction="#setSimDelay" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementSimDelay" text="+" />
                </children>
             </FlowPane>
@@ -130,7 +130,7 @@
             <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
                <children>
                   <Button mnemonicParsing="false" onMouseClicked="#decrementWristbandChance" text="-" />
-                  <TextField fx:id="wristbandChance" onKeyTyped="#setWristbandChance" />
+                  <TextField fx:id="wristbandChance" onAction="#setWristbandChance" />
                   <Button mnemonicParsing="false" onMouseClicked="#incrementWristbandChance" text="+" />
                </children>
             </FlowPane>

@@ -54,12 +54,45 @@ public class SettingsController {
     private Stage stage;
 
     public void initialize() throws Exception {
+        // Add focusout listeners to each input field
+        simTime.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setSimTime();
+            }
+        });
+        ticketBoothCount.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setTicketBoothCount();
+            }
+        });
+        rideCount.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setRideCount();
+            }
+        });
+        restaurantCap.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setRestaurantCap();
+            }
+        });
+        simDelay.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setSimDelay();
+            }
+        });
+        wristbandChance.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setWristbandChance();
+            }
+        });
+        // Add sanitization listeners to each input field
         sanitizeInput(simTime);
         sanitizeInput(ticketBoothCount);
         sanitizeInput(rideCount);
         sanitizeInput(restaurantCap);
         sanitizeInput(simDelay);
         sanitizeInput(wristbandChance);
+        // Set default values
         simTime.setText(String.valueOf(simTimeValue));
         ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
         rideCount.setText(String.valueOf(rideCountValue));
@@ -82,7 +115,10 @@ public class SettingsController {
         number.setText(String.valueOf(rideProperties.get(index)[type]));
         sanitizeInput(number);
         numberInput.getChildren().addAll(decrement, number, increment);
-        number.setOnKeyTyped(e -> setRideParam(index, type, number));
+        number.setOnAction(e -> setRideParam(index, type, number));
+        number.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) setRideParam(index, type, number);
+        });
         decrement.setOnMouseClicked(e -> changeRideParam(index, type, e, number, -1));
         increment.setOnMouseClicked(e -> changeRideParam(index, type, e, number, 1));
         return numberInput;
@@ -106,6 +142,9 @@ public class SettingsController {
 
     public void setRideParam(int index, int type, TextField field) {
         if (!field.getText().isEmpty()) {
+            if (field.getText().length() > 3) {
+                field.setText(field.getText().substring(0, 3));
+            }
             int value = Integer.parseInt(field.getText());
             if (value < 1 || value > 100) {
                 if (value < 1) {
@@ -319,6 +358,9 @@ public class SettingsController {
 
     public void setSimTime() {
         if (!simTime.getText().isEmpty()) {
+            if (simTime.getText().length() > 10) {
+                simTime.setText(simTime.getText().substring(0, 9));
+            }
             simTimeValue = Integer.parseInt(simTime.getText());
             if (simTimeValue < minDelay) {
                 simTimeValue = minDelay;
@@ -329,6 +371,9 @@ public class SettingsController {
 
     public void setTicketBoothCount() {
         if (!ticketBoothCount.getText().isEmpty()) {
+            if (ticketBoothCount.getText().length() > 3) {
+                ticketBoothCount.setText(ticketBoothCount.getText().substring(0, 3));
+            }
             ticketBoothCountValue = Integer.parseInt(ticketBoothCount.getText());
             if (ticketBoothCountValue < 1 || ticketBoothCountValue > maxTicketBoothCount) {
                 if (ticketBoothCountValue < 1) {
@@ -343,6 +388,9 @@ public class SettingsController {
 
     public void setRideCount() {
         if (!rideCount.getText().isEmpty()) {
+            if (rideCount.getText().length() > 3) {
+                rideCount.setText(rideCount.getText().substring(0, 3));
+            }
             rideCountValue = Integer.parseInt(rideCount.getText());
             if (rideCountValue < 1 || rideCountValue > maxRideCount) {
                 if (rideCountValue < 1) {
@@ -359,6 +407,9 @@ public class SettingsController {
 
     public void setRestaurantCap() {
         if (!restaurantCap.getText().isEmpty()) {
+            if (restaurantCap.getText().length() > 3) {
+                restaurantCap.setText(restaurantCap.getText().substring(0, 3));
+            }
             restaurantCapValue = Integer.parseInt(restaurantCap.getText());
             if (restaurantCapValue < 1) {
                 restaurantCapValue = 1;
@@ -369,6 +420,9 @@ public class SettingsController {
 
     public void setSimDelay() {
         if (!simDelay.getText().isEmpty()) {
+            if (simDelay.getText().length() > 5) {
+                simDelay.setText(simDelay.getText().substring(0, 5));
+            }
             simDelayValue = Long.parseLong(simDelay.getText());
             if (simDelayValue < 0) {
                 simDelayValue = 0;
@@ -379,14 +433,17 @@ public class SettingsController {
 
     public void setWristbandChance() {
         if (!wristbandChance.getText().isEmpty()) {
+            if (wristbandChance.getText().length() > 5) {
+                wristbandChance.setText(wristbandChance.getText().substring(0, 5));
+            }
             wristbandChanceValue = Double.parseDouble(wristbandChance.getText());
             if (wristbandChanceValue < 1 || wristbandChanceValue > 100) {
-                wristbandChance.setText(String.valueOf(wristbandChanceValue));
                 if (wristbandChanceValue < 1) {
                     wristbandChanceValue = 1;
-                } else if (wristbandChanceValue > 100) {
+                } else {
                     wristbandChanceValue = 100;
                 }
+                wristbandChance.setText(String.valueOf(wristbandChanceValue));
             }
         }
     }
