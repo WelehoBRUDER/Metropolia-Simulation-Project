@@ -12,6 +12,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import simu.framework.Trace;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -117,11 +118,8 @@ public class ResultsController implements ISettingsControllerForM{
      */
     @FXML
     public void initialize() {
-        System.out.println("Initializing the controller...");
-        if (resultTableView != null) {
-            System.out.println("TableView initialized");
-        } else {
-            System.out.println("TableView is null");
+        if (resultTableView == null) {
+            Trace.out(Trace.Level.WAR, "Table view is null");
         }
         servicePointCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(0)));
         countCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().get(1)));
