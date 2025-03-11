@@ -46,6 +46,32 @@
 }
 
 .ride-label {
-    -fx-pref-width: 80;
+    -fx-pref-width: 35;
     -fx-font-weight: bold;
+}
+
+.ride * {
+    -fx-font-size: 10px;
+}
+
+.ride .num-setting-small Button {
+    -fx-pref-width: 15;
+    -fx-pref-height: 15;
+    -fx-padding: 0;
+}
+
+.ride TextField {
+    -fx-pref-width: 20;
+    -fx-pref-height: 15;
+    -fx-font-size: 10px;
+    -fx-padding: 0;
+}
+
+.ride {
+    -fx-border-width: 2;
+    -fx-border-color: gray;
+}
+
+.ride-list {
+    -fx-spacing: 5;
 }

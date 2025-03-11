@@ -38,7 +38,7 @@ public class OwnEngine extends Engine {
     private int ticketBoothCounter = -1;
 
 
-    public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
+    public OwnEngine(ISettingsControllerForM controller, double arrivalInterval,  int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
         super(controller);
 
@@ -76,7 +76,7 @@ public class OwnEngine extends Engine {
         servicePoints[rideCount + ticketBoothCount] = new RestaurantServicePoint(new Normal(80, 3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY); //Ravintola
 
         //arrivalProgress = new ArrivalProgress(new Negexp(15, 5), eventList, EventType.ARRIVAL); //Saapuminen, Tällä asiakkaat saapuvat n. 15 aikayksikön välein eli aika harvoin
-        arrivalProgress = new ArrivalProgress(new Negexp(5, 5), eventList, EventType.ARRIVAL); //Saapuminen
+        arrivalProgress = new ArrivalProgress(new Negexp(arrivalInterval, 5), eventList, EventType.ARRIVAL); //Saapuminen
     }
 
     private ServicePoint findRideByID(int id) {

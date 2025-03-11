@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
+<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
@@ -34,6 +34,22 @@
          <VBox.margin>
             <Insets bottom="2.0" top="8.0" />
          </VBox.margin>
+      </HBox>
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
+         <children>
+            <Label text="Arrival interval">
+               <tooltip>
+                  <Tooltip text="How often customers arrive (in simulation time)" />
+               </tooltip>
+            </Label>
+            <FlowPane alignment="CENTER" prefHeight="200.0" prefWidth="200.0" styleClass="num-setting">
+               <children>
+                  <Button mnemonicParsing="false" onMouseClicked="#decrementArrivalInterval" text="-" />
+                  <TextField fx:id="arrivalInterval" onAction="#setArrivalInterval" />
+                  <Button mnemonicParsing="false" onMouseClicked="#incrementArrivalInterval" text="+" />
+               </children>
+            </FlowPane>
+         </children>
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
@@ -73,15 +89,6 @@
             <Insets bottom="8.0" top="2.0" />
          </VBox.margin>
       </HBox>
-      <ScrollPane fitToHeight="true" fitToWidth="true" minHeight="0.0" prefWidth="200.0" styleClass="machine-settings" VBox.vgrow="ALWAYS">
-         <content>
-            <StackPane prefWidth="200.0">
-               <children>
-                  <VBox fx:id="rides" alignment="TOP_CENTER" prefWidth="200.0" />
-               </children>
-            </StackPane>
-         </content>
-      </ScrollPane>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
             <Label text="Restaurant capacity">
@@ -139,6 +146,15 @@
             <Insets bottom="2.0" top="2.0" />
          </VBox.margin>
       </HBox>
+      <ScrollPane fitToHeight="true" fitToWidth="true" maxWidth="300.0" styleClass="machine-settings">
+         <content>
+            <StackPane prefWidth="0.0">
+               <children>
+                  <VBox fx:id="rides" maxWidth="300.0" prefHeight="200.0" prefWidth="348.0" styleClass="ride-list" />
+               </children>
+            </StackPane>
+         </content>
+      </ScrollPane>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
          <children>
             <Button fx:id="launchSim" mnemonicParsing="false" onAction="#startSimulation" text="Launch simulation" />
