@@ -53,7 +53,7 @@
       </HBox>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
-            <Label text="Ticket Booth Count">
+            <Label text="Ticket Booth count">
                <tooltip>
                   <Tooltip text="How many ticket booths are available to the customers" />
                </tooltip>
@@ -155,9 +155,10 @@
             </StackPane>
          </content>
       </ScrollPane>
-      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0">
          <children>
-            <Button fx:id="launchSim" mnemonicParsing="false" onAction="#startSimulation" text="Launch simulation" />
+            <Button fx:id="launchSim" mnemonicParsing="false" onAction="#startSimulation" text="Launch Simulation" />
+            <Button mnemonicParsing="false" onAction="#viewHistory" text="View History" />
          </children>
          <VBox.margin>
             <Insets bottom="2.0" top="2.0" />

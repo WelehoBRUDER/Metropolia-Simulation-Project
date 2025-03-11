@@ -529,6 +529,19 @@ public class SettingsController {
         simController.startSim();
     }
 
+    public void viewHistory() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/history.fxml"));
+        Parent root = loader.load();
+        HistoryController historyController = loader.getController();
+
+        // Show new stage
+        stage = new Stage();
+        stage.setTitle("Simulation history");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root));
+        stage.show();
+    }
+
     public void closeSimulation() {
         Platform.runLater(() -> {
             stage.close();
