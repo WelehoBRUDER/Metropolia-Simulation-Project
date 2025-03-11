@@ -11,7 +11,7 @@ public class TestDao {
         dao.addRide(1,1,1,1, 1, 1);
         dao.addTicketBooth(2,56,7);
         dao.addRestaurant(1, 1, 1);
-        dao.addRestaurant(2, 2, 2);
+        dao.addRestaurant(22, 22, 22);
 
         //System.out.println(dao.getRideById(1).get(0).getAverageQueueTime());
         //System.out.println(dao.getRideById(1));

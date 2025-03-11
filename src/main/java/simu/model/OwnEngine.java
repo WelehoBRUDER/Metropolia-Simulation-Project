@@ -12,8 +12,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import database.Dao;
 
 public class OwnEngine extends Engine {
+
+    Dao dao = new Dao();
+
 
     private ArrivalProgress arrivalProgress;
     private ServicePoint[] servicePoints;
@@ -337,6 +341,12 @@ public class OwnEngine extends Engine {
         resultsController.visualizeResults(results, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
         controller.closeSimulation();
+        dao.incrementSimId();
+        dao.incrementSimId();
+        dao.addRide(60,60,60,60,60,60);
+        dao.addRestaurant(60, 60, 60);
+        dao.addTicketBooth(60, 60, 60);
+        dao.addServicePoint(60,60,60,60,60,60,60,60,60,60);
     }
 
 
