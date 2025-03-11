@@ -111,7 +111,6 @@ public class OwnEngine extends Engine {
 
                 if (c.hasWristband()) {
                     p = findRideByID(c.getNextRideID());
-                    controller.visualizeCustomer(c.getId(), p.getRideID(), true);
                     controller.updateConsole("Customer " + c.getId() + " (wristband) arrived and goes to ride " + p.getRideID());
 
                     p.addToQueue(c);
@@ -131,7 +130,6 @@ public class OwnEngine extends Engine {
                     to = (ticketBoothCounter + 1) / -1;
                     //System.out.println("from " + -100 + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
-                    controller.visualizeCustomer(c.getId(), 0, false);
                     controller.updateConsole("Customer " + c.getId() + " (no wristband) arrived and goes to ticket booth " + (ticketBoothCounter+1));
                     Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
                 }
@@ -145,7 +143,6 @@ public class OwnEngine extends Engine {
                 c.incrementTicketboothCounter();
 
                 p = findRideByID(c.getNextRideID());
-                controller.visualizeCustomer(c.getId(), p.getRideID(), c.hasWristband());
 
                 p.addToQueue(c);
                 c.removeNextRide();
@@ -167,7 +164,6 @@ public class OwnEngine extends Engine {
                 if (c.ridesLeft()) {
                     if (c.hasWristband() || c.getTickets() > 0) {
                         p = findRideByID(c.getNextRideID());
-                        controller.visualizeCustomer(c.getId(), p.getRideID(), c.hasWristband());
 
                         p.addToQueue(c);
                         c.removeNextRide();
@@ -181,7 +177,6 @@ public class OwnEngine extends Engine {
                     } else {
                         servicePoints[nextTicketBooth()].addToQueue(c);
                         ticketOrder.add(ticketBoothCounter);
-                        controller.visualizeCustomer(c.getId(), 0, c.hasWristband());
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = (ticketBoothCounter + 1) / -1;
                         controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ticket booth " + (to/-1));
@@ -191,7 +186,6 @@ public class OwnEngine extends Engine {
                     }
                 } else {
                     servicePoints[rideCount + ticketBoothCount].addToQueue(c);
-                    controller.visualizeCustomer(c.getId(), rideCount + 1, c.hasWristband());
                     from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                     to = 100;
                     controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to the restaurant");
@@ -205,7 +199,6 @@ public class OwnEngine extends Engine {
             case DEP_RESTAURANT:
                 c = servicePoints[rideCount + ticketBoothCount].fetchFromCustomerList();
                 servicePoints[rideCount + ticketBoothCount].incrementCustomerCounter();
-                controller.visualizeCustomer(c.getId(), rideCount + 2, c.hasWristband());
                 c.setDepartureTime(Clock.getInstance().getTime());
                 readyCustomers++;
                 from = 100;

@@ -165,7 +165,7 @@ public class SimController implements ISettingsControllerForM {
 
     public void resumeSim() {
         running = true;
-        changePauseButtonText("⏸");
+        changePauseButtonText(" || ");
         ((Thread) this.engine).resume();
     }
 
@@ -530,14 +530,10 @@ public class SimController implements ISettingsControllerForM {
     }
 
     @Override
-    public void showEndTime(double aika) {
+    public void showEndTime(double time) {
 
     }
 
-    @Override
-    public void visualizeCustomer(int id, int rideid, boolean wristband) {
-
-    }
 
     @Override
     public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults) {

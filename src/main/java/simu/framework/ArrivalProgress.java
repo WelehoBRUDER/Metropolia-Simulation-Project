@@ -39,5 +39,4 @@ public class ArrivalProgress {
 		Event t = new Event(type, Clock.getInstance().getTime()+generator.sample());
 		eventList.add(t);
 	}
-
 }

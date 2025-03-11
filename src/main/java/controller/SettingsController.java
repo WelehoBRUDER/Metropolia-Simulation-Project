@@ -1,7 +1,5 @@
 package controller;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,11 +13,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.application.Platform;
-import simu.framework.IEngine;
-import simu.model.OwnEngine;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SettingsController {
     @FXML
@@ -486,18 +480,4 @@ public class SettingsController {
         });
     }
 
-
-    public int getRideCount() {
-        return rideCountValue;
-    }
-
-
-    public void setWristbandChance(long amount) {
-
-    }
-
-
-    public long getWristbandChance() {
-        return (long) wristbandChanceValue;
-    }
 }
