@@ -366,6 +366,10 @@ public class SettingsController {
                 simTimeValue = minDelay;
                 simTime.setText(String.valueOf(simTimeValue));
             }
+            else if (simTimeValue > 10000) {
+                simTimeValue = 10000;
+                simTime.setText("10000");
+            }
         }
     }
 
