@@ -27,6 +27,7 @@ public class Customer {
 	private int tickets = 0;
 	private int maxTicketPurchase;
 	private int minTicketPurchase;
+	private static int totalTicketCount = 0;
 	
 	public Customer(int rideCount, double wristbandChance, int minTicketPurchase, int maxTicketPurchase) {
 	    id = i++;
@@ -163,7 +164,9 @@ public class Customer {
 	}
 
 	public void addTickets() {
-		tickets += (Math.random() * maxTicketPurchase) + minTicketPurchase;
+		int amount = (int)(Math.random() * maxTicketPurchase) + minTicketPurchase;
+		totalTicketCount += amount;
+		tickets += amount;
 	}
 
 	public int getTickets() {
@@ -173,5 +176,10 @@ public class Customer {
 	public void removeTicket() {
 		tickets -= 1;
 	}
+
+	public static int getTotalTicketCount() {
+		return totalTicketCount;
+	}
+
 
 }

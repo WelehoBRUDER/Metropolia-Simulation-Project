@@ -63,9 +63,11 @@ public abstract class Engine extends Thread implements IEngine {  // UUDET MÄÄ
 	}
 	
 	private void runBEvents(){
+		controller.newAnimation();
 		while (eventList.getNextTime() == clock.getTime()){
 			runEvent(eventList.remove());
 		}
+		controller.moveCustomerAnimation();
 	}
 
 	protected abstract void attemptCEvents();

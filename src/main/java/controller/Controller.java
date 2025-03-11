@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import simu.framework.IEngine;
 import simu.model.OwnEngine;
 import view.ISimulatorUI;
-
+import java.util.TreeMap;
 import java.util.HashMap;
 
 public class Controller implements ISettingsControllerForM, ISettingsControllerForV {   // UUSI
@@ -22,11 +22,11 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		
 	@Override
 	public void startSimulation() {
-		engine = new OwnEngine(this, ui.getRideCount()); // luodaan uusi moottorisäie jokaista simulointia varten
-		engine.setSimulationTime(ui.getTime());
-		engine.setDelay(ui.getDelay());
-		ui.getVisualization().clearScreen();
-		((Thread)engine).start();
+//		engine = new OwnEngine(this, ui.getRideCount()); // luodaan uusi moottorisäie jokaista simulointia varten
+//		engine.setSimulationTime(ui.getTime());
+//		engine.setDelay(ui.getDelay());
+//		ui.getVisualization().clearScreen();
+//		((Thread)engine).start();
 		//((Thread)moottori).run(); // Ei missään tapauksessa näin. Miksi?		
 	}
 	
@@ -60,12 +60,42 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		});
 	}
 
-	public void visualizeResults(){
-		Platform.runLater(new Runnable(){
-			public void run(){
-				ui.getVisualization().showResults();
-			}
-		});
+	@Override
+	public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults) {
+
+	}
+
+//	public void visualizeResults(){
+//		Platform.runLater(new Runnable(){
+//			public void run(){
+//				ui.getVisualization().showResults();
+//			}
+//		});
+//	}
+
+	@Override
+	public void moveCustomerAnimation() {
+
+	}
+
+	@Override
+	public void newAnimation() {
+
+	}
+
+	@Override
+	public void addCustomerToAnimation(int from, int to) {
+
+	}
+
+	@Override
+	public void updateEventTime(double time) {
+
+	}
+
+	@Override
+	public void closeSimulation() {
+
 	}
 
 	public void setWristbandChance(double amount) {
@@ -76,12 +106,19 @@ public class Controller implements ISettingsControllerForM, ISettingsControllerF
 		return ((OwnEngine)engine).getWristbandChance();
 	}
 
+	public void updateConsole(String msg) {
+	}
+
 	public int getRideCount() {
 		return ui.getRideCount();
 	}
 
-	public HashMap<String, Double> getResults() {
-		return ((OwnEngine)engine).getResults();
+	public HashMap<String, Double> getStaticResults() {
+		return ((OwnEngine)engine).getStaticResults();
+	}
+
+	public TreeMap<String, Double> getDynamicResults() {
+		return ((OwnEngine)engine).getDynamicResults();
 	}
 
 }

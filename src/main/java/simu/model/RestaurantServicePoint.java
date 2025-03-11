@@ -9,7 +9,7 @@ import simu.framework.Trace;
 import java.util.ArrayList;
 
 public class RestaurantServicePoint extends ServicePoint{
-    protected int rideID = 0;
+    protected int rideID = 100;
     private int capacity;
     private ArrayList<Customer> CustomerList = new ArrayList<>();
     private ArrayList<Double> serviceTimes = new ArrayList<>();
