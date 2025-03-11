@@ -1,17 +1,19 @@
 package view;
 
+/**
+ * ISimulatorUI is an interface for the user interface of the simulation.
+ */
 public interface ISimulatorUI {
-	
-	// Kontrolleri tarvitsee syötteitä, jotka se välittää Moottorille
+	/**
+	 * Gets the time for the simulation.
+	 * @return The time for the simulation.
+	 */
 	public double getTime();
-	public long getDelay();
-	
-	//Kontrolleri antaa käyttöliittymälle tuloksia, joita Moottori tuottaa 
+	/**
+	 * Sets the end time for the simulation.
+	 * @param time The simulation time.
+	 */
 	public void setEndTime(double time);
-	
-	// Kontrolleri tarvitsee  
-	public IVisualization getVisualization();
 
-	public int getRideCount();
 
 }

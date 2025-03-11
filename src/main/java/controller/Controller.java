@@ -7,118 +7,88 @@ import view.ISimulatorUI;
 import java.util.TreeMap;
 import java.util.HashMap;
 
-public class Controller implements ISettingsControllerForM, ISettingsControllerForV {   // UUSI
-	
-	private IEngine engine;
+/**
+ * Controller is the class for the controller in the simulation. Implements ISettingsControllerForM.
+ */
+public class Controller implements ISettingsControllerForM {
+	/**
+	 * The user interface for the simulation.
+	 */
 	private ISimulatorUI ui;
-	
+
+	/**
+	 * Constructor for the Controller class.
+	 * @param ui The user interface for the simulation.
+	 */
 	public Controller(ISimulatorUI ui) {
 		this.ui = ui;
-		
 	}
 
-	
-	// Moottorin ohjausta:
-		
-	@Override
-	public void startSimulation() {
-//		engine = new OwnEngine(this, ui.getRideCount()); // luodaan uusi moottorisäie jokaista simulointia varten
-//		engine.setSimulationTime(ui.getTime());
-//		engine.setDelay(ui.getDelay());
-//		ui.getVisualization().clearScreen();
-//		((Thread)engine).start();
-		//((Thread)moottori).run(); // Ei missään tapauksessa näin. Miksi?		
-	}
-	
-	@Override
-	public void slowDown() { // hidastetaan moottorisäiettä
-		engine.setDelay((long)(engine.getDelay()*1.10));
-	}
-
-
-	@Override
-	public void speedUp() { // nopeutetaan moottorisäiettä
-		engine.setDelay((long)(engine.getDelay()*0.9));
-	}
-	
-	// Simulointitulosten välittämistä käyttöliittymään.
-	// Koska FX-ui:n päivitykset tulevat moottorisäikeestä, ne pitää ohjata JavaFX-säikeeseen:
-		
-
+	/**
+	 * Shows the end time of the simulation.
+	 */
 	@Override
 	public void showEndTime(double time) {
 		Platform.runLater(()->ui.setEndTime(time));
 	}
 
-	
-	@Override
-	public void visualizeCustomer(int id, int rideid, boolean wristband) {
-		Platform.runLater(new Runnable(){
-			public void run(){
-				ui.getVisualization().newCustomer(id, rideid, wristband);
-			}
-		});
-	}
-
+	/**
+	 * Shows the current time of the simulation.
+	 * @param staticResults The static results of the simulation, that is the results that all simulations have.
+	 * @param dynamicResults The dynamic results of the simulation, that is the results for all the service points in the simulation.
+	 */
 	@Override
 	public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults) {
 
 	}
 
-//	public void visualizeResults(){
-//		Platform.runLater(new Runnable(){
-//			public void run(){
-//				ui.getVisualization().showResults();
-//			}
-//		});
-//	}
-
+	/**
+	 * Moves the customer in the simulation.
+	 */
 	@Override
 	public void moveCustomerAnimation() {
 
 	}
 
+	/**
+	 * Creates a new animation.
+	 */
 	@Override
 	public void newAnimation() {
 
 	}
 
+	/**
+	 * Adds a customer to the animation.
+	 * @param from
+	 * @param to
+	 */
 	@Override
 	public void addCustomerToAnimation(int from, int to) {
 
 	}
 
+	/** Updates the time of the event.
+	 * @param time The time of the event.
+	 */
 	@Override
 	public void updateEventTime(double time) {
 
 	}
 
+	/**
+	 * Closes the simulation.
+	 */
 	@Override
 	public void closeSimulation() {
 
 	}
 
-	public void setWristbandChance(double amount) {
-		((OwnEngine)engine).setWristbandChance(amount);
-	}
-
-	public double getWristbandChance() {
-		return ((OwnEngine)engine).getWristbandChance();
-	}
-
+	/**
+	 * Updates the console with a message.
+	 * @param msg The message to be displayed in the console.
+	 */
 	public void updateConsole(String msg) {
-	}
-
-	public int getRideCount() {
-		return ui.getRideCount();
-	}
-
-	public HashMap<String, Double> getStaticResults() {
-		return ((OwnEngine)engine).getStaticResults();
-	}
-
-	public TreeMap<String, Double> getDynamicResults() {
-		return ((OwnEngine)engine).getDynamicResults();
 	}
 
 }
