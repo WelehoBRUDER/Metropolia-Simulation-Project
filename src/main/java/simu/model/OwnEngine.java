@@ -6,38 +6,99 @@ import distributions.Bernoulli;
 import distributions.Negexp;
 import distributions.Normal;
 import simu.framework.*;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * OwnEngine extends {@link simu.framework.Engine} and is the class for the simulation engine in the simulation.
+ */
 public class OwnEngine extends Engine {
 
+    /**
+     * ArrivalProgress: Arrival of customers
+     */
     private ArrivalProgress arrivalProgress;
+    /**
+     * ServicePoints: Service points in the simulation
+     */
     private ServicePoint[] servicePoints;
+    /**
+     * RideOrder: Order of rides
+     */
     private ArrayList<Integer> rideOrder = new ArrayList<>();
+    /**
+     * TicketOrder: Order of tickets
+     */
     private ArrayList<Integer> ticketOrder = new ArrayList<>();
-
+    /**
+     * WristbandChance: Chance of customer being a wristband customer
+     */
     private double wristbandChance = 0.1;
+    /**
+     * RestaurantCapacity: Capacity of the restaurant
+     */
     private int RESTAURANT_CAPASITY = 20;
+    /**
+     * Bernoulli: Bernoulli distribution for wristband chance
+     */
     private Bernoulli bernoulli;
+    /**
+     * RideCount: Number of rides in the simulation
+     */
     private int rideCount;
+    /**
+     * TicketBoothCount: Number of ticket booths in the simulation
+     */
     private int ticketBoothCount = 1;
+    /**
+     * MinTicketPurchase: Minimum amount of tickets that can be purchased
+     */
     private int minTicketPurchase = 1;
+    /**
+     * MaxTicketPurchase: Maximum amount of tickets that can be purchased
+     */
     private int maxTicketPurchase = 1;
+    /**
+     * RideParameters: Parameters for the rides
+     */
     private ArrayList<int[]> rideParameters;
-
-    private ArrayList<Double> wristbandAverages = new ArrayList<>();
-    private ArrayList<Double> ticketAverages = new ArrayList<>();
-    private HashMap<String, Double> results = new HashMap<>();
+    /**
+     * WristbandTimes: List of times that wristband customers spend in the simulation
+     */
+    private ArrayList<Double> wristbandTimes = new ArrayList<>();
+    /**
+     * TicketTimes: List of times that ticket customers spend in the simulation
+     */
+    private ArrayList<Double> ticketTimes = new ArrayList<>();
+    /**
+     * StaticResults: Static results of the simulation, the results that are same for all simulations
+     */
+    private HashMap<String, Double> staticResults = new HashMap<>();
+    /**
+     * DynamicResults: Dynamic results of the simulation, the results for all the service points in the simulation
+     */
     private TreeMap<String, Double> dynamicResults = new TreeMap<>();
+    /**
+     * ReadyCustomers: Amount of customers that have reached the end of the simulation
+     */
     private int readyCustomers = 0;
-
+    /**
+     * TicketBoothCounter: Counter for the ticket booths
+     */
     private int ticketBoothCounter = -1;
 
 
+    /**
+     * Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters. Sets the time of the simulation to 0.
+     * Creates the service points for the simulation and assigns them IDs. Initializes the arrival progress for the simulation and generates the first arrival in the simulation.
+     * @param controller The controller for the simulation
+     * @param rideCount The number of rides in the simulation
+     * @param ticketBoothCount The number of ticket booths in the simulation
+     * @param rideProperties The properties for the rides, such as mean and variance
+     * @param restaurantCap The capacity of the restaurant
+     * @param wristbandChance The chance of the customer being a wristband customer
+     */
     public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
         super(controller);
@@ -53,52 +114,61 @@ public class OwnEngine extends Engine {
         ServicePoint.i = 0;
         ServicePoint.j = 0;
 
-        //TESTI PARAMETREJÄ!!!
+        //TESTI PARAMETREJÄ!!! ENTÄ VOISKO NÄMÄ JO POISTAA? :)
         rideParameters = new ArrayList<>();
         rideParameters.add(new int[]{5, 2});
         rideParameters.add(new int[]{10, 10});
         //TESTI PARAMETREJÄ!!!
 
         servicePoints = new ServicePoint[rideCount + ticketBoothCount + 1];
-        System.out.println("Palvelupisteitä: " + servicePoints.length);
+        System.out.println("Service points: " + servicePoints.length);
 
         for (int i = 0; i < ticketBoothCount; i++) {
 
-            servicePoints[i] = new ServicePoint(new Normal(5, 2), eventList, EventType.DEP_TICKET_BOOTH, rideCount);//lipunmyynti
+            servicePoints[i] = new ServicePoint(new Normal(5, 2), eventList, EventType.DEP_TICKET_BOOTH, rideCount);
         }
 
         for (int i = ticketBoothCount; i < ticketBoothCount + rideCount; i++) {
             int mean = rideProperties.get(i - ticketBoothCount)[1];
             int variance = rideProperties.get(i - ticketBoothCount)[0];
-            servicePoints[i] = new ServicePoint(new Normal(mean, variance), eventList, EventType.DEP_RIDE, rideCount); //Laitteet
+            servicePoints[i] = new ServicePoint(new Normal(mean, variance), eventList, EventType.DEP_RIDE, rideCount);
         }
 
-        servicePoints[rideCount + ticketBoothCount] = new RestaurantServicePoint(new Normal(80, 3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY); //Ravintola
+        servicePoints[rideCount + ticketBoothCount] = new RestaurantServicePoint(new Normal(80, 3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY);
 
-        //arrivalProgress = new ArrivalProgress(new Negexp(15, 5), eventList, EventType.ARRIVAL); //Saapuminen, Tällä asiakkaat saapuvat n. 15 aikayksikön välein eli aika harvoin
-        arrivalProgress = new ArrivalProgress(new Negexp(5, 5), eventList, EventType.ARRIVAL); //Saapuminen
+        arrivalProgress = new ArrivalProgress(new Negexp(5), eventList, EventType.ARRIVAL);
     }
 
+    /**
+     * FindRideByID: Finds a ride by its ID
+     * @param id ID of the ride
+     * @return The ride with the given ID
+     */
     private ServicePoint findRideByID(int id) {
         for (ServicePoint p : servicePoints) {
-            System.out.println("Palvelupisteen id on " + p.getRideID());
             if (p.getRideID() == id) {
                 return p;
             }
         }
-        System.out.println("Haettu id on " + id);
         return null;
     }
 
+    /**
+     * Init: Initializes the simulation engine and generates the first arrival to the system
+     */
     @Override
     protected void init() {
         arrivalProgress.generateNext(); // Ensimmäinen saapuminen järjestelmään
     }
 
+    /**
+     * RunEvent: Runs the B events in the simulation. Checks the type of the event and runs the corresponding event.
+     * @param t Event to be run
+     */
     @Override
-    protected void runEvent(Event t) {  // B-vaiheen tapahtumat
+    protected void runEvent(Event t) {
 
-        Trace.out(Trace.Level.INFO, "Ravintolassa on " + servicePoints[rideCount + ticketBoothCount].getCustomerListSize() + " asiakasta.");
+        Trace.out(Trace.Level.INFO, "Restaurant has " + servicePoints[rideCount + ticketBoothCount].getCustomerListSize() + " customers.");
 
         Customer c;
         ServicePoint p;
@@ -118,9 +188,6 @@ public class OwnEngine extends Engine {
                     rideOrder.add(p.getRideID());
                     from = -100;
                     to = p.getRideID();
-                    //System.out.println("from " + -100 + " to " + p.getRideID()); //FROMTO
-
-                    Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
 
                 } else {
                     c.addTickets();
@@ -128,10 +195,9 @@ public class OwnEngine extends Engine {
                     ticketOrder.add(ticketBoothCounter);
                     from = -100;
                     to = (ticketBoothCounter + 1) / -1;
-                    //System.out.println("from " + -100 + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
                     controller.updateConsole("Customer " + c.getId() + " (no wristband) arrived and goes to ticket booth " + (ticketBoothCounter+1));
-                    Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
+                    Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ticket booth");
                 }
 
                 arrivalProgress.generateNext();
@@ -143,18 +209,16 @@ public class OwnEngine extends Engine {
                 c.incrementTicketboothCounter();
 
                 p = findRideByID(c.getNextRideID());
-
                 p.addToQueue(c);
                 c.removeNextRide();
                 rideOrder.add(p.getRideID());
                 c.removeTicket();
+
                 from = servicePoints[ticketOrder.remove(0)].getRideID();
                 to = p.getRideID();
+
                 controller.updateConsole("Customer " + c.getId() + " bought tickets from ticket booth " + (from/-1) + " and goes to ride " + to);
-                //System.out.println("from " + servicePoints[ticketOrder.remove(0)].getRideID() + " to " + p.getRideID()); //FROMTO
-
-                Trace.out(Trace.Level.INFO, "Asiakas: " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
-
+                Trace.out(Trace.Level.INFO, "Customer: " + c.getId() + " goes to ride " + p.getRideID() + " queue");
                 break;
 
             case DEP_RIDE:
@@ -171,9 +235,8 @@ public class OwnEngine extends Engine {
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = p.getRideID();
                         controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ride " + to);
-                        //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + p.getRideID()); //FROMTO
 
-                        Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteeseen: " + p.getRideID());
+                        Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ride: " + p.getRideID());
                     } else {
                         servicePoints[nextTicketBooth()].addToQueue(c);
                         ticketOrder.add(ticketBoothCounter);
@@ -182,18 +245,15 @@ public class OwnEngine extends Engine {
                         controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ticket booth " + (to/-1));
                         //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
-                        Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
+                        Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ticket booth");
                     }
                 } else {
                     servicePoints[rideCount + ticketBoothCount].addToQueue(c);
                     from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                     to = 100;
                     controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to the restaurant");
-                    //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + 100); //FROMTO
-
-                    Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee ravintolajonoon");
+                    Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to restaurant");
                 }
-
                 break;
 
             case DEP_RESTAURANT:
@@ -204,26 +264,21 @@ public class OwnEngine extends Engine {
                 from = 100;
                 to = -101;
                 controller.updateConsole("Customer " + c.getId() + " left the restaurant and is ready to leave the park");
-                //System.out.println("from " + 100 + " to " + -101); //FROMTO
 
                 double average = c.report();
-                double ticketWristRatio = getWristbandTicketAverageRatio();
-                if (!Double.isNaN(ticketWristRatio)) {
-                    System.out.printf("Lippuja ostaneiden viipymä suhteessa rannekkeellisten viipymään: %.2f\n", ticketWristRatio);
-                } else {
-                    System.out.println("Lippu-asiakkaiden ja rannekkeellisten viipymäaikojen suhde ei voida vielä laskea.");
-                }
                 if (c.hasWristband()) {
-                    wristbandAverages.add(average);
+                    wristbandTimes.add(average);
                 } else {
-                    ticketAverages.add(average);
+                    ticketTimes.add(average);
                 }
                 break;
         }
         controller.updateEventTime(Clock.getInstance().getTime());
         controller.addCustomerToAnimation(from, to);
     }
-
+    /**
+     * AttemptCEvents: Attempts to run the C events in the simulation. Begins service if the service point is not reserved and there are customers in the queue.
+     */
     @Override
     protected void attemptCEvents() {
         for (ServicePoint p : servicePoints) {
@@ -233,6 +288,10 @@ public class OwnEngine extends Engine {
         }
     }
 
+    /**
+     * NextTicketBooth: Returns the next ticket booth to be used
+     * @return The next ticket booth to be used
+     */
     public int nextTicketBooth() {
         ticketBoothCounter++;
         if (ticketBoothCounter >= ticketBoothCount) {
@@ -241,6 +300,10 @@ public class OwnEngine extends Engine {
         return ticketBoothCounter;
     }
 
+    /**
+     * SetWristbandChance: Sets the chance of getting a wristband
+     * @param amount Amount to be added to the wristband chance
+     */
     public void setWristbandChance(double amount) {
         wristbandChance = amount/100;
         if (wristbandChance > 1) {
@@ -253,138 +316,119 @@ public class OwnEngine extends Engine {
         bernoulli = new Bernoulli(wristbandChance);
     }
 
-    public double getWristbandChance() {
-        return wristbandChance;
-    }
-
-
+    /**
+     * Results: Generates and summarizes the results of the simulation. Results are related to customer counts, ticket booths, customer times and service point specific results.
+     * Closes the simulation and visualizes the results in the results view.
+     */
     @Override
     protected void results() {
         double endTime = Clock.getInstance().getTime();
-        System.out.println("Simulointi päättyi kello " + endTime);
-        results.put("End time", endTime);
+        Trace.out(Trace.Level.INFO, "Simulation ends at time: " + endTime + ". Generating results.");
+        staticResults.put("End time", endTime);
 
-        //Asiakkaat:
+        //Customer count related results:
         int unreadyCustomers = Customer.getI() - readyCustomers;
-        System.out.println("Valmiita asiakkaita: " + readyCustomers + ", joista rannekeasiakkaita oli " + wristbandAverages.size() + " ja lippuasiakkaita " + ticketAverages.size());
-        System.out.println("Kesken jääneiden asiakkaiden määrä: " + unreadyCustomers);
-        results.put("Ready customers", (double) readyCustomers);
-        results.put("Ticket customers", (double) ticketAverages.size());
-        results.put("Wristband customers", (double) wristbandAverages.size());
-        results.put("Unready customers", (double) unreadyCustomers);
+        staticResults.put("Ready customers", (double) readyCustomers);
+        staticResults.put("Ticket customers", (double) ticketTimes.size());
+        staticResults.put("Wristband customers", (double) wristbandTimes.size());
+        staticResults.put("Unready customers", (double) unreadyCustomers);
 
-        //Lippuluukku (ticketboothCounterSumiin lisätään vasta kun asiakas valmis, joten lasketaan valmiilla asiakkailla:
-        System.out.printf("Lippuasiakas kävi keskimäärin %.2f kertaa lippuluukulla.\n", Customer.getTicketboothCounterAverage());
-        System.out.printf(("Simulaation aikana ostetut liput: %d \n"), Customer.getTotalTicketCount());
-        results.put("Ticket booth average", Customer.getTicketboothCounterAverage());
-        results.put("Total ticket count", (double)Customer.getTotalTicketCount());
+        //Ticket booth related results:
+        staticResults.put("Ticket booth average", Customer.getTicketboothCounterAverage());
+        staticResults.put("Total ticket count", (double)Customer.getTotalTicketCount());
 
-        //Viipymät:
-        System.out.printf("Rannekkeellisten keskimääräinen viipymäaika: %.2f\n", getAverageWristbandTime());
-        System.out.printf("Lippujen ostajien keskimääräinen viipymäaika: %.2f\n", getAverageTicketTime());
-        System.out.printf("Asiakkaiden keskimääräinen viipymäaika: %.2f\n", getWholeAverage());
-        System.out.printf("Lippuja ostaneiden viipymä suhteessa rannekkeellisten viipymään: %.2f\n", getWristbandTicketAverageRatio());
-        results.put("Wristband average time", getAverageWristbandTime());
-        results.put("Ticket average time", getAverageTicketTime());
-        results.put("Whole average time", getWholeAverage());
-        results.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
+        //Customer time related results:
+        staticResults.put("Wristband average time", getAverageWristbandTime());
+        staticResults.put("Ticket average time", getAverageTicketTime());
+        staticResults.put("Whole average time", getWholeAverage());
+        staticResults.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
 
-        //Palvelupisteiden tulokset:
+        //Results for each service point in the simulation:
         for (ServicePoint point : servicePoints) {
             int customerCount = point.getCustomerCounter();
             double averageServiceTime = point.getAverageServiceTime();
             double averageQueueTime = point.getAverageQueueTime();
-            int ticketBoothCustomerCount = 0;
 
             if (!(point instanceof RestaurantServicePoint)) {
                 if (point.getRideID() < 0) {
                     int ticketBoothNumber = point.getRideID() * -1;
-                    ticketBoothCustomerCount += customerCount;
-                    System.out.println("Lippupisteessä " + ticketBoothNumber + " käytiin " + customerCount + " kertaa.");
-                    System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen palveluaika: " + averageServiceTime);
-                    System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen jonotusaika: " + averageQueueTime);
                     dynamicResults.put("Ticket booth " + ticketBoothNumber + " count", (double) customerCount);
                     dynamicResults.put("Ticket booth " + ticketBoothNumber + " average service time", averageServiceTime);
                     dynamicResults.put("Ticket booth " + ticketBoothNumber + " average queue time", averageQueueTime);
                 } else {
-                    System.out.println("Laitteessa " + point.getRideID() + " palveltiin " + customerCount + " asiakasta.");
-                    System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen palveluaika: " + averageServiceTime);
-                    System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen jonotusaika: " + averageQueueTime);
                     dynamicResults.put("Ride " + point.getRideID() + " count", (double) customerCount);
                     dynamicResults.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
                     dynamicResults.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
                 }
             } else {
-                System.out.println("Ravintolassa palveltiin " + customerCount + " asiakasta.");
-                System.out.println("Ravintolassa keskimääräinen palveluaika: " + averageServiceTime);
-                System.out.println("Ravintolassa keskimääräinen jonotusaika: " + averageQueueTime);
                 dynamicResults.put("Restaurant count", (double) customerCount);
                 dynamicResults.put("Restaurant average service time", averageServiceTime);
                 dynamicResults.put("Restaurant average queue time", averageQueueTime);
             }
         }
-
-        //Tulokset hashmapissa:
-        System.out.println("Results hashmap: " + results);
-        System.out.println("DynamicResults hashmap: " + dynamicResults);
-
-        // UUTTA graafista
         ResultsController resultsController = new ResultsController();
-        resultsController.visualizeResults(results, dynamicResults);
+        resultsController.visualizeResults(staticResults, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
         controller.closeSimulation();
     }
 
-
+    /**
+     * GetWholeAverage: Returns the average time that customers spend in the simulation regardless of the type of the customer
+     * @return The average time that customers spend in the simulation
+     */
     protected double getWholeAverage() {
-        if (wristbandAverages.isEmpty() && ticketAverages.isEmpty()) {
+        if (wristbandTimes.isEmpty() && ticketTimes.isEmpty()) {
             return 0.00;
-        } else if (wristbandAverages.isEmpty()) {
+        } else if (wristbandTimes.isEmpty()) {
             return getAverageTicketTime();
-        } else if (ticketAverages.isEmpty()) {
+        } else if (ticketTimes.isEmpty()) {
             return getAverageWristbandTime();
         }
         return (getAverageTicketTime() + getAverageWristbandTime()) / 2;
     }
 
+    /**
+     * GetAverageWristbandTime: Returns the average time that wristband customers spend in the simulation
+     * @return The average time that wristband customers spend in the simulation, 0 if no wristband customers
+     */
     public double getAverageWristbandTime() {
-        if (wristbandAverages.isEmpty()) {
+        if (wristbandTimes.isEmpty()) {
             return 0.00;
         } else {
             double sum = 0;
-            for (double time : wristbandAverages) {
+            for (double time : wristbandTimes) {
                 sum += time;
             }
-            return sum / wristbandAverages.size();
+            return sum / wristbandTimes.size();
         }
     }
 
+    /**
+     * GetAverageTicketTime: Returns the average time that ticket customers spend in the simulation
+     * @return The average time that ticket customers spend in the simulation, 0 if no ticket customers
+     */
     public double getAverageTicketTime() {
-        if (ticketAverages.isEmpty()) {
+        if (ticketTimes.isEmpty()) {
             return 0.00;
         } else {
             double sum = 0;
-            for (double time : ticketAverages) {
+            for (double time : ticketTimes) {
                 sum += time;
             }
-            return sum / ticketAverages.size();
+            return sum / ticketTimes.size();
         }
     }
 
+    /**
+     * GetWristbandTicketAverageRatio: Returns the ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
+     * @return The ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation, 0.00 if no wristband or ticket customers
+     */
     public double getWristbandTicketAverageRatio() {
-        if (wristbandAverages.isEmpty() || ticketAverages.isEmpty()) {
+        if (wristbandTimes.isEmpty() || ticketTimes.isEmpty()) {
             return 0.00;
         }
          else {
              return getAverageTicketTime() / getAverageWristbandTime();
         }
-    }
-
-    public HashMap<String, Double> getStaticResults() {
-        return results;
-    }
-
-    public TreeMap<String, Double> getDynamicResults() {
-        return dynamicResults;
     }
 }
