@@ -8,6 +8,7 @@ import distributions.Normal;
 import simu.framework.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -318,6 +319,14 @@ public class OwnEngine extends Engine {
         bernoulli = new Bernoulli(wristbandChance);
     }
 
+    public void addResults(Map results, String key, double value) {
+        if (Double.isNaN(value)) {
+            results.put(key, 0.0);
+        } else {
+            results.put(key, value);
+        }
+    }
+
     /**
      * Results: Generates and summarizes the results of the simulation. Results are related to customer counts, ticket booths, customer times and service point specific results.
      * Closes the simulation and visualizes the results in the results view.
@@ -325,25 +334,25 @@ public class OwnEngine extends Engine {
     @Override
     protected void results() {
         double endTime = Clock.getInstance().getTime();
-        Trace.out(Trace.Level.INFO, "Simulation ends at time: " + endTime + ". Generating results.");
+        Trace.out(Trace.Level.INFO, "Simulation ends at time: " + endTime + ", generating results.");
         staticResults.put("End time", endTime);
 
         //Customer count related results:
         int unreadyCustomers = Customer.getI() - readyCustomers;
-        staticResults.put("Ready customers", (double) readyCustomers);
-        staticResults.put("Ticket customers", (double) ticketTimes.size());
-        staticResults.put("Wristband customers", (double) wristbandTimes.size());
-        staticResults.put("Unready customers", (double) unreadyCustomers);
+        addResults(staticResults, "Ready customers", readyCustomers);
+        addResults(staticResults, "Ticket customers", ticketTimes.size());
+        addResults(staticResults, "Wristband customers", wristbandTimes.size());
+        addResults(staticResults, "Unready customers", unreadyCustomers);
 
         //Ticket booth related results:
-        staticResults.put("Ticket booth average", Customer.getTicketboothCounterAverage());
-        staticResults.put("Total ticket count", (double)Customer.getTotalTicketCount());
+        addResults(staticResults, "Ticket booth average", Customer.getTicketboothCounterAverage());
+        addResults(staticResults, "Total ticket count", Customer.getTotalTicketCount());
 
         //Customer time related results:
-        staticResults.put("Wristband average time", getAverageWristbandTime());
-        staticResults.put("Ticket average time", getAverageTicketTime());
-        staticResults.put("Whole average time", getWholeAverage());
-        staticResults.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
+        addResults(staticResults, "Wristband average time", getAverageWristbandTime());
+        addResults(staticResults, "Ticket average time", getAverageTicketTime());
+        addResults(staticResults, "Whole average time", getWholeAverage());
+        addResults(staticResults, "Wristband ticket ratio", getWristbandTicketAverageRatio());
 
         //Results for each service point in the simulation:
         for (ServicePoint point : servicePoints) {
@@ -354,18 +363,18 @@ public class OwnEngine extends Engine {
             if (!(point instanceof RestaurantServicePoint)) {
                 if (point.getRideID() < 0) {
                     int ticketBoothNumber = point.getRideID() * -1;
-                    dynamicResults.put("Ticket booth " + ticketBoothNumber + " count", (double) customerCount);
-                    dynamicResults.put("Ticket booth " + ticketBoothNumber + " average service time", averageServiceTime);
-                    dynamicResults.put("Ticket booth " + ticketBoothNumber + " average queue time", averageQueueTime);
+                    addResults(dynamicResults, "Ticket booth " + ticketBoothNumber + " count", customerCount);
+                    addResults(dynamicResults, "Ticket booth " + ticketBoothNumber + " average service time", averageServiceTime);
+                    addResults(dynamicResults, "Ticket booth " + ticketBoothNumber + " average queue time", averageQueueTime);
                 } else {
-                    dynamicResults.put("Ride " + point.getRideID() + " count", (double) customerCount);
-                    dynamicResults.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
-                    dynamicResults.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
+                    addResults(dynamicResults, "Ride " + point.getRideID() + " count", customerCount);
+                    addResults(dynamicResults, "Ride " + point.getRideID() + " average service time", averageServiceTime);
+                    addResults(dynamicResults, "Ride " + point.getRideID() + " average queue time", averageQueueTime);
                 }
             } else {
-                dynamicResults.put("Restaurant count", (double) customerCount);
-                dynamicResults.put("Restaurant average service time", averageServiceTime);
-                dynamicResults.put("Restaurant average queue time", averageQueueTime);
+                addResults(dynamicResults, "Restaurant count", customerCount);
+                addResults(dynamicResults, "Restaurant average service time", averageServiceTime);
+                addResults(dynamicResults, "Restaurant average queue time", averageQueueTime);
             }
         }
         ResultsController resultsController = new ResultsController();
