@@ -222,7 +222,7 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 4);
 
         this.serviceCtx.setFill(ENTRANCE_COLOR);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 , this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.fillText("Entrance", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 + (this.SERVICE_POINT_SIZE / 1.5));
 
@@ -311,11 +311,11 @@ public class SimController implements ISettingsControllerForM {
         // Ticket booths
         for (int i = 0; i < this.ticketBoothCountValue; i++) {
             int[] cords = getTicketBooth(i);
-            drawServicePoint(cords[0], cords[1], this.TICKET_COLOR, i+1);
+            drawServicePoint(cords[0], cords[1], this.TICKET_COLOR, i + 1);
         }
         for (int i = 0; i < this.rideCountValue; i++) {
             int[] cords = getRide(i);
-            drawServicePoint(cords[0], cords[1], this.RIDE_COLOR, i+1);
+            drawServicePoint(cords[0], cords[1], this.RIDE_COLOR, i + 1);
         }
         // Restaurant
         drawServicePoint(this.restaurant[0], this.restaurant[1], this.RESTAURANT_COLOR, 0);
@@ -326,7 +326,7 @@ public class SimController implements ISettingsControllerForM {
 
     @Override
     public void updateConsole(String msg) {
-        simulationConsole.appendText("\n" + msg);
+        Platform.runLater(() -> simulationConsole.appendText("\n" + msg));
     }
 
     public void closeSimulation() {
@@ -336,6 +336,9 @@ public class SimController implements ISettingsControllerForM {
     @Override
     public void moveCustomerAnimation() {
         stopAnimation();
+        if (this.simDelayValue < this.UPDATE_RATE_MS * 2) {
+            return;
+        }
         this.customerCtx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
         this.step = 0;
         this.executorService = Executors.newSingleThreadScheduledExecutor();
@@ -455,8 +458,8 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public double[] calculatePath(double[] origin, int[] destination, int steps) {
-        int midX = destination[0] + (this.SERVICE_POINT_SIZE/4) - this.CUSTOMER_SIZE / 2;
-        int midY = destination[1] + (this.SERVICE_POINT_SIZE/4) - this.CUSTOMER_SIZE / 2;
+        int midX = destination[0] + (this.SERVICE_POINT_SIZE / 4) - this.CUSTOMER_SIZE / 2;
+        int midY = destination[1] + (this.SERVICE_POINT_SIZE / 4) - this.CUSTOMER_SIZE / 2;
         // Calculate delta x and y
         double dx = midX - origin[0];
         double dy = midY - origin[1];
