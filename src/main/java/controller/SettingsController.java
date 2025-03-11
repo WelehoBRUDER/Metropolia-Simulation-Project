@@ -2,6 +2,7 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,14 +11,21 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import org.checkerframework.checker.units.qual.A;
+import simu.framework.IEngine;
+import simu.model.OwnEngine;
+
 import java.util.ArrayList;
 
 public class SettingsController {
     @FXML
     private TextField simTime;
+    @FXML
+    private TextField arrivalInterval;
     @FXML
     private TextField ticketBoothCount;
     @FXML
@@ -34,6 +42,7 @@ public class SettingsController {
     private final boolean GUI_DEBUG = false;
 
     private int simTimeValue = 250;
+    private double arrivalIntervalValue = 5;
     private int ticketBoothCountValue = 4;
     private int rideCountValue = 9;
     private int restaurantCapValue = 20;
@@ -52,6 +61,11 @@ public class SettingsController {
         simTime.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) {
                 setSimTime();
+            }
+        });
+        arrivalInterval.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) {
+                setArrivalInterval();
             }
         });
         ticketBoothCount.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -81,6 +95,7 @@ public class SettingsController {
         });
         // Add sanitization listeners to each input field
         sanitizeInput(simTime);
+        sanitizeInput(arrivalInterval);
         sanitizeInput(ticketBoothCount);
         sanitizeInput(rideCount);
         sanitizeInput(restaurantCap);
@@ -88,6 +103,7 @@ public class SettingsController {
         sanitizeInput(wristbandChance);
         // Set default values
         simTime.setText(String.valueOf(simTimeValue));
+        arrivalInterval.setText(String.valueOf(arrivalIntervalValue));
         ticketBoothCount.setText(String.valueOf(ticketBoothCountValue));
         rideCount.setText(String.valueOf(rideCountValue));
         restaurantCap.setText(String.valueOf(restaurantCapValue));
@@ -100,12 +116,13 @@ public class SettingsController {
     }
 
     @FXML
-    public FlowPane createNumberInput(int index, int type) {
-        FlowPane numberInput = new FlowPane();
+    public HBox createNumberInput(int index, int type) {
+        HBox numberInput = new HBox();
         numberInput.getStyleClass().add("num-setting-small");
         TextField number = new TextField();
         Button increment = new Button("+");
         Button decrement = new Button("-");
+        numberInput.setMaxWidth(70);
         number.setText(String.valueOf(rideProperties.get(index)[type]));
         sanitizeInput(number);
         numberInput.getChildren().addAll(decrement, number, increment);
@@ -156,7 +173,7 @@ public class SettingsController {
     public void displayRides() {
         rides.getChildren().clear();
         for (int i = 0; i < rideCountValue; i++) {
-            FlowPane ride = new FlowPane();
+            HBox ride = new HBox(5);
             Label rideLabel = new Label("Ride " + (i + 1));
             Label varianceLabel = new Label("Variance:");
             Label meanLabel = new Label("Mean:");
@@ -169,14 +186,12 @@ public class SettingsController {
             Tooltip.install(varianceLabel, varianceTip);
             Tooltip.install(meanLabel, meanTip);
             rideLabel.getStyleClass().add("ride-label");
-            FlowPane variance = createNumberInput(i, 0);
-            FlowPane mean = createNumberInput(i, 1);
+            HBox variance = createNumberInput(i, 0);
+            HBox mean = createNumberInput(i, 1);
             ride.setId("ride" + i);
-            ride.setPrefHeight(40);
-            ride.setMinHeight(40);
-            ride.hgapProperty().setValue(5);
-            ride.alignmentProperty().setValue(javafx.geometry.Pos.CENTER);
-            ride.setRowValignment(javafx.geometry.VPos.CENTER);
+            ride.getStyleClass().add("ride");
+            ride.setPrefHeight(25);
+            ride.setMinHeight(25);
             ride.getChildren().addAll(rideLabel, meanLabel, mean, varianceLabel, variance);
             rides.getChildren().add(ride);
         }
@@ -359,12 +374,49 @@ public class SettingsController {
             if (simTimeValue < minDelay) {
                 simTimeValue = minDelay;
                 simTime.setText(String.valueOf(simTimeValue));
-            }
-            else if (simTimeValue > 10000) {
+            } else if (simTimeValue > 10000) {
                 simTimeValue = 10000;
                 simTime.setText("10000");
             }
         }
+    }
+
+    public void setArrivalInterval() {
+        if (!arrivalInterval.getText().isEmpty()) {
+            if (arrivalInterval.getText().length() > 10) {
+                arrivalInterval.setText(arrivalInterval.getText().substring(0, 9));
+            }
+            arrivalIntervalValue = Double.parseDouble(arrivalInterval.getText());
+            if (arrivalIntervalValue < 0) {
+                arrivalIntervalValue = 0;
+                arrivalInterval.setText(String.valueOf(arrivalIntervalValue));
+            } else if (arrivalIntervalValue > 1000) {
+                arrivalIntervalValue = 1000;
+                arrivalInterval.setText("1000");
+            }
+        }
+    }
+
+    public void incrementDecrementArrivalInterval(MouseEvent e, double value) {
+        if (e.isShiftDown() && !e.isControlDown()) {
+            arrivalIntervalValue += value * 5;
+        } else if (e.isControlDown() && !e.isShiftDown()) {
+            arrivalIntervalValue += value * 25;
+        } else if (e.isControlDown() && e.isShiftDown()) {
+            arrivalIntervalValue += value * 100;
+        } else {
+            arrivalIntervalValue += value;
+        }
+        arrivalInterval.setText(String.format("%.2f", arrivalIntervalValue));
+        setArrivalInterval();
+    }
+
+    public void incrementArrivalInterval(MouseEvent e) {
+        incrementDecrementArrivalInterval(e, 0.1);
+    }
+
+    public void decrementArrivalInterval(MouseEvent e) {
+        incrementDecrementArrivalInterval(e, -0.1);
     }
 
     public void setTicketBoothCount() {
@@ -454,7 +506,7 @@ public class SettingsController {
 
         System.out.println(simController);
 
-        simController.setSimulationParameters(simTimeValue, ticketBoothCountValue, rideCountValue, restaurantCapValue, simDelayValue, wristbandChanceValue, rideProperties, this);
+        simController.setSimulationParameters(simTimeValue, arrivalIntervalValue, ticketBoothCountValue, rideCountValue, restaurantCapValue, simDelayValue, wristbandChanceValue, rideProperties, this);
 
         // Show new stage
         stage = new Stage();
@@ -472,6 +524,19 @@ public class SettingsController {
         });
 
         simController.startSim();
+    }
+
+    public void viewHistory() throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/history.fxml"));
+        Parent root = loader.load();
+        HistoryController historyController = loader.getController();
+
+        // Show new stage
+        stage = new Stage();
+        stage.setTitle("Simulation history");
+        stage.setResizable(false);
+        stage.setScene(new Scene(root));
+        stage.show();
     }
 
     public void closeSimulation() {

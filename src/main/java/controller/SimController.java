@@ -26,6 +26,7 @@ public class SimController implements ISettingsControllerForM {
     private SettingsController settingsController;
 
     private int simTimeValue = 0;
+    private double arrivalIntervalValue = 0;
     private int ticketBoothCountValue = 0;
     private int rideCountValue = 0;
     private int restaurantCapValue = 0;
@@ -108,9 +109,10 @@ public class SimController implements ISettingsControllerForM {
         return coordinates;
     }
 
-    public void setSimulationParameters(int simTime, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
+    public void setSimulationParameters(int simTime, double arrivalIntervalValue,  int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
         this.settingsController = settingsController;
         this.simTimeValue = simTime;
+        this.arrivalIntervalValue = arrivalIntervalValue;
         this.ticketBoothCountValue = ticketBoothCount;
         this.rideCountValue = rideCount;
         this.restaurantCapValue = restaurantCap;
@@ -133,7 +135,7 @@ public class SimController implements ISettingsControllerForM {
         clearScreen();
         drawAllServicePoints();
         System.out.println("Starting simulation");
-        this.engine = new OwnEngine(this, this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
+        this.engine = new OwnEngine(this, this.arrivalIntervalValue,  this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
         this.engine.setSimulationTime(this.simTimeValue);
         this.engine.setDelay(this.simDelayValue);
         ((Thread) this.engine).start();

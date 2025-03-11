@@ -93,13 +93,14 @@ public class OwnEngine extends Engine {
      * Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters. Sets the time of the simulation to 0.
      * Creates the service points for the simulation and assigns them IDs. Initializes the arrival progress for the simulation and generates the first arrival in the simulation.
      * @param controller The controller for the simulation
+     * @param arrivalInterval The interval between customer arrivals
      * @param rideCount The number of rides in the simulation
      * @param ticketBoothCount The number of ticket booths in the simulation
      * @param rideProperties The properties for the rides, such as mean and variance
      * @param restaurantCap The capacity of the restaurant
      * @param wristbandChance The chance of the customer being a wristband customer
      */
-    public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
+    public OwnEngine(ISettingsControllerForM controller, double arrivalInterval,  int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
         super(controller);
 
@@ -135,8 +136,9 @@ public class OwnEngine extends Engine {
         }
 
         servicePoints[rideCount + ticketBoothCount] = new RestaurantServicePoint(new Normal(80, 3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY);
+        //arrivalProgress = new ArrivalProgress(new Negexp(15, 5), eventList, EventType.ARRIVAL); //Saapuminen, Tällä asiakkaat saapuvat n. 15 aikayksikön välein eli aika harvoin
+        arrivalProgress = new ArrivalProgress(new Negexp(arrivalInterval), eventList, EventType.ARRIVAL); //Saapuminen
 
-        arrivalProgress = new ArrivalProgress(new Negexp(5), eventList, EventType.ARRIVAL);
     }
 
     /**
