@@ -12,6 +12,7 @@ CREATE TABLE service_point (
 	simulation_time DECIMAL(12, 2),
 	ready_customers INT,
 	ticket_customers INT,
+	wristband_customers INT,
 	unready_customers INT,
 	ticket_booth_average DECIMAL(12, 2),
 	total_ticket_count INT,
@@ -37,6 +38,7 @@ CREATE TABLE ride (
 
 CREATE TABLE ticket_booth (
 	sim_id INT NOT NULL,
+	ticket_booth_id INT,
 	count INT,
 	average_service_time DECIMAL(12, 2),
 	average_queue_time DECIMAL(12, 2),
