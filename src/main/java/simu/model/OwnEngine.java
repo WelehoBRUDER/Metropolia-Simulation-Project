@@ -41,6 +41,9 @@ public class OwnEngine extends Engine {
     public OwnEngine(ISettingsControllerForM controller, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
         super(controller);
+
+        Clock.getInstance().setTime(0);
+
         this.rideCount = rideCount;
         this.ticketBoothCount = ticketBoothCount;
         this.RESTAURANT_CAPASITY = restaurantCap;
