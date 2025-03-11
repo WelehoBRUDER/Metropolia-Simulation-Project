@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -511,6 +512,7 @@ public class SettingsController {
         // Show new stage
         stage = new Stage();
         stage.setTitle("Simulation running...");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
         stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.show();

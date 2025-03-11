@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import simu.framework.Trace;
 
@@ -232,6 +233,7 @@ public class ResultsController implements ISettingsControllerForM{
                 controller.showStaticResults(staticResults);
                 controller.showDynamicResults(dynamicResults);
                 Stage stage = new Stage();
+                stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
                 stage.setTitle("Results");
                 stage.setResizable(false);
                 stage.setScene(new Scene(root));

@@ -89,6 +89,7 @@ public class SimController implements ISettingsControllerForM {
     private final Color TICKET_COLOR = Color.LIGHTBLUE;
     private final Color RIDE_COLOR = Color.ORANGE;
     private final Color RESTAURANT_COLOR = Color.RED;
+    private final Color EXIT_COLOR = Color.PURPLE;
 
     // Animation executor
     private ScheduledExecutorService executorService;
@@ -195,16 +196,17 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public void drawServicePointNumber(int x, int y, int number, int defaultValue) {
+        if (serviceCtx == null) { return;}
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.CENTER);
         if (defaultValue == 0 && number > 0) {
-            if (x == this.exit[0] && y == this.exit[1]) {
-                this.serviceCtx.clearRect(x - 3, y, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
-                this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y + (this.SERVICE_POINT_SIZE / 1.5));
+            if (x == exit[0] && y == exit[1]) {
+                this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
+                this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
                 return;
             } else {
-                this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
+                this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
                 this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y + (this.SERVICE_POINT_SIZE / 1.5));
                 return;
             }
@@ -213,7 +215,7 @@ public class SimController implements ISettingsControllerForM {
         }
         int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
         int waiting = Math.max(number, 0);
-        this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
+        this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
         this.serviceCtx.fillText(waiting + "(" + beingServed + ")", x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
     }
 
@@ -221,7 +223,7 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.setFill(Color.LIGHTGRAY);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.LEFT);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 4);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 5);
 
         this.serviceCtx.setFill(ENTRANCE_COLOR);
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
@@ -242,6 +244,12 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.fillText("Restaurant", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3 + (this.SERVICE_POINT_SIZE / 1.5));
+
+        this.serviceCtx.setFill(EXIT_COLOR);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 4, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText("Exit", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 4 + (this.SERVICE_POINT_SIZE / 1.5));
+
 
     }
 
@@ -300,8 +308,8 @@ public class SimController implements ISettingsControllerForM {
             addToRides(xOffset + cords[i][0], cords[i][1] + this.RIDE_AREA_SIZE + yOffset);
         }
 
-        setRestaurant(xOffset + calcCenterX(this.RESTAURANT_AREA_SIZE, this.SERVICE_POINT_SIZE) + this.RIDE_AREA_SIZE, calcCenterY(this.SERVICE_POINT_SIZE));
-        setExit(this.CANVAS_WIDTH - this.SERVICE_POINT_SIZE, calcCenterY(0));
+        setRestaurant(xOffset + calcCenterX(this.RESTAURANT_AREA_SIZE, this.SERVICE_POINT_SIZE) + this.RIDE_AREA_SIZE, calcCenterY(0));
+        setExit(this.CANVAS_WIDTH - (int)(this.SERVICE_POINT_SIZE * 1.5), calcCenterY(0));
     }
 
     public void drawAllServicePoints() {
@@ -321,6 +329,9 @@ public class SimController implements ISettingsControllerForM {
         }
         // Restaurant
         drawServicePoint(this.restaurant[0], this.restaurant[1], this.RESTAURANT_COLOR, 0);
+
+        // Exit
+        drawServicePoint(this.exit[0], this.exit[1], this.EXIT_COLOR, 0);
 
         // Info panel
         drawInfoPanel();
@@ -527,7 +538,7 @@ public class SimController implements ISettingsControllerForM {
     @Override
     public void updateEventTime(double time) {
         Platform.runLater(() -> {
-            this.time.setText("Total time:\n" + String.format("%.2f", time) + "/ " + this.simTimeValue);
+            this.time.setText("Total time:\n" + String.format("%.2f", time) + " / " + this.simTimeValue);
         });
     }
 
