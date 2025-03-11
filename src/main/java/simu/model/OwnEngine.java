@@ -334,7 +334,7 @@ public class OwnEngine extends Engine {
     @Override
     protected void results() {
         double endTime = Clock.getInstance().getTime();
-        Trace.out(Trace.Level.INFO, "Simulation ends at time: " + endTime + ". Generating results.");
+        Trace.out(Trace.Level.INFO, "Simulation ends at time: " + endTime + ", generating results.");
         staticResults.put("End time", endTime);
 
         //Customer count related results:
