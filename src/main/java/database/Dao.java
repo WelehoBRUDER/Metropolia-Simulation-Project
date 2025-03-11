@@ -6,19 +6,31 @@ import java.util.*;
 
 class ServicePoint {
     private int simId;
-    private String servicePointType;
-    private int count;
-    private double averageServiceTime;
-    private double averageQueueTime;
-    private int ticketsBought;
+    private double simulationTime;
+    private int readyCustomers;
+    private int ticketCustomers;
+    private int wristbandCustomers;
+    private int unreadyCustomers;
+    private double ticketBoothAverage;
+    private int totalTicketCount;
+    private double wristbandAverageTime;
+    private double ticketAverageTime;
+    private double wholeAverageTime;
+    private double ticketWristbandTimeRatio;
 
-    public ServicePoint(int simId, String servicePointType, int count, double averageServiceTime, double averageQueueTime, int ticketsBought) {
+    public ServicePoint(int simId, double simulationTime, int readyCustomers, int ticketCustomers, int wristbandCustomers, int unreadyCustomers, double ticketBoothAverage, int totalTicketCount, double wristbandAverageTime, double ticketAverageTime, double wholeAverageTime, double ticketWristbandTimeRatio) {
         this.simId = simId;
-        this.servicePointType = servicePointType;
-        this.count = count;
-        this.averageServiceTime = averageServiceTime;
-        this.averageQueueTime = averageQueueTime;
-        this.ticketsBought = ticketsBought;
+        this.simulationTime = simulationTime;
+        this.readyCustomers = readyCustomers;
+        this.ticketCustomers = ticketCustomers;
+        this.wristbandCustomers = wristbandCustomers;
+        this.unreadyCustomers = unreadyCustomers;
+        this.ticketBoothAverage = ticketBoothAverage;
+        this.totalTicketCount = totalTicketCount;
+        this.wristbandAverageTime = wristbandAverageTime;
+        this.ticketAverageTime = ticketAverageTime;
+        this.wholeAverageTime = wholeAverageTime;
+        this.ticketWristbandTimeRatio = ticketWristbandTimeRatio;
     }
 
     public int getSimId() {
@@ -29,44 +41,92 @@ class ServicePoint {
         this.simId = simId;
     }
 
-    public String getServicePointType() {
-        return servicePointType;
+    public double getSimulationTime() {
+        return simulationTime;
     }
 
-    public void setServicePointType(String servicePointType) {
-        this.servicePointType = servicePointType;
+    public void setSimulationTime(double simulationTime) {
+        this.simulationTime = simulationTime;
     }
 
-    public int getCount() {
-        return count;
+    public int getReadyCustomers() {
+        return readyCustomers;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setReadyCustomers(int readyCustomers) {
+        this.readyCustomers = readyCustomers;
     }
 
-    public double getAverageServiceTime() {
-        return averageServiceTime;
+    public int getTicketCustomers() {
+        return ticketCustomers;
     }
 
-    public void setAverageServiceTime(double averageServiceTime) {
-        this.averageServiceTime = averageServiceTime;
+    public void setTicketCustomers(int ticketCustomers) {
+        this.ticketCustomers = ticketCustomers;
     }
 
-    public double getAverageQueueTime() {
-        return averageQueueTime;
+    public int getWristbandCustomers() {
+        return wristbandCustomers;
     }
 
-    public void setAverageQueueTime(double averageQueueTime) {
-        this.averageQueueTime = averageQueueTime;
+    public void setWristbandCustomers(int wristbandCustomers) {
+        this.wristbandCustomers = wristbandCustomers;
     }
 
-    public int getTicketsBought() {
-        return ticketsBought;
+    public int getUnreadyCustomers() {
+        return unreadyCustomers;
     }
 
-    public void setTicketsBought(int ticketsBought) {
-        this.ticketsBought = ticketsBought;
+    public void setUnreadyCustomers(int unreadyCustomers) {
+        this.unreadyCustomers = unreadyCustomers;
+    }
+
+    public double getTicketBoothAverage() {
+        return ticketBoothAverage;
+    }
+
+    public void setTicketBoothAverage(double ticketBoothAverage) {
+        this.ticketBoothAverage = ticketBoothAverage;
+    }
+
+    public int getTotalTicketCount() {
+        return totalTicketCount;
+    }
+
+    public void setTotalTicketCount(int totalTicketCount) {
+        this.totalTicketCount = totalTicketCount;
+    }
+
+    public double getWristbandAverageTime() {
+        return wristbandAverageTime;
+    }
+
+    public void setWristbandAverageTime(double wristbandAverageTime) {
+        this.wristbandAverageTime = wristbandAverageTime;
+    }
+
+    public double getTicketAverageTime() {
+        return ticketAverageTime;
+    }
+
+    public void setTicketAverageTime(double ticketAverageTime) {
+        this.ticketAverageTime = ticketAverageTime;
+    }
+
+    public double getWholeAverageTime() {
+        return wholeAverageTime;
+    }
+
+    public void setWholeAverageTime(double wholeAverageTime) {
+        this.wholeAverageTime = wholeAverageTime;
+    }
+
+    public double getTicketWristbandTimeRatio() {
+        return ticketWristbandTimeRatio;
+    }
+
+    public void setTicketWristbandTimeRatio(double ticketWristbandTimeRatio) {
+        this.ticketWristbandTimeRatio = ticketWristbandTimeRatio;
     }
 }
 
@@ -148,12 +208,14 @@ class Ride {
 
 class TicketBooth {
     private int simId;
+    private int rideId;
     private int count;
     private double averageServiceTime;
     private double averageQueueTime;
 
-    public TicketBooth(int simId, int count, double averageServiceTime, double averageQueueTime) {
+    public TicketBooth(int simId, int rideId, int count, double averageServiceTime, double averageQueueTime) {
         this.simId = simId;
+        this.rideId = rideId;
         this.count = count;
         this.averageServiceTime = averageServiceTime;
         this.averageQueueTime = averageQueueTime;
@@ -165,6 +227,14 @@ class TicketBooth {
 
     public void setSimId(int simId) {
         this.simId = simId;
+    }
+
+    public int getRideId() {
+        return rideId;
+    }
+
+    public void setRideId(int rideId) {
+        this.rideId = rideId;
     }
 
     public int getCount() {
@@ -340,17 +410,23 @@ public class Dao {
         }
     }
 
-    public void addServicePoint(String servicePointType, int count, double averageServiceTime, double averageQueueTime, int ticketsBought){
+    public void addServicePoint(double simulationTime, int readyCustomers, int ticketCustomers, int wristbandCustomers, int unreadyCustomers, double ticketBoothAverage, int totalTicketCount, double wristbandAverageTime, double ticketAverageTime, double wholeAverageTime, double ticketWristbandTimeRatio){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO service_point (sim_id, service_point_type, count, average_service_time, average_queue_time, tickets_bought) VALUES (LAST_INSERT_ID(),?, ?, ?, ?, ?);";
+        String sql = "INSERT INTO service_point (sim_id, simulation_time, ready_customers, ticket_customers, wristband_customers, unready_customers, ticket_booth_average, total_ticket_count, wristband_average_time, ticket_average_time, whole_average_time, ticket_wristband_time_ratio) VALUES (LAST_INSERT_ID(),?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, servicePointType);
-            ps.setInt(2, count);
-            ps.setDouble(3, averageServiceTime);
-            ps.setDouble(4, averageQueueTime);
-            ps.setInt(5, ticketsBought);
+            ps.setDouble(1, simulationTime);
+            ps.setInt(2, readyCustomers);
+            ps.setInt(3, ticketCustomers);
+            ps.setInt(4, wristbandCustomers);
+            ps.setInt(5, unreadyCustomers);
+            ps.setDouble(6, ticketBoothAverage);
+            ps.setInt(7, totalTicketCount);
+            ps.setDouble(8, wristbandAverageTime);
+            ps.setDouble(9, ticketAverageTime);
+            ps.setDouble(10, wholeAverageTime);
+            ps.setDouble(11, ticketWristbandTimeRatio);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
@@ -375,34 +451,36 @@ public class Dao {
         }
     }
 
-    public void addTicketBooth(int count, double averageServiceTime, double averageQueueTime){
+    public void addTicketBooth(int count, int ticketBoothId, double averageServiceTime, double averageQueueTime){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO ticket_booth (sim_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?);";
+        String sql = "INSERT INTO ticket_booth (sim_id, ticket_booth_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, count);
-            ps.setDouble(2, averageServiceTime);
-            ps.setDouble(3, averageQueueTime);
+            ps.setInt(2, ticketBoothId);
+            ps.setDouble(3, averageServiceTime);
+            ps.setDouble(4, averageQueueTime);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
 
-    public void addRestaurant(int count, double averageServiceTime, double averageQueueTime){
+    public void addRestaurant(int count, double averageServiceTime, double averageQueueTime, int capacity){
         Connection conn = DatabaseConnection.getConnection();
-        String sql = "INSERT INTO restaurant (sim_id, count, average_service_time, average_queue_time) VALUES (LAST_INSERT_ID(), ?, ?, ?);";
+        String sql = "INSERT INTO restaurant (sim_id, count, average_service_time, average_queue_time, capacity) VALUES (LAST_INSERT_ID(), ?, ?, ?, ?);";
 
         try {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, count);
             ps.setDouble(2, averageServiceTime);
             ps.setDouble(3, averageQueueTime);
+            ps.setInt(4, capacity);
             ps.executeUpdate();
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
-    
+
 }
