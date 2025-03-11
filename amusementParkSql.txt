@@ -9,11 +9,16 @@ CREATE TABLE simulation (
 
 CREATE TABLE service_point (
 	sim_id INT NOT NULL,
-	service_point_type VARCHAR(60),
-	count INT,
-	average_service_time DECIMAL(12, 2),
-	average_queue_time DECIMAL(12, 2),
-	tickets_bought INT,
+	simulation_time DECIMAL(12, 2),
+	ready_customers INT,
+	ticket_customers INT,
+	unready_customers INT,
+	ticket_booth_average DECIMAL(12, 2),
+	total_ticket_count INT,
+	wristband_average_time DECIMAL(12, 2),
+	ticket_average_time DECIMAL(12,2),
+	whole_average_time DECIMAL(12, 2),
+	ticket_wristband_time_ratio DECIMAL(12, 2),
 	#PRIMARY KEY (sim_id),
 	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
 );
