@@ -10,6 +10,7 @@ import simu.framework.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class OwnEngine extends Engine {
@@ -260,6 +261,7 @@ public class OwnEngine extends Engine {
         return wristbandChance;
     }
 
+
     @Override
     protected void results() {
         double endTime = Clock.getInstance().getTime();
@@ -339,27 +341,47 @@ public class OwnEngine extends Engine {
 
 
     protected double getWholeAverage() {
+        if (wristbandAverages.isEmpty() && ticketAverages.isEmpty()) {
+            return 0.00;
+        } else if (wristbandAverages.isEmpty()) {
+            return getAverageTicketTime();
+        } else if (ticketAverages.isEmpty()) {
+            return getAverageWristbandTime();
+        }
         return (getAverageTicketTime() + getAverageWristbandTime()) / 2;
     }
 
     public double getAverageWristbandTime() {
-        double sum = 0;
-        for (double time : wristbandAverages) {
-            sum += time;
+        if (wristbandAverages.isEmpty()) {
+            return 0.00;
+        } else {
+            double sum = 0;
+            for (double time : wristbandAverages) {
+                sum += time;
+            }
+            return sum / wristbandAverages.size();
         }
-        return sum / wristbandAverages.size();
     }
 
     public double getAverageTicketTime() {
-        double sum = 0;
-        for (double time : ticketAverages) {
-            sum += time;
+        if (ticketAverages.isEmpty()) {
+            return 0.00;
+        } else {
+            double sum = 0;
+            for (double time : ticketAverages) {
+                sum += time;
+            }
+            return sum / ticketAverages.size();
         }
-        return sum / ticketAverages.size();
     }
 
     public double getWristbandTicketAverageRatio() {
-        return getAverageTicketTime() / getAverageWristbandTime();
+        if (wristbandAverages.isEmpty() || ticketAverages.isEmpty()) {
+            return 0.00;
+        }
+         else {
+             return getAverageTicketTime() / getAverageWristbandTime();
+        }
     }
 
     public HashMap<String, Double> getStaticResults() {
