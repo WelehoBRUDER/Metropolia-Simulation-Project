@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.application.Platform;
 import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
@@ -49,6 +50,8 @@ public class SettingsController {
     private final int maxTicketBoothCount = 9;
     private final int maxRideCount = 25;
     private final int minDelay = 20;
+
+    private Stage stage;
 
     public void initialize() throws Exception {
         sanitizeInput(simTime);
@@ -396,10 +399,10 @@ public class SettingsController {
 
         System.out.println(simController);
 
-        simController.setSimulationParameters(simTimeValue, ticketBoothCountValue, rideCountValue, restaurantCapValue, simDelayValue, wristbandChanceValue, rideProperties);
+        simController.setSimulationParameters(simTimeValue, ticketBoothCountValue, rideCountValue, restaurantCapValue, simDelayValue, wristbandChanceValue, rideProperties, this);
 
         // Show new stage
-        Stage stage = new Stage();
+        stage = new Stage();
         stage.setTitle("Simulation running...");
         stage.setResizable(false);
         stage.setScene(new Scene(root));
@@ -414,6 +417,12 @@ public class SettingsController {
         });
 
         simController.startSim();
+    }
+
+    public void closeSimulation() {
+        Platform.runLater(() -> {
+            stage.close();
+        });
     }
 
 

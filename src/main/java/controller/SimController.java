@@ -6,6 +6,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -21,6 +23,7 @@ import java.util.concurrent.*;
 
 public class SimController implements ISettingsControllerForM {
     private IEngine engine;
+    private SettingsController settingsController;
 
     private int simTimeValue = 0;
     private int ticketBoothCountValue = 0;
@@ -46,6 +49,8 @@ public class SimController implements ISettingsControllerForM {
     private Label currentDelay;
     @FXML
     private Label wristbandChanceLabel;
+    @FXML
+    private TextArea simulationConsole;
 
     // Canvas elements
     @FXML
@@ -80,7 +85,7 @@ public class SimController implements ISettingsControllerForM {
 
     // Canvas style definitions
     private final Color ENTRANCE_COLOR = Color.GREEN;
-    private final Color TICKET_COLOR = Color.BLUE;
+    private final Color TICKET_COLOR = Color.LIGHTBLUE;
     private final Color RIDE_COLOR = Color.ORANGE;
     private final Color RESTAURANT_COLOR = Color.RED;
 
@@ -103,7 +108,8 @@ public class SimController implements ISettingsControllerForM {
         return coordinates;
     }
 
-    public void setSimulationParameters(int simTime, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties) {
+    public void setSimulationParameters(int simTime, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
+        this.settingsController = settingsController;
         this.simTimeValue = simTime;
         this.ticketBoothCountValue = ticketBoothCount;
         this.rideCountValue = rideCount;
@@ -114,6 +120,7 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx = servicePointCanvas.getGraphicsContext2D();
         this.customerCtx = customerCanvas.getGraphicsContext2D();
         this.customerNumbers.clear();
+        simulationConsole.appendText("Starting simulation...");
         this.currentDelay.setText("Current delay: " + this.simDelayValue + "ms");
         this.wristbandChanceLabel.setText(String.format("%.1f", this.wristbandChanceValue) + "%");
         this.defaults[3] = this.restaurantCapValue * -1;
@@ -179,21 +186,27 @@ public class SimController implements ISettingsControllerForM {
         this.customerCtx.clearRect(0, 0, this.customerCanvas.getWidth(), this.customerCanvas.getHeight());
     }
 
-    public void drawServicePoint(int x, int y, Color color) {
+    public void drawServicePoint(int x, int y, Color color, int number) {
         this.serviceCtx.setFill(color);
         this.serviceCtx.fillRect(x, y, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        drawServicePointNumber(x, y, 0, 0);
+        drawServicePointNumber(x, y, number, 0);
     }
 
     public void drawServicePointNumber(int x, int y, int number, int defaultValue) {
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.CENTER);
-        if (defaultValue == 0 && number >= 0) {
-            this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
-            this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
-            return;
-        } else if (defaultValue == 0 && number < 0) {
+        if (defaultValue == 0 && number > 0) {
+            if (x == this.exit[0] && y == this.exit[1]) {
+                this.serviceCtx.clearRect(x - 3, y, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
+                this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y + (this.SERVICE_POINT_SIZE / 1.5));
+                return;
+            } else {
+                this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
+                this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y + (this.SERVICE_POINT_SIZE / 1.5));
+                return;
+            }
+        } else if (defaultValue == 0 && number <= 0) {
             return;
         }
         int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
@@ -202,6 +215,33 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.fillText(waiting + "(" + beingServed + ")", x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
     }
 
+    public void drawInfoPanel() {
+        this.serviceCtx.setFill(Color.LIGHTGRAY);
+        this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
+        this.serviceCtx.setTextAlign(TextAlignment.LEFT);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 4);
+
+        this.serviceCtx.setFill(ENTRANCE_COLOR);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 , this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText("Entrance", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 + (this.SERVICE_POINT_SIZE / 1.5));
+
+        this.serviceCtx.setFill(TICKET_COLOR);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 1, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText("Ticket booths", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 1 + (this.SERVICE_POINT_SIZE / 1.5));
+
+        this.serviceCtx.setFill(RIDE_COLOR);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 2, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText("Rides", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 2 + (this.SERVICE_POINT_SIZE / 1.5));
+
+        this.serviceCtx.setFill(RESTAURANT_COLOR);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText("Restaurant", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3 + (this.SERVICE_POINT_SIZE / 1.5));
+
+    }
 
     public void setEntrance(int x, int y) {
         entrance = new int[]{x, y};
@@ -266,19 +306,31 @@ public class SimController implements ISettingsControllerForM {
         calcServicePointCords();
 
         // Entrance
-        drawServicePoint(this.entrance[0], this.entrance[1], this.ENTRANCE_COLOR);
+        drawServicePoint(this.entrance[0], this.entrance[1], this.ENTRANCE_COLOR, 0);
 
         // Ticket booths
         for (int i = 0; i < this.ticketBoothCountValue; i++) {
             int[] cords = getTicketBooth(i);
-            drawServicePoint(cords[0], cords[1], this.TICKET_COLOR);
+            drawServicePoint(cords[0], cords[1], this.TICKET_COLOR, i+1);
         }
         for (int i = 0; i < this.rideCountValue; i++) {
             int[] cords = getRide(i);
-            drawServicePoint(cords[0], cords[1], this.RIDE_COLOR);
+            drawServicePoint(cords[0], cords[1], this.RIDE_COLOR, i+1);
         }
         // Restaurant
-        drawServicePoint(this.restaurant[0], this.restaurant[1], this.RESTAURANT_COLOR);
+        drawServicePoint(this.restaurant[0], this.restaurant[1], this.RESTAURANT_COLOR, 0);
+
+        // Info panel
+        drawInfoPanel();
+    }
+
+    @Override
+    public void updateConsole(String msg) {
+        simulationConsole.appendText("\n" + msg);
+    }
+
+    public void closeSimulation() {
+        settingsController.closeSimulation();
     }
 
     @Override
@@ -338,7 +390,7 @@ public class SimController implements ISettingsControllerForM {
         // s = step
         double sx = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[0];
         double sy = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[1];
-        this.customerCords.add(new double[]{x, y, sx, sy});
+        this.customerCords.add(new double[]{x + (this.SERVICE_POINT_SIZE / 2) - (this.CUSTOMER_SIZE / 2), y + (this.SERVICE_POINT_SIZE / 2) - (this.CUSTOMER_SIZE / 2), sx, sy});
         this.customerDestination.add(getLocation(to));
         int defaultFrom = this.defaults[getIndex(from)[0]];
         int defaultTo = this.defaults[getIndex(to)[0]];
@@ -403,8 +455,8 @@ public class SimController implements ISettingsControllerForM {
     }
 
     public double[] calculatePath(double[] origin, int[] destination, int steps) {
-        int midX = destination[0] - this.CUSTOMER_SIZE / 2;
-        int midY = destination[1] - this.CUSTOMER_SIZE / 2;
+        int midX = destination[0] + (this.SERVICE_POINT_SIZE/4) - this.CUSTOMER_SIZE / 2;
+        int midY = destination[1] + (this.SERVICE_POINT_SIZE/4) - this.CUSTOMER_SIZE / 2;
         // Calculate delta x and y
         double dx = midX - origin[0];
         double dy = midY - origin[1];
@@ -470,7 +522,7 @@ public class SimController implements ISettingsControllerForM {
     @Override
     public void updateEventTime(double time) {
         Platform.runLater(() -> {
-            this.time.setText("Total time: " + String.format("%.2f", time));
+            this.time.setText("Total time:\n" + String.format("%.2f", time) + "/ " + this.simTimeValue);
         });
     }
 

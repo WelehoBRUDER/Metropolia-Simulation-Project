@@ -172,6 +172,8 @@ public class ResultsController implements ISettingsControllerForM{
                 controller.showStaticResults(staticResults);
                 controller.showDynamicResults(dynamicResults);
                 Stage stage = new Stage();
+                stage.setTitle("Results");
+                stage.setResizable(false);
                 stage.setScene(new Scene(root));
                 stage.show();
             } catch (IOException e) {
@@ -211,5 +213,11 @@ public class ResultsController implements ISettingsControllerForM{
 
     }
 
+    @Override
+    public void updateConsole(String msg) {
+    }
 
+    @Override
+    public void closeSimulation() {
+    }
 }

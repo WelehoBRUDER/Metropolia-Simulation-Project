@@ -13,4 +13,6 @@ public interface ISettingsControllerForM {
     public void newAnimation();
     public void addCustomerToAnimation(int from, int to);
     public void updateEventTime(double time);
+    public void updateConsole(String msg);
+    public void closeSimulation();
 }

@@ -4,11 +4,13 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@simulation.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SimController">
    <children>
@@ -20,7 +22,7 @@
       </StackPane>
       <HBox prefHeight="100.0" prefWidth="200.0" styleClass="footer">
          <children>
-            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="controls">
+            <VBox maxWidth="242.0" prefHeight="100.0" prefWidth="242.0" styleClass="controls">
                <children>
                   <Label fx:id="time" text="Total time: 0">
                      <padding>
@@ -29,6 +31,14 @@
                   </Label>
                </children>
             </VBox>
+            <TextArea fx:id="simulationConsole" editable="false" prefHeight="92.0" prefWidth="461.0">
+               <HBox.margin>
+                  <Insets bottom="4.0" top="4.0" />
+               </HBox.margin>
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </TextArea>
             <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" styleClass="controls">
                <children>
                   <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="400.0">
@@ -46,7 +56,7 @@
                         <Insets right="10.0" top="10.0" />
                      </padding>
                   </FlowPane>
-                  <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="400.0">
+                  <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="200.0">
                      <children>
                         <Label fx:id="currentDelay1" prefWidth="125.0" text="Wristband chance" />
                         <Button mnemonicParsing="false" onMouseClicked="#decreaseWristbandChance" text="▼" />

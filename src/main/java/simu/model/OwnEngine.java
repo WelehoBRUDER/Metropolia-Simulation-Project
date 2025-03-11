@@ -22,7 +22,7 @@ public class OwnEngine extends Engine {
 
     private double wristbandChance = 0.1;
     private int RESTAURANT_CAPASITY = 20;
-    private Bernoulli bernoulli = new Bernoulli(wristbandChance);
+    private Bernoulli bernoulli;
     private int rideCount;
     private int ticketBoothCount = 1;
     private int minTicketPurchase = 1;
@@ -44,7 +44,8 @@ public class OwnEngine extends Engine {
         this.rideCount = rideCount;
         this.ticketBoothCount = ticketBoothCount;
         this.RESTAURANT_CAPASITY = restaurantCap;
-        this.wristbandChance = wristbandChance;
+        this.wristbandChance = wristbandChance/100;
+        this.bernoulli = new Bernoulli(this.wristbandChance);
 
         ServicePoint.i = 0;
         ServicePoint.j = 0;
@@ -108,6 +109,7 @@ public class OwnEngine extends Engine {
                 if (c.hasWristband()) {
                     p = findRideByID(c.getNextRideID());
                     controller.visualizeCustomer(c.getId(), p.getRideID(), true);
+                    controller.updateConsole("Customer " + c.getId() + " (wristband) arrived and goes to ride " + p.getRideID());
 
                     p.addToQueue(c);
                     c.removeNextRide();
@@ -127,6 +129,7 @@ public class OwnEngine extends Engine {
                     //System.out.println("from " + -100 + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
                     controller.visualizeCustomer(c.getId(), 0, false);
+                    controller.updateConsole("Customer " + c.getId() + " (no wristband) arrived and goes to ticket booth " + (ticketBoothCounter+1));
                     Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
                 }
 
@@ -147,6 +150,7 @@ public class OwnEngine extends Engine {
                 c.removeTicket();
                 from = servicePoints[ticketOrder.remove(0)].getRideID();
                 to = p.getRideID();
+                controller.updateConsole("Customer " + c.getId() + " bought tickets from ticket booth " + (from/-1) + " and goes to ride " + to);
                 //System.out.println("from " + servicePoints[ticketOrder.remove(0)].getRideID() + " to " + p.getRideID()); //FROMTO
 
                 Trace.out(Trace.Level.INFO, "Asiakas: " + c.getId() + " menee laitteen " + p.getRideID() + " jonoon");
@@ -167,6 +171,7 @@ public class OwnEngine extends Engine {
                         rideOrder.add(p.getRideID());
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = p.getRideID();
+                        controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ride " + to);
                         //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + p.getRideID()); //FROMTO
 
                         Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee laitteeseen: " + p.getRideID());
@@ -176,6 +181,7 @@ public class OwnEngine extends Engine {
                         controller.visualizeCustomer(c.getId(), 0, c.hasWristband());
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = (ticketBoothCounter + 1) / -1;
+                        controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ticket booth " + (to/-1));
                         //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
                         Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee lippujonoon");
@@ -185,6 +191,7 @@ public class OwnEngine extends Engine {
                     controller.visualizeCustomer(c.getId(), rideCount + 1, c.hasWristband());
                     from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                     to = 100;
+                    controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to the restaurant");
                     //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + 100); //FROMTO
 
                     Trace.out(Trace.Level.INFO, "Asiakas " + c.getId() + " menee ravintolajonoon");
@@ -200,6 +207,7 @@ public class OwnEngine extends Engine {
                 readyCustomers++;
                 from = 100;
                 to = -101;
+                controller.updateConsole("Customer " + c.getId() + " left the restaurant and is ready to leave the park");
                 //System.out.println("from " + 100 + " to " + -101); //FROMTO
 
                 double average = c.report();
@@ -238,13 +246,14 @@ public class OwnEngine extends Engine {
     }
 
     public void setWristbandChance(double amount) {
-        wristbandChance += amount;
+        wristbandChance = amount/100;
         if (wristbandChance > 1) {
             wristbandChance = 1;
         } else if (wristbandChance < 0) {
             wristbandChance = 0;
         }
         System.out.println("Wristband chance: " + wristbandChance);
+        this.bernoulli = new Bernoulli(this.wristbandChance);
         bernoulli = new Bernoulli(wristbandChance);
     }
 
@@ -327,6 +336,7 @@ public class OwnEngine extends Engine {
         ResultsController resultsController = new ResultsController();
         resultsController.visualizeResults(results, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
+        controller.closeSimulation();
     }
 
 
