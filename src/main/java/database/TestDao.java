@@ -13,10 +13,11 @@ public class TestDao {
         dao.addRestaurant(1, 1, 1);
         dao.addRestaurant(2, 2, 2);
 
-        System.out.println(dao.getRideById(5).get(0).getAverageQueueTime());
-        System.out.println(dao.getRestaurantById(4).get(0).getAverageQueueTime());
-        System.out.println(dao.getRideById(4).size());
-        System.out.println(dao.getSimId());
+        System.out.println(dao.getRideById(1).get(0).getAverageQueueTime());
+        System.out.println(dao.getRideById(1));
+        //System.out.println(dao.getRestaurantById(4).get(0).getAverageQueueTime());
+        //System.out.println(dao.getRideById(4).size());
+        //System.out.println(dao.getSimId());
 
 
 
