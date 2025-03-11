@@ -2,12 +2,10 @@ package simu.model;
 
 import simu.framework.Clock;
 import simu.framework.Trace;
-
 import java.util.ArrayList;
 
 
-// TODO:
-// Asiakas koodataan simulointimallin edellyttämällä tavalla (data!)
+
 public class Customer {
 	private double arrivalTime;
 	private double departureTime;

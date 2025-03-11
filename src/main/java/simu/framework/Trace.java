@@ -1,5 +1,8 @@
 package simu.framework;
 
+/**
+ * Trace is a class for managing the trace output of the simulation.
+ */
 public class Trace {
 
 	public enum Level{INFO, WAR, ERR}

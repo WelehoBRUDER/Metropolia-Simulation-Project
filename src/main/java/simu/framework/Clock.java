@@ -1,5 +1,8 @@
 package simu.framework;
 
+/**
+ * Clock is a singleton class that represents the time in the simulation.
+ */
 public class Clock {
 
 	private double time;
