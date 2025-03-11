@@ -157,6 +157,9 @@ public class ServicePoint {
 	 * @return The average service time of the service point.
 	 */
 	public double getAverageServiceTime() {
+		if (!serviceTimes.containsKey(rideID)) {
+			return 0;
+		}
 		return (serviceTimes.get(rideID).get(0) / serviceTimes.get(rideID).get(1));
 	}
 
