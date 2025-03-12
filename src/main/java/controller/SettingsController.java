@@ -23,6 +23,9 @@ import simu.model.OwnEngine;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * Settings controller class. Controls the settings window.
+ */
 public class SettingsController {
     @FXML
     private TextField simTime;
@@ -690,6 +693,7 @@ public class SettingsController {
         // Show new stage
         stage = new Stage();
         stage.setTitle("Simulation history");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
         stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.show();

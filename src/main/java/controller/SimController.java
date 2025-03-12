@@ -306,6 +306,17 @@ public class SimController implements ISettingsControllerForM {
     }
 
     /**
+     * Draws an element on the info panel.
+     */
+    public void drawInfoPanelElement(Color color, int elementNumber, String elementText) {
+        this.serviceCtx.setFill(color);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * (elementNumber-1), this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText(elementText, 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * (elementNumber-1) + (this.SERVICE_POINT_SIZE / 1.5));
+
+    }
+
+    /**
      * Draws the info panel on the canvas, showing the color of each service point.
      */
     public void drawInfoPanel() {
@@ -314,32 +325,11 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.setTextAlign(TextAlignment.LEFT);
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 5);
 
-        this.serviceCtx.setFill(ENTRANCE_COLOR);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Entrance", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0 + (this.SERVICE_POINT_SIZE / 1.5));
-
-        this.serviceCtx.setFill(TICKET_COLOR);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 1, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Ticket booths", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 1 + (this.SERVICE_POINT_SIZE / 1.5));
-
-        this.serviceCtx.setFill(RIDE_COLOR);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 2, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Rides", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 2 + (this.SERVICE_POINT_SIZE / 1.5));
-
-        this.serviceCtx.setFill(RESTAURANT_COLOR);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Restaurant", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3 + (this.SERVICE_POINT_SIZE / 1.5));
-
-        this.serviceCtx.setFill(EXIT_COLOR);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 4, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        this.serviceCtx.setFill(Color.BLACK);
-        this.serviceCtx.fillText("Exit", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 4 + (this.SERVICE_POINT_SIZE / 1.5));
-
-
+        drawInfoPanelElement(ENTRANCE_COLOR, 1, "Entrance");
+        drawInfoPanelElement(TICKET_COLOR, 2, "Ticket booths");
+        drawInfoPanelElement(RIDE_COLOR, 3, "Rides");
+        drawInfoPanelElement(RESTAURANT_COLOR, 4, "Restaurant");
+        drawInfoPanelElement(EXIT_COLOR, 5, "Exit");
     }
 
     /**
@@ -665,6 +655,9 @@ public class SimController implements ISettingsControllerForM {
      * @return The cords for the customer.
      */
     public int[] getCustomerCords(int id) {
+        if (this.customerCords.isEmpty()) {
+            return new int[]{0, 0};
+        }
         return new int[]{(int) this.customerCords.get(id)[0], (int) this.customerCords.get(id)[1]};
     }
 
