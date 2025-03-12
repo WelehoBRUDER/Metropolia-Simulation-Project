@@ -60,8 +60,8 @@ public class Controller implements ISettingsControllerForM {
 
 	/**
 	 * Adds a customer to the animation.
-	 * @param from
-	 * @param to
+	 * @param from The service point the customer is coming from.
+	 * @param to The service point the customer is going to.
 	 */
 	@Override
 	public void addCustomerToAnimation(int from, int to) {

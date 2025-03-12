@@ -227,7 +227,7 @@ public class ResultsController implements ISettingsControllerForM{
                 Parent root = loader.load();
                 ResultsController controller = loader.getController();
                 if (controller == null) {
-                    System.out.println("Controller is null. Make sure FXML is properly linked to controller.");
+                    Trace.out(Trace.Level.WAR, "Controller is null!");
                     return;
                 }
                 controller.showStaticResults(staticResults);
@@ -240,7 +240,7 @@ public class ResultsController implements ISettingsControllerForM{
                 stage.show();
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("FXML Loading failed");
+                Trace.out(Trace.Level.WAR, "FXML Loading failed");
             }
         });
     }
@@ -272,8 +272,8 @@ public class ResultsController implements ISettingsControllerForM{
 
     /**
      * Adds a customer to the animation.
-     * @param from
-     * @param to
+     * @param from The service point the customer is coming from.
+     * @param to The service point the customer is going to.
      */
     @Override
     public void addCustomerToAnimation(int from, int to) {
