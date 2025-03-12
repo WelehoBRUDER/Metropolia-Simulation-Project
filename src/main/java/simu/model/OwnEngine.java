@@ -301,17 +301,7 @@ public class OwnEngine extends Engine {
         results.put("Wristband ticket ratio", getWristbandTicketAverageRatio());
 
         //dao
-        /*
-        System.out.println("NOTICE MEEEEEE");
-        System.out.println(readyCustomers);
-        System.out.println(ticketAverages.size());
-        System.out.println(wristbandAverages.size());
-        System.out.println(unreadyCustomers);
-        System.out.println(Customer.getTicketboothCounterAverage());
-        System.out.println(Customer.getTotalTicketCount());
-        System.out.println(getAverageWristbandTime());
-         */
-        dao.addServicePoint(endTime, readyCustomers, ticketAverages.size(), wristbandAverages.size(), unreadyCustomers, /*Customer.getTicketboothCounterAverage()*/0, Customer.getTotalTicketCount(), getAverageWristbandTime(), getAverageTicketTime(), getWholeAverage(), getWristbandTicketAverageRatio());
+        dao.addServicePoint(endTime, readyCustomers, ticketAverages.size(), wristbandAverages.size(), unreadyCustomers, Customer.getTicketboothCounterAverage()/*0*/, Customer.getTotalTicketCount(), getAverageWristbandTime(), getAverageTicketTime(), getWholeAverage(), getWristbandTicketAverageRatio());
 
         //Palvelupisteiden tulokset:
         for (ServicePoint point : servicePoints) {
