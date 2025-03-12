@@ -110,7 +110,7 @@ public class SimController implements ISettingsControllerForM {
         return coordinates;
     }
 
-    public void setSimulationParameters(int simTime, double arrivalIntervalValue,  int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
+    public void setSimulationParameters(int simTime, double arrivalIntervalValue, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
         this.settingsController = settingsController;
         this.simTimeValue = simTime;
         this.arrivalIntervalValue = arrivalIntervalValue;
@@ -136,7 +136,7 @@ public class SimController implements ISettingsControllerForM {
         clearScreen();
         drawAllServicePoints();
         System.out.println("Starting simulation");
-        this.engine = new OwnEngine(this, this.arrivalIntervalValue,  this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
+        this.engine = new OwnEngine(this, this.arrivalIntervalValue, this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
         this.engine.setSimulationTime(this.simTimeValue);
         this.engine.setDelay(this.simDelayValue);
         ((Thread) this.engine).start();
@@ -192,11 +192,13 @@ public class SimController implements ISettingsControllerForM {
     public void drawServicePoint(int x, int y, Color color, int number) {
         this.serviceCtx.setFill(color);
         this.serviceCtx.fillRect(x, y, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        drawServicePointNumber(x, y, number, 0);
+        Platform.runLater(() -> drawServicePointNumber(x, y, number, 0));
     }
 
     public void drawServicePointNumber(int x, int y, int number, int defaultValue) {
-        if (serviceCtx == null) { return;}
+        if (serviceCtx == null) {
+            return;
+        }
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.CENTER);
@@ -309,7 +311,7 @@ public class SimController implements ISettingsControllerForM {
         }
 
         setRestaurant(xOffset + calcCenterX(this.RESTAURANT_AREA_SIZE, this.SERVICE_POINT_SIZE) + this.RIDE_AREA_SIZE, calcCenterY(0));
-        setExit(this.CANVAS_WIDTH - (int)(this.SERVICE_POINT_SIZE * 1.5), calcCenterY(0));
+        setExit(this.CANVAS_WIDTH - (int) (this.SERVICE_POINT_SIZE * 1.5), calcCenterY(0));
     }
 
     public void drawAllServicePoints() {
@@ -410,8 +412,10 @@ public class SimController implements ISettingsControllerForM {
         this.customerDestination.add(getLocation(to));
         int defaultFrom = this.defaults[getIndex(from)[0]];
         int defaultTo = this.defaults[getIndex(to)[0]];
-        drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
-        drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
+        Platform.runLater(() -> {
+            drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
+            drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
+        });
     }
 
     public void changeCustomerNumber(int id, int amount) {
