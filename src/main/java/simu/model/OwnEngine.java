@@ -52,15 +52,10 @@ public class OwnEngine extends Engine {
         this.RESTAURANT_CAPASITY = restaurantCap;
         this.wristbandChance = wristbandChance/100;
         this.bernoulli = new Bernoulli(this.wristbandChance);
+        this.rideParameters = rideProperties;
 
         ServicePoint.i = 0;
         ServicePoint.j = 0;
-
-        //TESTI PARAMETREJÄ!!!
-        rideParameters = new ArrayList<>();
-        rideParameters.add(new int[]{5, 2});
-        rideParameters.add(new int[]{10, 10});
-        //TESTI PARAMETREJÄ!!!
 
         servicePoints = new ServicePoint[rideCount + ticketBoothCount + 1];
         System.out.println("Palvelupisteitä: " + servicePoints.length);
@@ -304,6 +299,7 @@ public class OwnEngine extends Engine {
         dao.addServicePoint(endTime, readyCustomers, ticketAverages.size(), wristbandAverages.size(), unreadyCustomers, Customer.getTicketboothCounterAverage()/*0*/, Customer.getTotalTicketCount(), getAverageWristbandTime(), getAverageTicketTime(), getWholeAverage(), getWristbandTicketAverageRatio());
 
         //Palvelupisteiden tulokset:
+        int i = ticketBoothCount;
         for (ServicePoint point : servicePoints) {
             int customerCount = point.getCustomerCounter();
             double averageServiceTime = point.getAverageServiceTime();
@@ -328,7 +324,8 @@ public class OwnEngine extends Engine {
                     dynamicResults.put("Ride " + point.getRideID() + " count", (double) customerCount);
                     dynamicResults.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
                     dynamicResults.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
-                    dao.addRide(point.getRideID(), customerCount, averageServiceTime, averageQueueTime, 0, 0);
+                    dao.addRide(point.getRideID(), customerCount, averageServiceTime, averageQueueTime, rideParameters.get(i - ticketBoothCount)[0], rideParameters.get(i - ticketBoothCount)[1]);
+                    i++;
                 }
             } else {
                 System.out.println("Ravintolassa palveltiin " + customerCount + " asiakasta.");
