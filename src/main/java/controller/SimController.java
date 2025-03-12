@@ -567,6 +567,19 @@ public class SimController implements ISettingsControllerForM {
      */
     @Override
     public void addCustomerToAnimation(int from, int to) {
+        changeCustomerNumber(from, -1);
+        changeCustomerNumber(to, 1);
+        // extract details for this
+        double x = getLocation(from)[0];
+        double y = getLocation(from)[1];
+        int toX = getLocation(to)[0];
+        int toY = getLocation(to)[1];
+        int defaultFrom = this.defaults[getIndex(from)[0]];
+        int defaultTo = this.defaults[getIndex(to)[0]];
+        Platform.runLater(() -> {
+            drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
+            drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
+        });
         if (this.simDelayValue < this.UPDATE_RATE_MS * 2.5) {
             if (!this.customerCords.isEmpty()) {
                 this.customerCords.clear();
@@ -574,24 +587,11 @@ public class SimController implements ISettingsControllerForM {
             }
             return;
         }
-        // extract details for this
-        double x = getLocation(from)[0];
-        double y = getLocation(from)[1];
-        int toX = getLocation(to)[0];
-        int toY = getLocation(to)[1];
-        changeCustomerNumber(from, -1);
-        changeCustomerNumber(to, 1);
         // s = step
         double sx = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[0];
         double sy = calculatePath(new double[]{x, y}, getLocation(to), getAnimationSteps())[1];
         this.customerCords.add(new double[]{x + (this.SERVICE_POINT_SIZE / 2) - (this.CUSTOMER_SIZE / 2), y + (this.SERVICE_POINT_SIZE / 2) - (this.CUSTOMER_SIZE / 2), sx, sy});
         this.customerDestination.add(getLocation(to));
-        int defaultFrom = this.defaults[getIndex(from)[0]];
-        int defaultTo = this.defaults[getIndex(to)[0]];
-        Platform.runLater(() -> {
-            drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
-            drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
-        });
     }
 
     /**
