@@ -10,6 +10,9 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 
 /**
  * HistoryController is the class that controls the history selection screen.
@@ -17,6 +20,8 @@ import javafx.scene.layout.VBox;
 public class HistoryController {
     private Dao dao = new Dao();
     private int sims = 0;
+    private String pattern = "MM/dd/yyyy HH:mm:ss";
+    private DateFormat df = new SimpleDateFormat(pattern);
     @FXML
     private FlowPane allResults;
 
@@ -54,9 +59,13 @@ public class HistoryController {
     public void createHistoryLinks() {
         this.allResults.getChildren().clear();
         for (int i = 1; i <= this.sims; i++) {
+            VBox container = new VBox();
+            Label timestamp = new Label(df.format(dao.getSimTimestampById(i)));
+            timestamp.setPadding(new Insets(0, 0, 4, 0));
             HBox link = new HBox();
-            link.getStyleClass().add("history-link");
+            container.getStyleClass().add("history-link");
             link.setAlignment(javafx.geometry.Pos.CENTER);
+            container.setAlignment(javafx.geometry.Pos.CENTER);
             link.setPrefWidth(200);
             Label title = new Label("Simulation " + i + "  ");
             Button clickable = new Button("View");
@@ -64,7 +73,9 @@ public class HistoryController {
                 this.unearth(title.getText().substring(11));
             });
             link.getChildren().addAll(title, clickable);
-            this.allResults.getChildren().add(link);
+            container.getChildren().add(timestamp);
+            container.getChildren().add(link);
+            this.allResults.getChildren().add(container);
         }
     }
 }
