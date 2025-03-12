@@ -86,6 +86,10 @@ public class Dao {
         return null;
     }
 
+    /**
+     * Function made to get all simulation timestamps along with their ids.
+     * @return A hashmap with the time stamps.
+     */
     public Map<Integer, Long> getSimTimestamps() {
 
         Connection conn = DatabaseConnection.getConnection();
