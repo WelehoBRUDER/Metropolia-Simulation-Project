@@ -21,6 +21,7 @@ import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SettingsController {
     @FXML
@@ -43,7 +44,7 @@ public class SettingsController {
     private final boolean GUI_DEBUG = false;
 
     private int simTimeValue = 250;
-    private double arrivalIntervalValue = 5;
+    private double arrivalIntervalValue = 5.0;
     private int ticketBoothCountValue = 4;
     private int rideCountValue = 9;
     private int restaurantCapValue = 20;
@@ -493,6 +494,7 @@ public class SettingsController {
                 arrivalInterval.setText(arrivalInterval.getText().substring(0, 9));
             }
             arrivalIntervalValue = Double.parseDouble(arrivalInterval.getText());
+            System.out.println("Arrival interval: " + arrivalIntervalValue);
             if (arrivalIntervalValue < 0) {
                 arrivalIntervalValue = 0;
                 arrivalInterval.setText(String.valueOf(arrivalIntervalValue));
@@ -500,6 +502,7 @@ public class SettingsController {
                 arrivalIntervalValue = 1000;
                 arrivalInterval.setText("1000");
             }
+            arrivalInterval.setText(String.format(Locale.US, "%.2f", arrivalIntervalValue));
         }
     }
 
@@ -519,7 +522,9 @@ public class SettingsController {
         } else {
             arrivalIntervalValue += value;
         }
-        arrivalInterval.setText(String.format("%.2f", arrivalIntervalValue));
+        System.out.println("Arrival interval value: " + arrivalIntervalValue);
+        System.out.println("Arrival interval text: " + arrivalInterval.getText());
+        arrivalInterval.setText(String.valueOf(arrivalIntervalValue));
         setArrivalInterval();
     }
 
