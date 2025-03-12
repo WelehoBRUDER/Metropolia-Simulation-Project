@@ -82,7 +82,7 @@ public class SimController implements ISettingsControllerForM {
     private final int ENTRANCE_AREA_SIZE = 50;
     private final int RESTAURANT_AREA_SIZE = 200;
     private final int FONT_SIZE = SERVICE_POINT_SIZE / 2;
-    private final int UPDATE_RATE_MS = 5;
+    private final int UPDATE_RATE_MS = 10;
 
     // Canvas style definitions
     private final Color ENTRANCE_COLOR = Color.GREEN;
@@ -351,7 +351,7 @@ public class SimController implements ISettingsControllerForM {
     @Override
     public void moveCustomerAnimation() {
         stopAnimation();
-        if (this.simDelayValue < this.UPDATE_RATE_MS * 2) {
+        if (this.simDelayValue < this.UPDATE_RATE_MS * 2.5) {
             return;
         }
         this.customerCtx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
@@ -398,6 +398,13 @@ public class SimController implements ISettingsControllerForM {
 
     @Override
     public void addCustomerToAnimation(int from, int to) {
+        if (this.simDelayValue < this.UPDATE_RATE_MS * 2.5) {
+            if (!this.customerCords.isEmpty()) {
+                this.customerCords.clear();
+                this.customerDestination.clear();
+            }
+            return;
+        }
         // extract details for this
         double x = getLocation(from)[0];
         double y = getLocation(from)[1];
