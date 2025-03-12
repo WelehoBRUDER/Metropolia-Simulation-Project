@@ -522,8 +522,11 @@ public class SettingsController {
         } else {
             arrivalIntervalValue += value;
         }
-        System.out.println("Arrival interval value: " + arrivalIntervalValue);
-        System.out.println("Arrival interval text: " + arrivalInterval.getText());
+        if (arrivalIntervalValue < 0) {
+            arrivalIntervalValue = 0;
+        } else if (arrivalIntervalValue > 1000) {
+            arrivalIntervalValue = 1000;
+        }
         arrivalInterval.setText(String.valueOf(arrivalIntervalValue));
         setArrivalInterval();
     }
