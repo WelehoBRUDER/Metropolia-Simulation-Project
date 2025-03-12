@@ -365,7 +365,7 @@ public class OwnEngine extends Engine {
         addResults(staticResults, "Wristband ticket ratio", getWristbandTicketAverageRatio());
 
         //dao
-        dao.addServicePoint(endTime, readyCustomers, ticketAverages.size(), wristbandAverages.size(), unreadyCustomers, Customer.getTicketboothCounterAverage()/*0*/, Customer.getTotalTicketCount(), getAverageWristbandTime(), getAverageTicketTime(), getWholeAverage(), getWristbandTicketAverageRatio());
+        dao.addServicePoint(endTime, readyCustomers, ticketTimes.size(), wristbandTimes.size(), unreadyCustomers, Customer.getTicketboothCounterAverage()/*0*/, Customer.getTotalTicketCount(), getAverageWristbandTime(), getAverageTicketTime(), getWholeAverage(), getWristbandTicketAverageRatio());
 
         //Palvelupisteiden tulokset:
         int i = ticketBoothCount;
