@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -12,7 +13,7 @@ public class HistoryController {
     private Dao dao = new Dao();
     private int sims = 0;
     @FXML
-    private VBox allResults;
+    private FlowPane allResults;
 
     public void setSims(int sims) {
         this.sims = sims;
