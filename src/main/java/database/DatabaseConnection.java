@@ -4,10 +4,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * The class that Dao uses to connect to the database.
+ */
 public class DatabaseConnection {
 
     private static Connection conn = null;
 
+    /**
+     * Is used to connect to the database.
+     *
+     * @return A connection object used to connect to the database.
+     */
     public static Connection getConnection() {
         if (conn==null) {
             // connect if necessary
@@ -25,6 +33,9 @@ public class DatabaseConnection {
         }
     }
 
+    /**
+     * Terminates the connection.
+     */
     public static void terminate() {
         try {
             getConnection().close();

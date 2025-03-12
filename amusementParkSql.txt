@@ -4,6 +4,7 @@ USE amusement_park;
 
 CREATE TABLE simulation (
 	sim_id INT NOT NULL AUTO_INCREMENT,
+	time_stamp BIGINT,
 	PRIMARY KEY (sim_id)
 );
 
