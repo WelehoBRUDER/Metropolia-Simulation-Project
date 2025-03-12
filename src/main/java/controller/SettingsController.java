@@ -494,9 +494,8 @@ public class SettingsController {
                 arrivalInterval.setText(arrivalInterval.getText().substring(0, 9));
             }
             arrivalIntervalValue = Double.parseDouble(arrivalInterval.getText());
-            System.out.println("Arrival interval: " + arrivalIntervalValue);
             if (arrivalIntervalValue < 0) {
-                arrivalIntervalValue = 0;
+                arrivalIntervalValue = 0.01;
                 arrivalInterval.setText(String.valueOf(arrivalIntervalValue));
             } else if (arrivalIntervalValue > 1000) {
                 arrivalIntervalValue = 1000;
@@ -523,7 +522,7 @@ public class SettingsController {
             arrivalIntervalValue += value;
         }
         if (arrivalIntervalValue < 0) {
-            arrivalIntervalValue = 0;
+            arrivalIntervalValue = 0.01;
         } else if (arrivalIntervalValue > 1000) {
             arrivalIntervalValue = 1000;
         }

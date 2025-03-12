@@ -21,6 +21,9 @@ import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.concurrent.*;
 
+/**
+ * SimController is a class that controls the simulation screen.
+ */
 public class SimController implements ISettingsControllerForM {
     private IEngine engine;
     private SettingsController settingsController;

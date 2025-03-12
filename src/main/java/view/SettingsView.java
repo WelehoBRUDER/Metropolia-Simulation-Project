@@ -9,14 +9,25 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import simu.framework.Trace;
 
+/**
+ * SettingsView is a class that launches the settings.fxml file.
+ */
 public class SettingsView extends Application {
 
+    /**
+     * Initializes the settings view.
+     */
     @Override
     public void init() {
         Trace.setTraceLevel(Trace.Level.INFO);
 
     }
 
+    /**
+     * Starts the settings view.
+     * @param stage the current stage
+     * @throws Exception if something goes wrong
+     */
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/settings.fxml"));
@@ -29,6 +40,10 @@ public class SettingsView extends Application {
         stage.show();
     }
 
+    /**
+     * Launches the settings view.
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
