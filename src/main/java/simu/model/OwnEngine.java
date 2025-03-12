@@ -6,10 +6,12 @@ import distributions.Bernoulli;
 import distributions.Negexp;
 import distributions.Normal;
 import simu.framework.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
 import database.Dao;
 
 /**
@@ -92,19 +94,23 @@ public class OwnEngine extends Engine {
 
     private Dao dao = new Dao();
 
+    private ArrayList<Double> wristbandAverages = new ArrayList<>();
+    private ArrayList<Double> ticketAverages = new ArrayList<>();
+
 
     /**
      * Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters. Sets the time of the simulation to 0.
      * Creates the service points for the simulation and assigns them IDs. Initializes the arrival progress for the simulation and generates the first arrival in the simulation.
-     * @param controller The controller for the simulation
-     * @param arrivalInterval The interval between customer arrivals
-     * @param rideCount The number of rides in the simulation
+     *
+     * @param controller       The controller for the simulation
+     * @param arrivalInterval  The interval between customer arrivals
+     * @param rideCount        The number of rides in the simulation
      * @param ticketBoothCount The number of ticket booths in the simulation
-     * @param rideProperties The properties for the rides, such as mean and variance
-     * @param restaurantCap The capacity of the restaurant
-     * @param wristbandChance The chance of the customer being a wristband customer
+     * @param rideProperties   The properties for the rides, such as mean and variance
+     * @param restaurantCap    The capacity of the restaurant
+     * @param wristbandChance  The chance of the customer being a wristband customer
      */
-    public OwnEngine(ISettingsControllerForM controller, double arrivalInterval,  int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
+    public OwnEngine(ISettingsControllerForM controller, double arrivalInterval, int rideCount, int ticketBoothCount, ArrayList<int[]> rideProperties, int restaurantCap, double wristbandChance) {
 
         super(controller);
 
@@ -113,7 +119,7 @@ public class OwnEngine extends Engine {
         this.rideCount = rideCount;
         this.ticketBoothCount = ticketBoothCount;
         this.RESTAURANT_CAPASITY = restaurantCap;
-        this.wristbandChance = wristbandChance/100;
+        this.wristbandChance = wristbandChance / 100;
         this.bernoulli = new Bernoulli(this.wristbandChance);
         this.rideParameters = rideProperties;
 
@@ -142,6 +148,7 @@ public class OwnEngine extends Engine {
 
     /**
      * FindRideByID: Finds a ride by its ID
+     *
      * @param id ID of the ride
      * @return The ride with the given ID
      */
@@ -164,6 +171,7 @@ public class OwnEngine extends Engine {
 
     /**
      * RunEvent: Runs the B events in the simulation. Checks the type of the event and runs the corresponding event.
+     *
      * @param t Event to be run
      */
     @Override
@@ -197,7 +205,7 @@ public class OwnEngine extends Engine {
                     from = -100;
                     to = (ticketBoothCounter + 1) / -1;
 
-                    controller.updateConsole("Customer " + c.getId() + " (no wristband) arrived and goes to ticket booth " + (ticketBoothCounter+1));
+                    controller.updateConsole("Customer " + c.getId() + " (no wristband) arrived and goes to ticket booth " + (ticketBoothCounter + 1));
                     Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ticket booth");
                 }
 
@@ -218,7 +226,7 @@ public class OwnEngine extends Engine {
                 from = servicePoints[ticketOrder.remove(0)].getRideID();
                 to = p.getRideID();
 
-                controller.updateConsole("Customer " + c.getId() + " bought tickets from ticket booth " + (from/-1) + " and goes to ride " + to);
+                controller.updateConsole("Customer " + c.getId() + " bought tickets from ticket booth " + (from / -1) + " and goes to ride " + to);
                 Trace.out(Trace.Level.INFO, "Customer: " + c.getId() + " goes to ride " + p.getRideID() + " queue");
                 break;
 
@@ -243,7 +251,7 @@ public class OwnEngine extends Engine {
                         ticketOrder.add(ticketBoothCounter);
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = (ticketBoothCounter + 1) / -1;
-                        controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ticket booth " + (to/-1));
+                        controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ticket booth " + (to / -1));
                         //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + (ticketBoothCounter+1)/-1); //FROMTO
 
                         Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ticket booth");
@@ -277,6 +285,7 @@ public class OwnEngine extends Engine {
         controller.updateEventTime(Clock.getInstance().getTime());
         controller.addCustomerToAnimation(from, to);
     }
+
     /**
      * AttemptCEvents: Attempts to run the C events in the simulation. Begins service if the service point is not reserved and there are customers in the queue.
      */
@@ -291,6 +300,7 @@ public class OwnEngine extends Engine {
 
     /**
      * NextTicketBooth: Returns the next ticket booth to be used
+     *
      * @return The next ticket booth to be used
      */
     public int nextTicketBooth() {
@@ -303,10 +313,11 @@ public class OwnEngine extends Engine {
 
     /**
      * SetWristbandChance: Sets the chance of getting a wristband
+     *
      * @param amount Amount to be added to the wristband chance
      */
     public void setWristbandChance(double amount) {
-        wristbandChance = amount/100;
+        wristbandChance = amount / 100;
         if (wristbandChance > 1) {
             wristbandChance = 1;
         } else if (wristbandChance < 0) {
@@ -367,7 +378,6 @@ public class OwnEngine extends Engine {
             if (!(point instanceof RestaurantServicePoint)) {
                 if (point.getRideID() < 0) {
                     int ticketBoothNumber = point.getRideID() * -1;
-                    ticketBoothCustomerCount += customerCount;
                     System.out.println("Lippupisteessä " + ticketBoothNumber + " käytiin " + customerCount + " kertaa.");
                     System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen palveluaika: " + averageServiceTime);
                     System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen jonotusaika: " + averageQueueTime);
@@ -394,18 +404,6 @@ public class OwnEngine extends Engine {
                 dynamicResults.put("Restaurant average queue time", averageQueueTime);
                 dao.addRestaurant(customerCount, averageServiceTime, averageQueueTime, RESTAURANT_CAPASITY);
 
-                    addResults(dynamicResults, "Ticket booth " + ticketBoothNumber + " count", customerCount);
-                    addResults(dynamicResults, "Ticket booth " + ticketBoothNumber + " average service time", averageServiceTime);
-                    addResults(dynamicResults, "Ticket booth " + ticketBoothNumber + " average queue time", averageQueueTime);
-                } else {
-                    addResults(dynamicResults, "Ride " + point.getRideID() + " count", customerCount);
-                    addResults(dynamicResults, "Ride " + point.getRideID() + " average service time", averageServiceTime);
-                    addResults(dynamicResults, "Ride " + point.getRideID() + " average queue time", averageQueueTime);
-                }
-            } else {
-                addResults(dynamicResults, "Restaurant count", customerCount);
-                addResults(dynamicResults, "Restaurant average service time", averageServiceTime);
-                addResults(dynamicResults, "Restaurant average queue time", averageQueueTime);
             }
         }
         ResultsController resultsController = new ResultsController();
@@ -421,6 +419,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetWholeAverage: Returns the average time that customers spend in the simulation regardless of the type of the customer
+     *
      * @return The average time that customers spend in the simulation
      */
     protected double getWholeAverage() {
@@ -436,6 +435,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetAverageWristbandTime: Returns the average time that wristband customers spend in the simulation
+     *
      * @return The average time that wristband customers spend in the simulation, 0 if no wristband customers
      */
     public double getAverageWristbandTime() {
@@ -452,6 +452,7 @@ public class OwnEngine extends Engine {
 
     /**
      * GetAverageTicketTime: Returns the average time that ticket customers spend in the simulation
+     *
      * @return The average time that ticket customers spend in the simulation, 0 if no ticket customers
      */
     public double getAverageTicketTime() {
@@ -468,14 +469,14 @@ public class OwnEngine extends Engine {
 
     /**
      * GetWristbandTicketAverageRatio: Returns the ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation
+     *
      * @return The ratio of the average time that ticket customers spend in the simulation to the average time that wristband customers spend in the simulation, 0.00 if no wristband or ticket customers
      */
     public double getWristbandTicketAverageRatio() {
         if (wristbandTimes.isEmpty() || ticketTimes.isEmpty()) {
             return 0.00;
-        }
-         else {
-             return getAverageTicketTime() / getAverageWristbandTime();
+        } else {
+            return getAverageTicketTime() / getAverageWristbandTime();
         }
     }
 }
