@@ -7,7 +7,17 @@ public class Dao {
 
     public void incrementSimId(){
         Connection conn = DatabaseConnection.getConnection();
+        long reallyBigNumber = System.currentTimeMillis();
+        //reallyBigNumber = 4;
+        //System.out.println(System.currentTime());
+        //String sql = "INSERT INTO simulation (sim_id, time_stamp) VALUES (NULL, " + reallyBigNumber +");";
         String sql = "INSERT INTO simulation (sim_id) VALUES (NULL);";
+
+        //long x =777;
+        //String sql = "INSERT INTO simulation (sim_id, time_stamp) VALUES (NULL, x)";
+
+
+
 
         try {
             Statement s = conn.createStatement();
