@@ -56,10 +56,6 @@ public class Dao {
         return 0;
     }
 
-    public Object getSomeBitches(){
-        return null;
-    }
-
     /**
      * Returns the timestamp of the simulation.
      *
