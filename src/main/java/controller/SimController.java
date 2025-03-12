@@ -82,13 +82,14 @@ public class SimController implements ISettingsControllerForM {
     private final int ENTRANCE_AREA_SIZE = 50;
     private final int RESTAURANT_AREA_SIZE = 200;
     private final int FONT_SIZE = SERVICE_POINT_SIZE / 2;
-    private final int UPDATE_RATE_MS = 5;
+    private final int UPDATE_RATE_MS = 10;
 
     // Canvas style definitions
     private final Color ENTRANCE_COLOR = Color.GREEN;
     private final Color TICKET_COLOR = Color.LIGHTBLUE;
     private final Color RIDE_COLOR = Color.ORANGE;
     private final Color RESTAURANT_COLOR = Color.RED;
+    private final Color EXIT_COLOR = Color.PURPLE;
 
     // Animation executor
     private ScheduledExecutorService executorService;
@@ -99,7 +100,14 @@ public class SimController implements ISettingsControllerForM {
     private ArrayList<int[]> customerDestination = new ArrayList<>();
     private int step = 0;
 
-    // Leevin pätkä koodia
+    /**
+     * Creates a circle of elements.
+     *
+     * @param area   The area of the circle.
+     * @param size   The size of the elements.
+     * @param amount The amount of elements.
+     * @return The coordinates for the elements.
+     */
     public int[][] circleOfElements(int area, int size, int amount) {
         int[][] coordinates = new int[amount][2];
         for (int i = 1; i <= amount; i++) {
@@ -109,7 +117,20 @@ public class SimController implements ISettingsControllerForM {
         return coordinates;
     }
 
-    public void setSimulationParameters(int simTime, double arrivalIntervalValue,  int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
+    /**
+     * Sets all parameters for the simulation.
+     *
+     * @param simTime              The total time the simulation should run for.
+     * @param arrivalIntervalValue The arrival interval for customers (in simulation time).
+     * @param ticketBoothCount     The number of ticket booths.
+     * @param rideCount            The number of rides.
+     * @param restaurantCap        The capacity of the restaurant.
+     * @param simDelay             The delay between each event (in ms).
+     * @param wristbandChance      The chance for a wristband on each new customer.
+     * @param rideProperties       The properties for the rides (mean and variance).
+     * @param settingsController   The settings controller for the simulation.
+     */
+    public void setSimulationParameters(int simTime, double arrivalIntervalValue, int ticketBoothCount, int rideCount, int restaurantCap, long simDelay, double wristbandChance, ArrayList<int[]> rideProperties, SettingsController settingsController) {
         this.settingsController = settingsController;
         this.simTimeValue = simTime;
         this.arrivalIntervalValue = arrivalIntervalValue;
@@ -131,24 +152,33 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
+    /**
+     * Starts the simulation with current parameters.
+     */
     public void startSim() {
         clearScreen();
         drawAllServicePoints();
         System.out.println("Starting simulation");
-        this.engine = new OwnEngine(this, this.arrivalIntervalValue,  this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
+        this.engine = new OwnEngine(this, this.arrivalIntervalValue, this.rideCountValue, this.ticketBoothCountValue, this.rideProperties, this.restaurantCapValue, this.wristbandChanceValue); // luodaan uusi moottorisäie jokaista simulointia varten
         this.engine.setSimulationTime(this.simTimeValue);
         this.engine.setDelay(this.simDelayValue);
         ((Thread) this.engine).start();
         running = true;
     }
 
+    /**
+     * Stops the simulation.
+     */
     public void stopSim() {
         stopAnimation();
         ((Thread) this.engine).stop();
         ((Thread) this.engine).interrupt();
     }
 
-    public void toggleSimRunning() throws Exception {
+    /**
+     * Toggles the simulation running state.
+     */
+    public void toggleSimRunning() {
         if (this.running) {
             pauseSim();
 
@@ -158,53 +188,108 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
-    public void pauseSim() throws Exception {
+    /**
+     * Pauses the simulation. Uses the suspend method which is marked for removal.
+     */
+    public void pauseSim() {
         stopAnimation();
         running = false;
         changePauseButtonText("▶");
-        ((Thread) this.engine).suspend();
+        try {
+            ((Thread) this.engine).suspend();
+        } catch (Exception e) {
+            System.out.println("Can't pause simulation");
+        }
     }
 
+    /**
+     * Resumes the simulation. Uses the resume method which is marked for removal.
+     */
     public void resumeSim() {
         running = true;
-        changePauseButtonText("⏸");
-        ((Thread) this.engine).resume();
+        changePauseButtonText(" || ");
+        try {
+            ((Thread) this.engine).resume();
+        } catch (Exception e) {
+            System.out.println("Can't resume simulation");
+        }
     }
 
+    /**
+     * Changes the text on the pause button.
+     *
+     * @param text The text to change to.
+     */
     public void changePauseButtonText(String text) {
         this.simPause.setText(text);
     }
 
+    /**
+     * Calculates the center x coordinate for a point.
+     *
+     * @param width  The width of the area the point is in.
+     * @param offset The offset for the point (its size).
+     * @return The center x coordinate.
+     */
     public int calcCenterX(int width, int offset) {
         return width / 2 - offset / 2;
     }
 
+
+    /**
+     * Calculates the center y coordinate for a point.
+     *
+     * @param offset The offset for the point (its size).
+     * @return The center y coordinate on the canvas.
+     */
     public int calcCenterY(int offset) {
         return this.CANVAS_HEIGHT / 2 - offset / 2;
     }
 
+    /**
+     * Clears the screen of all drawings.
+     */
     public void clearScreen() {
         this.serviceCtx.clearRect(0, 0, this.servicePointCanvas.getWidth(), this.servicePointCanvas.getHeight());
         this.customerCtx.clearRect(0, 0, this.customerCanvas.getWidth(), this.customerCanvas.getHeight());
     }
 
+    /**
+     * Draws a service point on the canvas.
+     *
+     * @param x      The x coordinate for the service point.
+     * @param y      The y coordinate for the service point.
+     * @param color  The color for the service point.
+     * @param number The number of customers at the service point.
+     */
     public void drawServicePoint(int x, int y, Color color, int number) {
         this.serviceCtx.setFill(color);
         this.serviceCtx.fillRect(x, y, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        drawServicePointNumber(x, y, number, 0);
+        Platform.runLater(() -> drawServicePointNumber(x, y, number, 0));
     }
 
+    /**
+     * Draws the number of customers at a service point.
+     *
+     * @param x            The x coordinate for the service point.
+     * @param y            The y coordinate for the service point.
+     * @param number       The number of customers at the service point.
+     * @param defaultValue The default value for the service point (essentially its capacity in reverse, like -20).
+     */
     public void drawServicePointNumber(int x, int y, int number, int defaultValue) {
+        if (serviceCtx == null) {
+            return;
+        }
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.CENTER);
         if (defaultValue == 0 && number > 0) {
-            if (x == this.exit[0] && y == this.exit[1]) {
-                this.serviceCtx.clearRect(x - 3, y, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
-                this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y + (this.SERVICE_POINT_SIZE / 1.5));
+            if (x == exit[0] && y == exit[1]) {
+                this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
+                this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
                 return;
             } else {
-                this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
+                this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
                 this.serviceCtx.fillText(String.valueOf(number), x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y + (this.SERVICE_POINT_SIZE / 1.5));
                 return;
             }
@@ -213,15 +298,18 @@ public class SimController implements ISettingsControllerForM {
         }
         int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
         int waiting = Math.max(number, 0);
-        this.serviceCtx.clearRect(x - 3, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 3, this.FONT_SIZE + 4);
+        this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
         this.serviceCtx.fillText(waiting + "(" + beingServed + ")", x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
     }
 
+    /**
+     * Draws the info panel on the canvas, showing the color of each service point.
+     */
     public void drawInfoPanel() {
         this.serviceCtx.setFill(Color.LIGHTGRAY);
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.LEFT);
-        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 4);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 5);
 
         this.serviceCtx.setFill(ENTRANCE_COLOR);
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 0, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
@@ -243,28 +331,70 @@ public class SimController implements ISettingsControllerForM {
         this.serviceCtx.setFill(Color.BLACK);
         this.serviceCtx.fillText("Restaurant", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 3 + (this.SERVICE_POINT_SIZE / 1.5));
 
+        this.serviceCtx.setFill(EXIT_COLOR);
+        this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 4, this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
+        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.fillText("Exit", 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * 4 + (this.SERVICE_POINT_SIZE / 1.5));
+
+
     }
 
+    /**
+     * Sets the entrance for the simulation.
+     *
+     * @param x The x coordinate for the entrance.
+     * @param y The y coordinate for the entrance.
+     */
     public void setEntrance(int x, int y) {
         entrance = new int[]{x, y};
     }
 
+    /**
+     * Adds a ticket booth to the simulation.
+     *
+     * @param x The x coordinate for the ticket booth.
+     * @param y The y coordinate for the ticket booth.
+     */
     public void addToTickets(int x, int y) {
         tickets.add(new int[]{x, y});
     }
 
+    /**
+     * Adds a ride to the simulation.
+     *
+     * @param x The x coordinate for the ride.
+     * @param y The y coordinate for the ride.
+     */
     public void addToRides(int x, int y) {
         rides.add(new int[]{x, y});
     }
 
+    /**
+     * Sets the restaurant for the simulation.
+     *
+     * @param x The x coordinate for the restaurant.
+     * @param y The y coordinate for the restaurant.
+     */
     public void setRestaurant(int x, int y) {
         restaurant = new int[]{x, y};
     }
 
+    /**
+     * Sets the exit for the simulation.
+     *
+     * @param x The x coordinate for the exit.
+     * @param y The y coordinate for the exit.
+     */
     public void setExit(int x, int y) {
         exit = new int[]{x, y};
     }
 
+    /**
+     * Gets the ticket booth coordinates for a ticket booth.
+     *
+     * @param id The ticket booth id.
+     * @return The coordinates for the ticket booth.
+     */
     public int[] getTicketBooth(int id) {
         if (id >= this.ticketBoothCountValue) {
             return this.tickets.get(this.ticketBoothCountValue - 1);
@@ -272,6 +402,12 @@ public class SimController implements ISettingsControllerForM {
         return this.tickets.get(id);
     }
 
+    /**
+     * Gets the ride coordinates for a ride.
+     *
+     * @param id The ride id.
+     * @return The coordinates for the ride.
+     */
     public int[] getRide(int id) {
         if (id >= this.rideCountValue) {
             return this.rides.get(this.rideCountValue - 1);
@@ -279,6 +415,9 @@ public class SimController implements ISettingsControllerForM {
         return this.rides.get(id);
     }
 
+    /**
+     * Calculates the coordinates for all the service points.
+     */
     public void calcServicePointCords() {
         this.rides.clear();
         this.tickets.clear();
@@ -300,10 +439,13 @@ public class SimController implements ISettingsControllerForM {
             addToRides(xOffset + cords[i][0], cords[i][1] + this.RIDE_AREA_SIZE + yOffset);
         }
 
-        setRestaurant(xOffset + calcCenterX(this.RESTAURANT_AREA_SIZE, this.SERVICE_POINT_SIZE) + this.RIDE_AREA_SIZE, calcCenterY(this.SERVICE_POINT_SIZE));
-        setExit(this.CANVAS_WIDTH - this.SERVICE_POINT_SIZE, calcCenterY(0));
+        setRestaurant(xOffset + calcCenterX(this.RESTAURANT_AREA_SIZE, this.SERVICE_POINT_SIZE) + this.RIDE_AREA_SIZE, calcCenterY(0));
+        setExit(this.CANVAS_WIDTH - (int) (this.SERVICE_POINT_SIZE * 1.5), calcCenterY(0));
     }
 
+    /**
+     * Draws all service points on the canvas.
+     */
     public void drawAllServicePoints() {
         calcServicePointCords();
 
@@ -322,23 +464,39 @@ public class SimController implements ISettingsControllerForM {
         // Restaurant
         drawServicePoint(this.restaurant[0], this.restaurant[1], this.RESTAURANT_COLOR, 0);
 
+        // Exit
+        drawServicePoint(this.exit[0], this.exit[1], this.EXIT_COLOR, 0);
+
         // Info panel
         drawInfoPanel();
     }
 
+    /**
+     * Updates the simulation console with each event that has passed.
+     *
+     * @param msg The newest event message.
+     */
     @Override
     public void updateConsole(String msg) {
         Platform.runLater(() -> simulationConsole.appendText("\n" + msg));
     }
 
+    /**
+     * Closes the simulation screen
+     */
     public void closeSimulation() {
         settingsController.closeSimulation();
     }
 
+
+    /**
+     * Draws customers moving on the canvas.
+     * Starts an interval that calls the renderCustomers method.
+     */
     @Override
     public void moveCustomerAnimation() {
         stopAnimation();
-        if (this.simDelayValue < this.UPDATE_RATE_MS * 2) {
+        if (this.simDelayValue < this.UPDATE_RATE_MS * 2.5) {
             return;
         }
         this.customerCtx.clearRect(0, 0, this.CANVAS_WIDTH, this.CANVAS_HEIGHT);
@@ -349,12 +507,21 @@ public class SimController implements ISettingsControllerForM {
         );
     }
 
+    /**
+     * Clears customer cords and destinations.
+     */
     @Override
     public void newAnimation() {
         this.customerCords.clear();
         this.customerDestination.clear();
     }
 
+    /**
+     * Gets the location of a service point.
+     *
+     * @param id The service point id.
+     * @return The coordinates for the service point.
+     */
     public int[] getLocation(int id) {
         if (id == this.entranceID) {
             return this.entrance;
@@ -369,6 +536,12 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
+    /**
+     * Gets the index for a service point.
+     *
+     * @param id The service point id.
+     * @return The index for the service point.
+     */
     public int[] getIndex(int id) {
         if (id == this.entranceID) {
             return new int[]{0, 0};
@@ -383,8 +556,21 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
+    /**
+     * Adds a customer to the animation. Stored in a list of cords and destinations.
+     *
+     * @param from The service point id the customer is coming from.
+     * @param to   The service point id the customer is going to.
+     */
     @Override
     public void addCustomerToAnimation(int from, int to) {
+        if (this.simDelayValue < this.UPDATE_RATE_MS * 2.5) {
+            if (!this.customerCords.isEmpty()) {
+                this.customerCords.clear();
+                this.customerDestination.clear();
+            }
+            return;
+        }
         // extract details for this
         double x = getLocation(from)[0];
         double y = getLocation(from)[1];
@@ -399,10 +585,18 @@ public class SimController implements ISettingsControllerForM {
         this.customerDestination.add(getLocation(to));
         int defaultFrom = this.defaults[getIndex(from)[0]];
         int defaultTo = this.defaults[getIndex(to)[0]];
-        drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
-        drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
+        Platform.runLater(() -> {
+            drawServicePointNumber((int) x, (int) y, this.customerNumbers.get(getIndex(from)[0]).get(getIndex(from)[1]), defaultFrom);
+            drawServicePointNumber(toX, toY, this.customerNumbers.get(getIndex(to)[0]).get(getIndex(to)[1]), defaultTo);
+        });
     }
 
+    /**
+     * Changes the customer number for a service point.
+     *
+     * @param id     The service point id.
+     * @param amount The amount to change the customer number by.
+     */
     public void changeCustomerNumber(int id, int amount) {
         int[] index = getIndex(id);
         int row = index[0];
@@ -416,6 +610,9 @@ public class SimController implements ISettingsControllerForM {
         this.customerNumbers.get(row).set(col, this.customerNumbers.get(row).get(col) + amount);
     }
 
+    /**
+     * Stops all animation execution, current and interval.
+     */
     public void stopAnimation() {
         if (this.future != null) {
             this.future.cancel(true); // Cancel the scheduled task
@@ -432,6 +629,9 @@ public class SimController implements ISettingsControllerForM {
         }
     }
 
+    /**
+     * Renders the customers moving from one service point to another.
+     */
     public void renderCustomers() {
         if (this.step >= getAnimationSteps()) {
             stopAnimation();
@@ -455,10 +655,24 @@ public class SimController implements ISettingsControllerForM {
         this.step++;
     }
 
+    /**
+     * Gets the customer cords for a customer.
+     *
+     * @param id The customer id.
+     * @return The cords for the customer.
+     */
     public int[] getCustomerCords(int id) {
         return new int[]{(int) this.customerCords.get(id)[0], (int) this.customerCords.get(id)[1]};
     }
 
+    /**
+     * Calculates the path for a customer to move from one service point to another.
+     *
+     * @param origin      The origin cords of the customer.
+     * @param destination The destination cords of the customer.
+     * @param steps       How many steps the customer needs to take in total, affects dx and dy.
+     * @return The next coordinate point for the customer to move to.
+     */
     public double[] calculatePath(double[] origin, int[] destination, int steps) {
         int midX = destination[0] + (this.SERVICE_POINT_SIZE / 4) - this.CUSTOMER_SIZE / 2;
         int midY = destination[1] + (this.SERVICE_POINT_SIZE / 4) - this.CUSTOMER_SIZE / 2;
@@ -470,10 +684,21 @@ public class SimController implements ISettingsControllerForM {
         return new double[]{x, y};
     }
 
+    /**
+     * Gets the amount of steps for the animation.
+     *
+     * @return The amount of steps for the animation.
+     */
     public int getAnimationSteps() {
         return (int) (this.simDelayValue / this.UPDATE_RATE_MS) + 1;
     }
 
+    /**
+     * Changes the delay for the simulation.
+     *
+     * @param e    The mouse event.
+     * @param type The type of change (positive or negative).
+     */
     public void changeDelay(MouseEvent e, long type) {
         if (e.isShiftDown() && !e.isControlDown()) {
             simDelayValue += 5 * type;
@@ -491,14 +716,30 @@ public class SimController implements ISettingsControllerForM {
         this.currentDelay.setText("Current delay: " + this.simDelayValue + "ms");
     }
 
+    /**
+     * Increases the delay for the simulation.
+     *
+     * @param e The mouse event.
+     */
     public void increaseDelay(MouseEvent e) {
         changeDelay(e, 1);
     }
 
+    /**
+     * Decreases the delay for the simulation.
+     *
+     * @param e The mouse event.
+     */
     public void decreaseDelay(MouseEvent e) {
         changeDelay(e, -1);
     }
 
+    /**
+     * Changes the wristband occurrence chance for the simulation.
+     *
+     * @param e    The mouse event.
+     * @param type The type of change (positive or negative).
+     */
     public void changeWristbandChance(MouseEvent e, int type) {
         if (e.isShiftDown() && !e.isControlDown()) {
             this.wristbandChanceValue += type;
@@ -516,30 +757,41 @@ public class SimController implements ISettingsControllerForM {
         this.wristbandChanceLabel.setText(String.format("%.1f", this.wristbandChanceValue) + "%");
     }
 
+    /**
+     * Increases the wristband occurrence chance for the simulation.
+     *
+     * @param e The mouse event.
+     */
     public void increaseWristbandChance(MouseEvent e) {
         changeWristbandChance(e, 1);
     }
 
+    /**
+     * Decreases the wristband occurrence chance for the simulation.
+     *
+     * @param e The mouse event.
+     */
     public void decreaseWristbandChance(MouseEvent e) {
         changeWristbandChance(e, -1);
     }
 
+    /**
+     * Updates total time shown in the simulation screen
+     *
+     * @param time Current time on the internal clock
+     */
     @Override
     public void updateEventTime(double time) {
         Platform.runLater(() -> {
-            this.time.setText("Total time:\n" + String.format("%.2f", time) + "/ " + this.simTimeValue);
+            this.time.setText("Total time:\n" + String.format("%.2f", time) + " / " + this.simTimeValue);
         });
     }
 
     @Override
-    public void showEndTime(double aika) {
+    public void showEndTime(double time) {
 
     }
 
-    @Override
-    public void visualizeCustomer(int id, int rideid, boolean wristband) {
-
-    }
 
     @Override
     public void visualizeResults(HashMap<String, Double> staticResults, TreeMap<String, Double> dynamicResults) {

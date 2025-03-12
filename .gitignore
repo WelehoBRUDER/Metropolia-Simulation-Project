@@ -6,3 +6,20 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+# Ignore build output
+target/
+
+# IDE-specific files
+.idea/
+*.iml
+.vscode/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Compiled files
+*.class

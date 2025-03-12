@@ -1,7 +1,5 @@
 package controller;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -11,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
@@ -22,7 +21,6 @@ import simu.framework.IEngine;
 import simu.model.OwnEngine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SettingsController {
     @FXML
@@ -59,6 +57,11 @@ public class SettingsController {
 
     private Stage stage;
 
+    /**
+     * Initializes the settings controller.
+     *
+     * @throws Exception If the initialization fails.
+     */
     public void initialize() throws Exception {
         // Add focusout listeners to each input field
         simTime.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -118,6 +121,13 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Creates a number input field.
+     *
+     * @param index The index of the ride.
+     * @param type  The type of the ride.
+     * @return The number input field.
+     */
     @FXML
     public HBox createNumberInput(int index, int type) {
         HBox numberInput = new HBox();
@@ -138,6 +148,15 @@ public class SettingsController {
         return numberInput;
     }
 
+    /**
+     * Changes the ride parameters.
+     *
+     * @param index The index of the ride.
+     * @param type  The type of the ride.
+     * @param e     The mouse event.
+     * @param field The text field.
+     * @param power The power of the change.
+     */
     public void changeRideParam(int index, int type, MouseEvent e, TextField field, int power) {
         int value = power;
         if (e.isShiftDown() && !e.isControlDown()) {
@@ -154,6 +173,13 @@ public class SettingsController {
         field.setText(String.valueOf(rideProperties.get(index)[type]));
     }
 
+    /**
+     * Sets the ride parameters.
+     *
+     * @param index The index of the ride.
+     * @param type  The type of the ride.
+     * @param field The text field.
+     */
     public void setRideParam(int index, int type, TextField field) {
         if (!field.getText().isEmpty()) {
             if (field.getText().length() > 3) {
@@ -172,6 +198,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Displays the rides.
+     */
     @FXML
     public void displayRides() {
         rides.getChildren().clear();
@@ -200,6 +229,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Changes the ride properties.
+     */
     public void changeRideProperties() {
         if (rideProperties.size() < rideCountValue) {
             for (int i = rideProperties.size(); i < rideCountValue; i++) {
@@ -212,6 +244,11 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Sanitizes the input of a text field (removes all non-numeric characters).
+     *
+     * @param field The text field to sanitize.
+     */
     public void sanitizeInput(TextField field) {
         field.textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d*\\.?\\d*")) {
@@ -220,6 +257,11 @@ public class SettingsController {
         });
     }
 
+    /**
+     * Increments the simulation time.
+     *
+     * @param e The mouse event.
+     */
     public void incrementSimTime(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             simTimeValue += 5;
@@ -234,6 +276,11 @@ public class SettingsController {
         setSimTime();
     }
 
+    /**
+     * Decrements the simulation time.
+     *
+     * @param e The mouse event.
+     */
     public void decrementSimTime(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             simTimeValue -= 5;
@@ -248,6 +295,11 @@ public class SettingsController {
         setSimTime();
     }
 
+    /**
+     * Increments the ticket booth count.
+     *
+     * @param e The mouse event.
+     */
     public void incrementTicketBooths(MouseEvent e) {
         if (e.isShiftDown()) {
             ticketBoothCountValue += 5;
@@ -258,6 +310,11 @@ public class SettingsController {
         setTicketBoothCount();
     }
 
+    /**
+     * Decrements the ticket booth count.
+     *
+     * @param e The mouse event.
+     */
     public void decrementTicketBooths(MouseEvent e) {
         if (e.isShiftDown()) {
             ticketBoothCountValue -= 5;
@@ -268,6 +325,11 @@ public class SettingsController {
         setTicketBoothCount();
     }
 
+    /**
+     * Increments the ride count.
+     *
+     * @param e The mouse event.
+     */
     public void incrementRideCount(MouseEvent e) {
         if (e.isShiftDown()) {
             rideCountValue += 5;
@@ -278,6 +340,11 @@ public class SettingsController {
         setRideCount();
     }
 
+    /**
+     * Decrements the ride count.
+     *
+     * @param e The mouse event.
+     */
     public void decrementRideCount(MouseEvent e) {
         if (e.isShiftDown()) {
             rideCountValue -= 5;
@@ -288,6 +355,11 @@ public class SettingsController {
         setRideCount();
     }
 
+    /**
+     * Increments the restaurant capacity.
+     *
+     * @param e The mouse event.
+     */
     public void incrementRestaurantCap(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             restaurantCapValue += 5;
@@ -302,6 +374,11 @@ public class SettingsController {
         setRestaurantCap();
     }
 
+    /**
+     * Decrements the restaurant capacity.
+     *
+     * @param e The mouse event.
+     */
     public void decrementRestaurantCap(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             restaurantCapValue -= 5;
@@ -316,6 +393,11 @@ public class SettingsController {
         setRestaurantCap();
     }
 
+    /**
+     * Increments the simulation delay.
+     *
+     * @param e The mouse event.
+     */
     public void incrementSimDelay(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             simDelayValue += 5;
@@ -330,6 +412,11 @@ public class SettingsController {
         setSimDelay();
     }
 
+    /**
+     * Decrements the simulation delay.
+     *
+     * @param e The mouse event.
+     */
     public void decrementSimDelay(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             simDelayValue -= 5;
@@ -344,6 +431,11 @@ public class SettingsController {
         setSimDelay();
     }
 
+    /**
+     * Increments the wristband chance.
+     *
+     * @param e The mouse event.
+     */
     public void incrementWristbandChance(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             wristbandChanceValue++;
@@ -356,6 +448,11 @@ public class SettingsController {
         setWristbandChance();
     }
 
+    /**
+     * Decrements the wristband chance.
+     *
+     * @param e The mouse event.
+     */
     public void decrementWristbandChance(MouseEvent e) {
         if (e.isShiftDown() && !e.isControlDown()) {
             wristbandChanceValue--;
@@ -368,6 +465,9 @@ public class SettingsController {
         setWristbandChance();
     }
 
+    /**
+     * Sets the simulation time.
+     */
     public void setSimTime() {
         if (!simTime.getText().isEmpty()) {
             if (simTime.getText().length() > 10) {
@@ -384,6 +484,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Sets the arrival interval.
+     */
     public void setArrivalInterval() {
         if (!arrivalInterval.getText().isEmpty()) {
             if (arrivalInterval.getText().length() > 10) {
@@ -400,6 +503,12 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Increments or decrements the arrival interval.
+     *
+     * @param e     The mouse event.
+     * @param value The value to increment or decrement by.
+     */
     public void incrementDecrementArrivalInterval(MouseEvent e, double value) {
         if (e.isShiftDown() && !e.isControlDown()) {
             arrivalIntervalValue += value * 5;
@@ -414,14 +523,27 @@ public class SettingsController {
         setArrivalInterval();
     }
 
+    /**
+     * Increments the arrival interval.
+     *
+     * @param e The mouse event.
+     */
     public void incrementArrivalInterval(MouseEvent e) {
         incrementDecrementArrivalInterval(e, 0.1);
     }
 
+    /**
+     * Decrements the arrival interval.
+     *
+     * @param e The mouse event.
+     */
     public void decrementArrivalInterval(MouseEvent e) {
         incrementDecrementArrivalInterval(e, -0.1);
     }
 
+    /**
+     * Sets the ticket booth count based on the input.
+     */
     public void setTicketBoothCount() {
         if (!ticketBoothCount.getText().isEmpty()) {
             if (ticketBoothCount.getText().length() > 3) {
@@ -439,6 +561,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Sets the ride count based on the input.
+     */
     public void setRideCount() {
         if (!rideCount.getText().isEmpty()) {
             if (rideCount.getText().length() > 3) {
@@ -458,6 +583,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Sets the restaurant capacity based on the input.
+     */
     public void setRestaurantCap() {
         if (!restaurantCap.getText().isEmpty()) {
             if (restaurantCap.getText().length() > 3) {
@@ -471,6 +599,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Sets the simulation delay based on the input.
+     */
     public void setSimDelay() {
         if (!simDelay.getText().isEmpty()) {
             if (simDelay.getText().length() > 5) {
@@ -484,6 +615,9 @@ public class SettingsController {
         }
     }
 
+    /**
+     * Sets the wristband chance based on the input.
+     */
     public void setWristbandChance() {
         if (!wristbandChance.getText().isEmpty()) {
             if (wristbandChance.getText().length() > 5) {
@@ -502,6 +636,12 @@ public class SettingsController {
     }
 
 
+    /**
+     * Starts the simulation.
+     * The simulation is displayed in a new window.
+     *
+     * @throws Exception If the simulation fails to start.
+     */
     public void startSimulation() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/simulation.fxml"));
         Parent root = loader.load();
@@ -514,6 +654,7 @@ public class SettingsController {
         // Show new stage
         stage = new Stage();
         stage.setTitle("Simulation running...");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
         stage.setResizable(false);
         stage.setScene(new Scene(root));
         stage.show();
@@ -529,6 +670,11 @@ public class SettingsController {
         simController.startSim();
     }
 
+    /**
+     * Shows the simulation history.
+     *
+     * @throws Exception If the history fails to load.
+     */
     public void viewHistory() throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/history.fxml"));
         Parent root = loader.load();
@@ -542,24 +688,13 @@ public class SettingsController {
         stage.show();
     }
 
+    /**
+     * Closes the simulation.
+     */
     public void closeSimulation() {
         Platform.runLater(() -> {
             stage.close();
         });
     }
 
-
-    public int getRideCount() {
-        return rideCountValue;
-    }
-
-
-    public void setWristbandChance(long amount) {
-
-    }
-
-
-    public long getWristbandChance() {
-        return (long) wristbandChanceValue;
-    }
 }
