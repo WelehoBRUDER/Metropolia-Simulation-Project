@@ -80,7 +80,7 @@ public class Customer {
 		}
 
 		arrivalTime = Clock.getInstance().getTime();
-		Trace.out(Trace.Level.INFO, "Uusi asiakas " + id + ". saapumisaika: "+arrivalTime + " Ranneke: " + wristband + ". Laitteet: " + ridesToSring());
+		Trace.out(Trace.Level.INFO, "New customer " + id + ". arrival time: "+arrivalTime + " Wristband: " + wristband + ". Rides: " + ridesToSring());
 
 	}
 
@@ -250,24 +250,17 @@ public class Customer {
 	 * @return Average time for wristband or ticket customers
 	 */
 	public double report(){
-		Trace.out(Trace.Level.INFO, "Asiakas "+id+ " saapui:" +arrivalTime);
-		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " poistui:" +departureTime);
-		Trace.out(Trace.Level.INFO,"Asiakas "+id+ " viipyi:" +(departureTime-arrivalTime));
-		double average;
+		Trace.out(Trace.Level.INFO, "Customer "+id+ " arrived:" +arrivalTime);
+		Trace.out(Trace.Level.INFO,"Customer "+id+ " left:" +departureTime);
+		Trace.out(Trace.Level.INFO,"Customer "+id+ " stayed for:" +(departureTime-arrivalTime));
 		double time = departureTime - arrivalTime;
 		if (wristband) {
 			wristbandCount++;
 			wristbandSum += (time);
-			average = wristbandSum / wristbandCount;
-			System.out.println("Rannekkeellisten asiakkaiden läpimenoaikojen keskiarvo "+ average);
-
 		} else {
 			ticketCount++;
-			System.out.println("Asiakas kävi " + ticketboothCounter + " kertaa lipunmyyntipisteessä");
 			addTicketboothCounterSum();
 			ticketSum += (time);
-			average = ticketSum / ticketCount;
-			System.out.println("Lippu-asiakkaiden läpimenoaikojen keskiarvo "+ average);
 		}
 		return time;
 	}

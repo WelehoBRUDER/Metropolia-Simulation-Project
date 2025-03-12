@@ -94,10 +94,6 @@ public class OwnEngine extends Engine {
 
     private Dao dao = new Dao();
 
-    private ArrayList<Double> wristbandAverages = new ArrayList<>();
-    private ArrayList<Double> ticketAverages = new ArrayList<>();
-
-
     /**
      * Constructor for the OwnEngine class. Initializes the simulation engine with the given parameters. Sets the time of the simulation to 0.
      * Creates the service points for the simulation and assigns them IDs. Initializes the arrival progress for the simulation and generates the first arrival in the simulation.
@@ -141,8 +137,7 @@ public class OwnEngine extends Engine {
         }
 
         servicePoints[rideCount + ticketBoothCount] = new RestaurantServicePoint(new Normal(80, 3), eventList, EventType.DEP_RESTAURANT, rideCount, RESTAURANT_CAPASITY);
-        //arrivalProgress = new ArrivalProgress(new Negexp(15, 5), eventList, EventType.ARRIVAL); //Saapuminen, Tällä asiakkaat saapuvat n. 15 aikayksikön välein eli aika harvoin
-        arrivalProgress = new ArrivalProgress(new Negexp(arrivalInterval), eventList, EventType.ARRIVAL); //Saapuminen
+        arrivalProgress = new ArrivalProgress(new Negexp(arrivalInterval), eventList, EventType.ARRIVAL);
 
     }
 
@@ -244,7 +239,6 @@ public class OwnEngine extends Engine {
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = p.getRideID();
                         controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ride " + to);
-
                         Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ride: " + p.getRideID());
                     } else {
                         servicePoints[nextTicketBooth()].addToQueue(c);
@@ -252,8 +246,6 @@ public class OwnEngine extends Engine {
                         from = servicePoints[rideOrder.remove(0) + ticketBoothCount - 1].getRideID();
                         to = (ticketBoothCounter + 1) / -1;
                         controller.updateConsole("Customer " + c.getId() + " rode ride " + from + " and goes to ticket booth " + (to / -1));
-                        //System.out.println("from " + servicePoints[rideOrder.remove(0)+ticketBoothCount-1].getRideID() + " to " + (ticketBoothCounter+1)/-1); //FROMTO
-
                         Trace.out(Trace.Level.INFO, "Customer " + c.getId() + " goes to ticket booth");
                     }
                 } else {
@@ -367,7 +359,6 @@ public class OwnEngine extends Engine {
         //dao
         dao.addServicePoint(endTime, readyCustomers, ticketTimes.size(), wristbandTimes.size(), unreadyCustomers, Customer.getTicketboothCounterAverage()/*0*/, Customer.getTotalTicketCount(), getAverageWristbandTime(), getAverageTicketTime(), getWholeAverage(), getWristbandTicketAverageRatio());
 
-        //Palvelupisteiden tulokset:
         int i = ticketBoothCount;
         //Results for each service point in the simulation:
         for (ServicePoint point : servicePoints) {
@@ -378,17 +369,11 @@ public class OwnEngine extends Engine {
             if (!(point instanceof RestaurantServicePoint)) {
                 if (point.getRideID() < 0) {
                     int ticketBoothNumber = point.getRideID() * -1;
-                    System.out.println("Lippupisteessä " + ticketBoothNumber + " käytiin " + customerCount + " kertaa.");
-                    System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen palveluaika: " + averageServiceTime);
-                    System.out.println("Lippupisteessä " + ticketBoothNumber + " keskimääräinen jonotusaika: " + averageQueueTime);
                     dynamicResults.put("Ticket booth " + ticketBoothNumber + " count", (double) customerCount);
                     dynamicResults.put("Ticket booth " + ticketBoothNumber + " average service time", averageServiceTime);
                     dynamicResults.put("Ticket booth " + ticketBoothNumber + " average queue time", averageQueueTime);
                     dao.addTicketBooth(ticketBoothNumber, customerCount, averageServiceTime, averageQueueTime);
                 } else {
-                    System.out.println("Laitteessa " + point.getRideID() + " palveltiin " + customerCount + " asiakasta.");
-                    System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen palveluaika: " + averageServiceTime);
-                    System.out.println("Laitteessa " + point.getRideID() + " keskimääräinen jonotusaika: " + averageQueueTime);
                     dynamicResults.put("Ride " + point.getRideID() + " count", (double) customerCount);
                     dynamicResults.put("Ride " + point.getRideID() + " average service time", averageServiceTime);
                     dynamicResults.put("Ride " + point.getRideID() + " average queue time", averageQueueTime);
@@ -396,25 +381,16 @@ public class OwnEngine extends Engine {
                     i++;
                 }
             } else {
-                System.out.println("Ravintolassa palveltiin " + customerCount + " asiakasta.");
-                System.out.println("Ravintolassa keskimääräinen palveluaika: " + averageServiceTime);
-                System.out.println("Ravintolassa keskimääräinen jonotusaika: " + averageQueueTime);
                 dynamicResults.put("Restaurant count", (double) customerCount);
                 dynamicResults.put("Restaurant average service time", averageServiceTime);
                 dynamicResults.put("Restaurant average queue time", averageQueueTime);
                 dao.addRestaurant(customerCount, averageServiceTime, averageQueueTime, RESTAURANT_CAPASITY);
-
             }
         }
         ResultsController resultsController = new ResultsController();
         resultsController.visualizeResults(staticResults, dynamicResults);
         controller.showEndTime(Clock.getInstance().getTime());
         controller.closeSimulation();
-
-        //dao.addServicePoint(endTime, readyCustomers, ticketAverages.size(), wristbandAverages.size(), unreadyCustomers, Customer.getTicketboothCounterAverage(), );
-        //dao.addRide();
-        //dao.addTicketBooth();
-        //dao.addRestaurant();
     }
 
     /**
