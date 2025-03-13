@@ -111,6 +111,7 @@ public class OwnEngine extends Engine {
         super(controller);
 
         Clock.getInstance().setTime(0);
+        Customer.setI(1);
 
         this.rideCount = rideCount;
         this.ticketBoothCount = ticketBoothCount;

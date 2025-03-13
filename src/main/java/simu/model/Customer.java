@@ -191,6 +191,10 @@ public class Customer {
 		return i;
 	}
 
+	public static void setI(int num) {
+		i = num;
+	}
+
 	/**
 	 * Setter for the customer's queue arrival time
 	 * @param queueArrivalTime Queue arrival time of the customer
