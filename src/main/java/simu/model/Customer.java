@@ -191,6 +191,10 @@ public class Customer {
 		return i;
 	}
 
+	/**
+	 * Setter for the static variable i, the unique id generator
+	 * @param num Unique id generator
+	 */
 	public static void setI(int num) {
 		i = num;
 	}
