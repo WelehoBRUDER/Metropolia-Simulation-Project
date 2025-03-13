@@ -170,13 +170,13 @@
             <Insets bottom="2.0" top="2.0" />
          </VBox.margin>
       </HBox>
-      <Label text="Shift + Click = increments of 5 (1 for wristband chance)" textFill="#9e9e9e">
+      <Label style="-fx-opacity: 0.5;" text="Shift + Click = increments of 5 (1 for wristband chance)" textFill="#9e9e9e">
          <VBox.margin>
             <Insets top="4.0" />
          </VBox.margin>
       </Label>
-      <Label text="Ctrl + Click = increments of 25 (5 for wristband chance)" textFill="#9e9e9e" />
-      <Label text="Ctrl + Shift + Click = increments of 100 (simulation time only)" textFill="#9e9e9e">
+      <Label style="-fx-opacity: 0.5;" text="Ctrl + Click = increments of 25 (5 for wristband chance)" textFill="#9e9e9e" />
+      <Label style="-fx-opacity: 0.5;" text="Ctrl + Shift + Click = increments of 100 (simulation time only)" textFill="#9e9e9e">
          <VBox.margin>
             <Insets bottom="4.0" />
          </VBox.margin>
