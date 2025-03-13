@@ -13,6 +13,10 @@ Button, .lightest-bg {
     -fx-background-color: #424141;
 }
 
+Button:hover {
+    -fx-background-color: #5a5a5a;
+}
+
 .text-area .content {
     -fx-background-color: #424141;
 }
