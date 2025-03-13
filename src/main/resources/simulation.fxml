@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -12,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" stylesheets="@simulation.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SimController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" styleClass="main" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SimController">
    <children>
       <StackPane prefHeight="150.0" prefWidth="200.0" styleClass="sim-canvas">
          <children>
@@ -20,9 +22,9 @@
             <Canvas fx:id="customerCanvas" height="500.0" styleClass="sim-canvas" width="800.0" />
          </children>
       </StackPane>
-      <HBox prefHeight="100.0" prefWidth="200.0" styleClass="footer">
+      <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <VBox maxWidth="242.0" prefHeight="100.0" prefWidth="242.0" styleClass="controls">
+            <VBox maxWidth="242.0" prefHeight="100.0" prefWidth="242.0">
                <children>
                   <Label fx:id="time" text="Total time: 0">
                      <padding>
@@ -30,6 +32,10 @@
                      </padding>
                   </Label>
                </children>
+               <styleClass>
+                  <String fx:value="controls" />
+                  <String fx:value="lighter-bg" />
+               </styleClass>
             </VBox>
             <TextArea fx:id="simulationConsole" editable="false" prefHeight="92.0" prefWidth="461.0">
                <HBox.margin>
@@ -38,8 +44,12 @@
                <font>
                   <Font size="10.0" />
                </font>
+               <styleClass>
+                  <String fx:value="lightest-bg" />
+                  <String fx:value="text-area" />
+               </styleClass>
             </TextArea>
-            <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0" styleClass="controls">
+            <VBox alignment="TOP_RIGHT" prefHeight="200.0" prefWidth="100.0">
                <children>
                   <FlowPane alignment="TOP_RIGHT" hgap="10.0" prefHeight="38.0" prefWidth="400.0">
                      <children>
@@ -68,8 +78,20 @@
                      </padding>
                   </FlowPane>
                </children>
+               <styleClass>
+                  <String fx:value="controls" />
+                  <String fx:value="lighter-bg" />
+               </styleClass>
             </VBox>
          </children>
+         <styleClass>
+            <String fx:value="footer" />
+            <String fx:value="lighter-bg" />
+         </styleClass>
       </HBox>
    </children>
+   <stylesheets>
+      <URL value="@simulation.css" />
+      <URL value="@colors.css" />
+   </stylesheets>
 </VBox>

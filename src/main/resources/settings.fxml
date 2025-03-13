@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -11,7 +13,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" stylesheets="@settings.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
+<VBox id="settings" alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" styleClass="main" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
    <children>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" styleClass="setting-row">
          <children>
@@ -150,7 +152,11 @@
          <content>
             <StackPane prefWidth="0.0">
                <children>
-                  <VBox fx:id="rides" maxWidth="300.0" prefHeight="200.0" prefWidth="348.0" styleClass="ride-list" />
+                  <VBox fx:id="rides" maxWidth="300.0" prefHeight="200.0" prefWidth="348.0">
+                     <styleClass>
+                        <String fx:value="ride-list" />
+                        <String fx:value="lighter-bg" />
+                     </styleClass></VBox>
                </children>
             </StackPane>
          </content>
@@ -176,4 +182,8 @@
          </VBox.margin>
       </Label>
    </children>
+   <stylesheets>
+      <URL value="@settings.css" />
+      <URL value="@colors.css" />
+   </stylesheets>
 </VBox>

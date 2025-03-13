@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ResultsController">
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="500.0" styleClass="main" stylesheets="@colors.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ResultsController">
    <children>
       <HBox alignment="CENTER" prefHeight="40.0" prefWidth="300.0">
          <children>
@@ -165,12 +169,12 @@
          </VBox.margin></HBox>
       <HBox layoutX="10.0" layoutY="90.0" prefHeight="160.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="resultTableView" prefHeight="200.0" prefWidth="499.0" HBox.hgrow="ALWAYS">
+            <TableView fx:id="resultTableView" prefHeight="200.0" prefWidth="499.0" styleClass="lighter-bg" HBox.hgrow="ALWAYS">
               <columns>
-                <TableColumn fx:id="servicePointCol" minWidth="50.0" prefWidth="100.0" text="Service Point" />
-                <TableColumn fx:id="countCol" minWidth="50.0" prefWidth="100.0" text="Count" />
-                  <TableColumn fx:id="averageServiceTimeCol" minWidth="5.199981689453125" prefWidth="150.0" text="Average service time" />
-                  <TableColumn fx:id="averageQueueTimeCol" prefWidth="148.00001831054686" text="Average queue time" />
+                <TableColumn fx:id="servicePointCol" minWidth="50.0" prefWidth="100.0" styleClass="lightest-bg" text="Service Point" />
+                <TableColumn fx:id="countCol" minWidth="50.0" prefWidth="100.0" styleClass="lightest-bg" text="Count" />
+                  <TableColumn fx:id="averageServiceTimeCol" minWidth="5.199981689453125" prefWidth="150.0" styleClass="lightest-bg" text="Average service time" />
+                  <TableColumn fx:id="averageQueueTimeCol" prefWidth="148.00001831054686" styleClass="lightest-bg" text="Average queue time" />
               </columns>
             </TableView>
          </children></HBox>

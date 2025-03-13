@@ -1,0 +1,18 @@
+.main {
+    -fx-background-color: #232323;
+}
+.main * {
+    -fx-text-fill: #ffffff;
+}
+
+TextField, ScrollPane,  .lighter-bg {
+    -fx-background-color: #323232;
+}
+
+Button, .lightest-bg {
+    -fx-background-color: #424141;
+}
+
+.text-area .content {
+    -fx-background-color: #424141;
+}

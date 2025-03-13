@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import simu.framework.Clock;
@@ -301,6 +302,7 @@ public class SimController implements ISettingsControllerForM {
         }
         int beingServed = Math.min(number + Math.abs(defaultValue), Math.abs(defaultValue));
         int waiting = Math.max(number, 0);
+        this.serviceCtx.setFill(Color.WHITE);
         this.serviceCtx.clearRect(x - 10, y - this.FONT_SIZE - 4, this.SERVICE_POINT_SIZE * 1.3 + 10, this.FONT_SIZE + 4);
         this.serviceCtx.fillText(waiting + "(" + beingServed + ")", x + calcCenterX(this.SERVICE_POINT_SIZE, 0), y - (double) this.FONT_SIZE / 2);
     }
@@ -311,7 +313,7 @@ public class SimController implements ISettingsControllerForM {
     public void drawInfoPanelElement(Color color, int elementNumber, String elementText) {
         this.serviceCtx.setFill(color);
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * (elementNumber-1), this.SERVICE_POINT_SIZE, this.SERVICE_POINT_SIZE);
-        this.serviceCtx.setFill(Color.BLACK);
+        this.serviceCtx.setFill(Color.WHITE);
         this.serviceCtx.fillText(elementText, 8 + this.SERVICE_POINT_SIZE + this.CANVAS_WIDTH - (120), 4 + (4 + this.SERVICE_POINT_SIZE) * (elementNumber-1) + (this.SERVICE_POINT_SIZE / 1.5));
 
     }
@@ -320,7 +322,7 @@ public class SimController implements ISettingsControllerForM {
      * Draws the info panel on the canvas, showing the color of each service point.
      */
     public void drawInfoPanel() {
-        this.serviceCtx.setFill(Color.LIGHTGRAY);
+        this.serviceCtx.setFill(Paint.valueOf("#323232"));
         this.serviceCtx.setFont(new Font("Arial", this.FONT_SIZE));
         this.serviceCtx.setTextAlign(TextAlignment.LEFT);
         this.serviceCtx.fillRect(this.CANVAS_WIDTH - (124), 0, 120, 4 + (4 + this.SERVICE_POINT_SIZE) * 5);
