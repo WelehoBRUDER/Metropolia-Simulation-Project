@@ -56,43 +56,6 @@ CREATE TABLE restaurant (
 	#PRIMARY KEY (sim_id),
 	FOREIGN KEY (sim_id) REFERENCES simulation(sim_id) ON DELETE CASCADE
 );
-/*
-INSERT INTO simulation (sim_id) VALUES (NULL);
-INSERT INTO rides (sim_id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 5, 5, 5);
-INSERT INTO rides (sim_id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 52, 52, 25);
-*/
-
-/*
-#INSERT INTO simulation DEFAULT VALUES;
-INSERT INTO simulation (id) VALUES (NULL);
-
-INSERT INTO restaurant (id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 5, 5, 5);
-	
-INSERT INTO service_point (id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 5, 5, 5);
-	
-	
-	
-INSERT INTO simulation (id) VALUES (NULL);
-	
-INSERT INTO service_point (id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 57, 57, 57);
-	
-	
-	
-	
-INSERT INTO simulation (id) VALUES (NULL);
-
-INSERT INTO restaurant (id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 25, 25, 25);
-	
-INSERT INTO service_point (id, customer_amount, average_serve_time, average_wait_time) VALUES
-	(LAST_INSERT_ID(), 15, 15, 51);
-	
-*/
 
 
 DROP USER IF EXISTS 'amusement'@'localhost';
