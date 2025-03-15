@@ -273,6 +273,10 @@ public class Customer {
 		return time;
 	}
 
+	public static void setTotalTicketCount(int amount){
+		totalTicketCount = amount;
+	}
+
 	/**
 	 * Adds tickets to the customer. Generates a random amount of tickets between the min and max ticket purchase values.
 	 * Adds the amount of tickets to the total ticket count in the simulation.
