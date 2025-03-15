@@ -261,17 +261,17 @@ public class Dao {
     /**
      * Adds a service point to the database.
      *
-     * @param simulationTime I'm not typing all this.
-     * @param readyCustomers
-     * @param ticketCustomers
-     * @param wristbandCustomers
-     * @param unreadyCustomers
-     * @param ticketBoothAverage
-     * @param totalTicketCount
-     * @param wristbandAverageTime
-     * @param ticketAverageTime
-     * @param wholeAverageTime
-     * @param ticketWristbandTimeRatio
+     * @param simulationTime The amount of time the simulation took.
+     * @param readyCustomers Customers that are ready.
+     * @param ticketCustomers Amount of customers that use tickets.
+     * @param wristbandCustomers Amount of customers that have a wristband.
+     * @param unreadyCustomers Customers that were not ready at the end of simulation.
+     * @param ticketBoothAverage How many times do ticket customers go to the ticket booth.
+     * @param totalTicketCount The total amount of tickets.
+     * @param wristbandAverageTime The average visit time of wristband customers.
+     * @param ticketAverageTime The average visit time of ticket customers.
+     * @param wholeAverageTime The average visit time of all customers.
+     * @param ticketWristbandTimeRatio The ratio ticket customers time spend to wristband customers time spend.
      */
     public void addServicePoint(double simulationTime, int readyCustomers, int ticketCustomers, int wristbandCustomers, int unreadyCustomers, double ticketBoothAverage, int totalTicketCount, double wristbandAverageTime, double ticketAverageTime, double wholeAverageTime, double ticketWristbandTimeRatio){
         Connection conn = DatabaseConnection.getConnection();
@@ -304,12 +304,12 @@ public class Dao {
     /**
      * Adds a ride to the database.
      *
-     * @param rideId
-     * @param count
-     * @param averageServeTime
-     * @param averageWaitTime
-     * @param variance
-     * @param mean
+     * @param rideId Which ride of the specific simulation.
+     * @param count How many times the ride gets used.
+     * @param averageServeTime The average service time of the ride.
+     * @param averageWaitTime The average waiting time for a customer.
+     * @param variance The variance of the ride.
+     * @param mean The mean of the ride.
      */
     public void addRide(int rideId, int count, double averageServeTime, double averageWaitTime, double variance, double mean){
         Connection conn = DatabaseConnection.getConnection();
@@ -332,10 +332,10 @@ public class Dao {
     /**
      * Adds a ticket booth to the database.
      *
-     * @param count
-     * @param ticketBoothId
-     * @param averageServiceTime
-     * @param averageQueueTime
+     * @param count How many times the ticket booth is used.
+     * @param ticketBoothId Which ticket booth we are talking about in this specific simulation
+     * @param averageServiceTime The average service time of the booth.
+     * @param averageQueueTime The average queue time of the booth.
      */
     public void addTicketBooth(int count, int ticketBoothId, double averageServiceTime, double averageQueueTime){
         Connection conn = DatabaseConnection.getConnection();
@@ -356,10 +356,10 @@ public class Dao {
     /**
      * Adds a restaurant to the database.
      *
-     * @param count
-     * @param averageServiceTime
-     * @param averageQueueTime
-     * @param capacity
+     * @param count How many customers used the restaurant.
+     * @param averageServiceTime The average service time of the restaurant.
+     * @param averageQueueTime The average queue time of the restaurant.
+     * @param capacity The capacity of the restaurant.
      */
     public void addRestaurant(int count, double averageServiceTime, double averageQueueTime, int capacity){
         Connection conn = DatabaseConnection.getConnection();
